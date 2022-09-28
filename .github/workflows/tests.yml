@@ -108,7 +108,7 @@ jobs:
       # conda install -c bioconda igblast blast ncbi-vdb=2.11.0
       # https://github.com/bioconda/bioconda-recipes/issues/33479
       run: |
-        conda install -c bioconda igblast blast
+        conda install -c bioconda igblast>=1.17.0 blast
 
     - name: Test if blast works
       run: |
