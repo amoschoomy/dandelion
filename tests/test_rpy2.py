@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test rpy2"""
 import pandas as pd
 import dandelion as ddl
 import sys

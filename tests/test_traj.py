@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test trajectory"""
 import dandelion as ddl
 import scanpy as sc
 import numpy as np

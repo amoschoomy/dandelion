@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test high conf."""
 import pytest
 import dandelion as ddl
 

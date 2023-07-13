@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test plotting"""
 import pytest
 import dandelion as ddl
 import scanpy as sc
@@ -19,9 +18,9 @@ def test_setup(create_testfolder, airr_reannotated, dummy_adata):
     ddl.tl.transfer(adata, vdj)
     assert "clone_id" in adata.obs
     assert "X_vdj" in adata.obsm
-    f1 = create_testfolder / "test.h5"
+    f1 = create_testfolder / "test.h5ddl"
     f2 = create_testfolder / "test.h5ad"
-    vdj.write_h5(f1)
+    vdj.write_h5ddl(f1)
     adata.write_h5ad(f2)
 
 
@@ -45,8 +44,8 @@ def test_plot_network(create_testfolder):
 )
 def test_plot_bar(create_testfolder, sort, norm):
     """test_plot_bar"""
-    f = create_testfolder / "test.h5"
-    vdj = ddl.read_h5(f)
+    f = create_testfolder / "test.h5ddl"
+    vdj = ddl.read_h5ddl(f)
     ax = ddl.pl.barplot(vdj, color="v_call_genotyped_VDJ")
     assert ax is not None
     ax = ddl.pl.barplot(vdj, color="v_call_genotyped_VDJ", sort_descending=sort)
@@ -58,7 +57,7 @@ def test_plot_bar(create_testfolder, sort, norm):
 @pytest.mark.usefixtures("create_testfolder")
 def test_plot_bar2(create_testfolder):
     """test_plot_bar2"""
-    f = create_testfolder / "test.h5"
+    f = create_testfolder / "test.h5ddl"
     vdj = ddl.read_h5ddl(f)
     f = create_testfolder / "test.h5ad"
     adata = sc.read_h5ad(f)
@@ -79,8 +78,8 @@ def test_plot_bar2(create_testfolder):
 @pytest.mark.parametrize("norm", [True, False])
 def test_plot_stackedbar(create_testfolder, norm):
     """test_plot_stackedbar"""
-    f = create_testfolder / "test.h5"
-    vdj = ddl.read_h5(f)
+    f = create_testfolder / "test.h5ddl"
+    vdj = ddl.read_h5ddl(f)
     ax = ddl.pl.stackedbarplot(
         vdj, color="v_call_genotyped_VDJ", groupby="isotype", normalize=norm
     )
@@ -91,8 +90,8 @@ def test_plot_stackedbar(create_testfolder, norm):
 @pytest.mark.parametrize("norm", [True, False])
 def test_plot_stackedbar2(create_testfolder, norm):
     """test_plot_stackedbar2"""
-    f = create_testfolder / "test.h5"
-    vdj = ddl.read_h5(f)
+    f = create_testfolder / "test.h5ddl"
+    vdj = ddl.read_h5ddl(f)
     f = create_testfolder / "test.h5ad"
     adata = sc.read_h5ad(f)
     ax = ddl.pl.stackedbarplot(
@@ -116,8 +115,8 @@ def test_plot_stackedbar2(create_testfolder, norm):
 @pytest.mark.usefixtures("create_testfolder")
 def test_plot_spectratype(create_testfolder):
     """test_plot_spectratype"""
-    f = create_testfolder / "test.h5"
-    vdj = ddl.read_h5(f)
+    f = create_testfolder / "test.h5ddl"
+    vdj = ddl.read_h5ddl(f)
     ax = ddl.pl.spectratype(
         vdj, color="junction_length", groupby="c_call", locus="IGH"
     )

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test clone overlap plotting"""
 import dandelion as ddl
 import pytest
 
@@ -11,9 +10,7 @@ def test_clone_overlap(
     create_testfolder, annotation_10x_mouse, dummy_adata_mouse
 ):
     """test_clone_overlap"""
-    annot_file = (
-        str(create_testfolder) + "/test_filtered_contig_annotations.csv"
-    )
+    annot_file = create_testfolder / "test_filtered_contig_annotations.csv"
     annotation_10x_mouse.to_csv(annot_file, index=False)
     vdj = ddl.read_10x_vdj(str(create_testfolder))
     ddl.pp.filter_contigs(vdj)
@@ -58,7 +55,7 @@ def test_clone_overlap(
         dummy_adata_mouse,
         groupby="sample_idx",
         weighted_overlap=False,
-        save="test.png",
+        save=create_testfolder / "test.png",
         return_graph=True,
     )
     assert G is not None

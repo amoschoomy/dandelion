@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-"""test mouse"""
 import pandas as pd
 import dandelion as ddl
 import pytest
-
-from pathlib import Path
 
 
 @pytest.mark.usefixtures("create_testfolder", "fasta_10x_mouse")
 def test_write_fasta(create_testfolder, fasta_10x_mouse):
     """test_write_fasta"""
-    out_fasta = str(create_testfolder) + "/filtered_contig.fasta"
+    out_fasta = create_testfolder / "filtered_contig.fasta"
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -23,7 +20,7 @@ def test_write_fasta(create_testfolder, fasta_10x_mouse):
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x_mouse")
 def test_write_annotation(create_testfolder, annotation_10x_mouse):
     """test_write_annotation"""
-    out_file = str(create_testfolder) + "/filtered_contig_annotations.csv"
+    out_file = create_testfolder / "filtered_contig_annotations.csv"
     annotation_10x_mouse.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == 2
 
@@ -109,9 +106,9 @@ def test_filtercontigs(create_testfolder, processed_files, dummy_adata_mouse):
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     dat = pd.read_csv(f, sep="\t")
     vdj, adata = ddl.pp.filter_contigs(dat, dummy_adata_mouse)
-    f1 = create_testfolder / "test.h5"
+    f1 = create_testfolder / "test.h5ddl"
     f2 = create_testfolder / "test.h5ad"
-    vdj.write_h5(f1)
+    vdj.write_h5ddl(f1)
     adata.write_h5ad(f2)
     assert dat.shape[0] == 1285
     assert vdj.data.shape[0] == 956
@@ -122,8 +119,8 @@ def test_filtercontigs(create_testfolder, processed_files, dummy_adata_mouse):
 @pytest.mark.usefixtures("create_testfolder")
 def test_generate_network(create_testfolder):
     """test_generate_network"""
-    f = create_testfolder / "test.h5"
-    vdj = ddl.read_h5(f)
+    f = create_testfolder / "test.h5ddl"
+    vdj = ddl.read_h5ddl(f)
     with pytest.raises(ValueError):
         ddl.tl.generate_network(vdj, compute_layout=False)
     ddl.tl.find_clones(vdj)

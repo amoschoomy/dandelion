@@ -161,24 +161,24 @@ def find_clones(
                 if not by_alleles:
                     if "v_call_genotyped" in dat_vdj.columns:
                         V = [
-                            re.sub("[*][0-9][0-9]", "", v)
+                            re.sub("[*][0-9][0-9]", "", str(v))
                             for v in dat_vdj["v_call_genotyped"]
                         ]
                     else:
                         V = [
-                            re.sub("[*][0-9][0-9]", "", v)
+                            re.sub("[*][0-9][0-9]", "", str(v))
                             for v in dat_vdj["v_call"]
                         ]
                     J = [
-                        re.sub("[*][0-9][0-9]", "", j)
+                        re.sub("[*][0-9][0-9]", "", str(j))
                         for j in dat_vdj["j_call"]
                     ]
                 else:
                     if "v_call_genotyped" in dat_vdj.columns:
-                        V = [v for v in dat_vdj["v_call_genotyped"]]
+                        V = [str(v) for v in dat_vdj["v_call_genotyped"]]
                     else:
-                        V = [v for v in dat_vdj["v_call"]]
-                    J = [j for j in dat_vdj["j_call"]]
+                        V = [str(v) for v in dat_vdj["v_call"]]
+                    J = [str(j) for j in dat_vdj["j_call"]]
 
                 # collapse the alleles to just genes
                 V = [",".join(list(set(v.split(",")))) for v in V]
@@ -350,24 +350,24 @@ def find_clones(
                     if not by_alleles:
                         if "v_call_genotyped" in dat_vj_c.columns:
                             Vvj = [
-                                re.sub("[*][0-9][0-9]", "", v)
+                                re.sub("[*][0-9][0-9]", "", str(v))
                                 for v in dat_vj_c["v_call_genotyped"]
                             ]
                         else:
                             Vvj = [
-                                re.sub("[*][0-9][0-9]", "", v)
+                                re.sub("[*][0-9][0-9]", "", str(v))
                                 for v in dat_vj_c["v_call"]
                             ]
                         Jvj = [
-                            re.sub("[*][0-9][0-9]", "", j)
+                            re.sub("[*][0-9][0-9]", "", str(j))
                             for j in dat_vj_c["j_call"]
                         ]
                     else:
                         if "v_call_genotyped" in dat_vj_c.columns:
-                            Vvj = [v for v in dat_vj_c["v_call_genotyped"]]
+                            Vvj = [str(v) for v in dat_vj_c["v_call_genotyped"]]
                         else:
-                            Vvj = [v for v in dat_vj_c["v_call"]]
-                        Jvj = [j for j in dat_vj_c["j_call"]]
+                            Vvj = [str(v) for v in dat_vj_c["v_call"]]
+                        Jvj = [str(j) for j in dat_vj_c["j_call"]]
                     # collapse the alleles to just genes
                     Vvj = [",".join(list(set(v.split(",")))) for v in Vvj]
                     Jvj = [",".join(list(set(j.split(",")))) for j in Jvj]

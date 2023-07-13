@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test tradv"""
 import dandelion as ddl
 import pytest
 

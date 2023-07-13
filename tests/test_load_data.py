@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""test load_data"""
-
 import dandelion as ddl
 import pytest
 

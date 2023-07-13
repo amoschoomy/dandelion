@@ -1,11 +1,8 @@
 #!/usr/bin/env python
-"""test pp"""
 import pytest
-import sys
 import os
 import pandas as pd
 import dandelion as ddl
-from pathlib import Path
 
 try:
     os.environ.pop("IGDATA")

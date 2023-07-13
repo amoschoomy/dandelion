@@ -118,7 +118,7 @@ def generate_network(
             dat_l = dat[dat["locus"].isin(["IGK", "IGL", "TRA", "TRG"])].copy()
             dat_h = dat_h.sample(downsample)
             dat_l = dat_l[dat_l["cell_id"].isin(list(dat_h["cell_id"]))].copy()
-            dat_ = dat_h.append(dat_l)
+            dat_ = pd.concat([dat_h, dat_l], ignore_index=True)
             dat_ = sanitize_data(dat_, ignore=clonekey)
     else:
         dat_ = sanitize_data(dat, ignore=clonekey)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test filter"""
 import json
 import os
 import dandelion as ddl

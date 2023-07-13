@@ -12,7 +12,6 @@ from dandelion.utilities import (
     load_data,
     read_10x_airr,
     read_10x_vdj,
-    read_h5,
     read_h5ddl,
     read_pkl,
     to_scirpy,

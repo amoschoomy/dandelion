@@ -147,120 +147,16 @@ def read_pkl(filename: str = "dandelion_data.pkl.pbz2") -> Dandelion:
     Dandelion
         saved `Dandelion` object in pickle format.
     """
-    if isBZIP(filename):
+    if isBZIP(str(filename)):
         data = bz2.BZ2File(filename, "rb")
         data = cPickle.load(data)
-    elif isGZIP(filename):
+    elif isGZIP(str(filename)):
         data = gzip.open(filename, "rb")
         data = cPickle.load(data)
     else:
         with open(filename, "rb") as f:
             data = cPickle.load(f)
     return data
-
-
-@deprecated(
-    deprecated_in="0.2.2",
-    removed_in="0.4.0",
-    details="read_h5ddl will be the recommended way to read.",
-)
-def read_h5(filename: str = "dandelion_data.h5") -> Dandelion:
-    """
-    Read in and returns a `Dandelion` class from .h5 format.
-
-    Parameters
-    ----------
-    filename : str, optional
-        path to `.h5` file
-
-    Returns
-    -------
-    Dandelion
-        `Dandelion` object.
-
-    Raises
-    ------
-    AttributeError
-        if `data` not found in `.h5` file.
-    """
-    try:
-        data = pd.read_hdf(filename, "data")
-        # data = sanitize_data(data)
-
-        # if check_mix_dtype(data):
-        #     for x in return_mix_dtype(data):
-        #        data[x].replace('', pd.NA, inplace=True)
-        #     data = sanitize_data(data)
-    except:
-        raise AttributeError(
-            "{} does not contain attribute `data`".format(filename)
-        )
-    try:
-        metadata = pd.read_hdf(filename, "metadata")
-    except:
-        pass
-
-    try:
-        g_0 = pd.read_hdf(filename, "graph/graph_0")
-        g_1 = pd.read_hdf(filename, "graph/graph_1")
-        g_0 = g_0 + 1
-        g_0 = g_0.fillna(0)
-        g_1 = g_1 + 1
-        g_1 = g_1.fillna(0)
-        graph0 = nx.from_pandas_adjacency(g_0)
-        graph1 = nx.from_pandas_adjacency(g_1)
-        for u, v, d in graph0.edges(data=True):
-            d["weight"] = d["weight"] - 1
-        for u, v, d in graph1.edges(data=True):
-            d["weight"] = d["weight"] - 1
-        graph = (graph0, graph1)
-    except:
-        pass
-
-    with h5py.File(filename, "r") as hf:
-        try:
-            layout0 = {}
-            for k in hf["layout/layout_0"].attrs.keys():
-                layout0.update({k: np.array(hf["layout/layout_0"].attrs[k])})
-            layout1 = {}
-            for k in hf["layout/layout_1"].attrs.keys():
-                layout1.update({k: np.array(hf["layout/layout_1"].attrs[k])})
-            layout = (layout0, layout1)
-        except:
-            pass
-
-        germline = {}
-        try:
-            for g in hf["germline"].attrs:
-                germline.update({g: hf["germline"].attrs[g]})
-        except:
-            pass
-
-        try:
-            threshold = float(np.array(hf["threshold"]))
-        except:
-            threshold = None
-
-    constructor = {}
-    constructor["data"] = data
-    if "metadata" in locals():
-        constructor["metadata"] = metadata
-    if "germline" in locals():
-        constructor["germline"] = germline
-    if "layout" in locals():
-        constructor["layout"] = layout
-    if "graph" in locals():
-        constructor["graph"] = graph
-    try:
-        res = Dandelion(**constructor)
-    except:
-        res = Dandelion(**constructor, initialize=False)
-
-    if "threshold" in locals():
-        res.threshold = threshold
-    else:
-        pass
-    return res
 
 
 def read_h5ddl(filename: str = "dandelion_data.h5ddl") -> Dandelion:

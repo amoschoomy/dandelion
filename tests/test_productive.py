@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test clone overlap plotting"""
 import dandelion as ddl
 from itertools import cycle
 import pytest

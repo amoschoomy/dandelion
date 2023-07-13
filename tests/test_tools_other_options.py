@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test tools clones."""
 import dandelion as ddl
 import pytest
 

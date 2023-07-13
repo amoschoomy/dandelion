@@ -503,7 +503,7 @@ def diversity_gini(
 
         # split up the table by groupby
         metadata[groupby] = metadata[groupby].astype("category")
-        metadata[groupby].cat.remove_unused_categories(inplace=True)
+        metadata[groupby] = metadata[groupby].cat.remove_unused_categories()
         groups = list(set(metadata[groupby]))
 
         if downsample is None:
@@ -973,7 +973,7 @@ def diversity_chao1(
 
         # split up the table by groupby
         metadata[groupby] = metadata[groupby].astype("category")
-        metadata[groupby].cat.remove_unused_categories(inplace=True)
+        metadata[groupby] = metadata[groupby].cat.remove_unused_categories()
         groups = list(set(metadata[groupby]))
 
         if downsample is None:

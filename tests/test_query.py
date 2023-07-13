@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""test query class"""
-
 import dandelion as ddl
 import pytest
 

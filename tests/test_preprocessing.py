@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""test pp"""
 import pytest
 import sys
 import os
@@ -21,7 +20,7 @@ except KeyError:
 )
 def test_write_fasta(create_testfolder, fasta_10x, filename, expected):
     """test_write_fasta"""
-    out_fasta = str(create_testfolder) + "/" + filename + "_contig.fasta"
+    out_fasta = create_testfolder / (filename + "_contig.fasta")
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -39,9 +38,7 @@ def test_write_annotation(
     create_testfolder, annotation_10x, filename, expected
 ):
     """test_write_annotation"""
-    out_file = (
-        str(create_testfolder) + "/" + filename + "_contig_annotations.csv"
-    )
+    out_file = create_testfolder / (filename + "_contig_annotations.csv")
     annotation_10x.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == expected
 
@@ -360,13 +357,13 @@ def test_update_germlines2(
     vdj = ddl.Dandelion(f)
     vdj.update_germline(germline=database_paths["germline"])
     assert len(vdj.germline) > 0
-    out_file = str(create_testfolder) + "/test_airr_reannotated.h5"
-    vdj.write_h5(out_file)
-    tmp = ddl.read_h5(out_file)
+    out_file = create_testfolder / "test_airr_reannotated.h5ddl"
+    vdj.write_h5ddl(out_file)
+    tmp = ddl.read_h5ddl(out_file)
     assert len(tmp.germline) > 0
     vdj.update_germline(
         germline=database_paths["germline"],
-        corrected=str(create_testfolder) + "/filtered_contig.fasta",
+        corrected=create_testfolder / "filtered_contig.fasta",
     )
     assert len(vdj.germline) > 0
     vdj.update_germline(
@@ -397,13 +394,13 @@ def test_store_germline_reference2(
     vdj = ddl.Dandelion(f)
     vdj.store_germline_reference(germline=database_paths["germline"])
     assert len(vdj.germline) > 0
-    out_file = str(create_testfolder) + "/test_airr_reannotated.h5"
-    vdj.write_h5(out_file)
-    tmp = ddl.read_h5(out_file)
+    out_file = create_testfolder / "test_airr_reannotated.h5ddl"
+    vdj.write_h5ddl(out_file)
+    tmp = ddl.read_h5ddl(out_file)
     assert len(tmp.germline) > 0
     vdj.store_germline_reference(
         germline=database_paths["germline"],
-        corrected=str(create_testfolder) + "/filtered_contig.fasta",
+        corrected=create_testfolder / "filtered_contig.fasta",
     )
     assert len(vdj.germline) > 0
     vdj.store_germline_reference(
