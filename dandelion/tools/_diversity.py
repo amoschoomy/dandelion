@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""diversity module."""
 import numpy as np
 import networkx as nx
 import pandas as pd
@@ -47,7 +45,7 @@ def clone_rarefaction(
     diversity_key : Optional[str], optional
         key for 'diversity' results in AnnData's `.uns`.
     verbose : bool, optional
-        whether to print progess.
+        whether to print progress.
 
     Returns
     -------
@@ -173,7 +171,7 @@ def clone_diversity(
     clone_key : Optional[str], optional
         Column name specifying the clone_id column in metadata.
     update_obs_meta : bool, optional
-        If True, a `pandas` dataframe is returned.
+        If True, a `pandas` data frame is returned.
         If False, function will try to populate the input object's metadata/obs slot.
     diversity_key : Optional[str], optional
         key for 'diversity' results in `.uns`.
@@ -201,7 +199,7 @@ def clone_diversity(
     verbose : bool, optional
         whether to print progress.
     **kwargs
-        passed to dandelion.tl.generate_nework
+        passed to dandelion.tl.generate_network
 
     Returns
     -------
@@ -319,7 +317,7 @@ def clone_networkstats(
     vdj_data : Dandelion
         input object
     expanded_only : bool, optional
-        whethr or not to calculate only on expanded clones.
+        whether or not to calculate only on expanded clones.
     network_clustersize : bool, optional
         depends on metric.
     verbose : bool, optional
@@ -328,7 +326,7 @@ def clone_networkstats(
     Returns
     -------
     Tuple[defaultdict, defaultdict, defaultdict]
-        output nodes names, vertex sizes and clustersizes.
+        output nodes names, vertex sizes and cluster sizes.
 
     Raises
     ------
@@ -429,7 +427,7 @@ def diversity_gini(
     clone_key : Optional[str], optional
         Column name specifying the clone_id column in metadata.
     update_obs_meta : bool, optional
-        If True, a `pandas` dataframe is returned.
+        If True, a `pandas` data frame is returned.
         If False, function will try to populate the input object's metadata/obs slot.
     diversity_key : Optional[str], optional
         Key for 'diversity' results in `.uns`.
@@ -455,7 +453,7 @@ def diversity_gini(
     verbose : bool, optional
         whether to print progress.
     **kwargs
-        passed to dandelion.tl.generate_nework
+        passed to dandelion.tl.generate_network
 
     Returns
     -------
@@ -884,11 +882,6 @@ def diversity_gini(
         **kwargs,
     )
 
-    if diversity_key is None:
-        diversitykey = "diversity"
-    else:
-        diversitykey = diversity_key
-
     if update_obs_meta:
         res_ = res.copy()
         transfer_gini_indices(vdj_data, res_, groupby)
@@ -1156,7 +1149,7 @@ def diversity_shannon(
     clone_key : Optional[str], optional
         Column name specifying the clone_id column in metadata.
     update_obs_meta : bool, optional
-        If True, a `pandas` dataframe is returned. If False, function will try to populate the input object's metadata/obs slot.
+        If True, a `pandas` data frame is returned. If False, function will try to populate the input object's metadata/obs slot.
     diversity_key : Optional[str], optional
         key for 'diversity' results in `.uns`.
     resample : bool, optional

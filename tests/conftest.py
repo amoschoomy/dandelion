@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # @Author: Kelvin
-"""conftest module."""
 from .fixtures.fixtures import (
     airr_10x,
     airr_generic,

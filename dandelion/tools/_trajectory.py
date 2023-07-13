@@ -1,4 +1,4 @@
-"""Trajectory functions."""
+#!/usr/bin/env python
 # @author: chenqu, kp9, kelvin
 import re
 import numpy as np

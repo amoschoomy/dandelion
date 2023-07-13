@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""network module."""
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -44,7 +42,7 @@ def generate_network(
         `Dandelion` object, pandas `DataFrame` in changeo/airr format, or file path to changeo/airr file after clones
         have been determined.
     key : Optional[str], optional
-        column name for distance calulations. None defaults to 'sequence_alignment_aa'.
+        column name for distance calculations. None defaults to 'sequence_alignment_aa'.
     clone_key : Optional[str], optional
         column name to build network on.
     min_size : int, optional

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""init module."""
 from dandelion.plotting._plotting import (
     barplot,
     clone_network,

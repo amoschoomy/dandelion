@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""utilities module."""
 import os
 import re
 import warnings
@@ -64,9 +62,9 @@ def dict_from_table(meta: pd.DataFrame, columns: Tuple[str, str]) -> dict:
     Parameters
     ----------
     meta : pd.DataFrame
-        pandas dataframe or file path
+        pandas data frame or file path
     columns : Tuple[str, str]
-        column names in dataframe
+        column names in data frame
 
     Returns
     -------

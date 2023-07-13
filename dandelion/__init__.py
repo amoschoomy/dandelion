@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""init module."""
 from dandelion import preprocessing as pp
 from dandelion import utilities as utl
 from dandelion import tools as tl
@@ -40,7 +38,7 @@ __all__ = [
     "pp",
     "read_10x_airr",
     "read_10x_vdj",
-    "read_h5",
+    "read_h5ddl",
     "read_pkl",
     "tl",
     "to_scirpy",

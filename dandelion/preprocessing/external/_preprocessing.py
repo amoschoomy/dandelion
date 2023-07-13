@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # @Author: kt16
-"""preprocessing module."""
 import os
 import re
 import scipy.stats

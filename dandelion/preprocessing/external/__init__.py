@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""init module."""
 from ._preprocessing import (
     assigngenes_igblast,
     creategermlines,

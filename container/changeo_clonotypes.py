@@ -1,5 +1,4 @@
 #!/opt/conda/envs/sc-dandelion-container/bin/python
-"""changeo clonotypes script"""
 import argparse
 import dandelion as ddl
 import os

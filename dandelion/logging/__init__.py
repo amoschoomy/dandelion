@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""init module."""
 from ._logging import print_header, print_versions
 from ._metadata import __author__, __email__, __classifiers__, __version__
 

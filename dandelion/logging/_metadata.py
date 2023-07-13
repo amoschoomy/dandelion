@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""metadata module."""
 try:
     from setuptools_scm import get_version
 

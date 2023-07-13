@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""tools module."""
 import math
 import os
 import re

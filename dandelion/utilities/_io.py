@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""io module."""
 import bz2
 import gzip
 import json

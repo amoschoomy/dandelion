@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""core module."""
 import bz2
 import copy
 import gzip

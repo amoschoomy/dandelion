@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-"""init module."""
 from dandelion.preprocessing import external
 from dandelion.preprocessing._preprocessing import (
     assign_isotype,

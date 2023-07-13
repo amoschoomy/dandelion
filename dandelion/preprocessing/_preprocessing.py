@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: kt16
-
 import anndata as ad
 import functools
 import numpy as np

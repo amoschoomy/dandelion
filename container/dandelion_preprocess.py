@@ -1,5 +1,4 @@
 #!/opt/conda/envs/sc-dandelion-container/bin/python
-"""dandelion preprocess script"""
 import argparse
 import dandelion as ddl
 import numpy as np

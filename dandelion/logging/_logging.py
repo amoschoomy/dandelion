@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# @Author: Kelvin
-"""logging module."""
 from typing import List, Tuple
 
 modules = [

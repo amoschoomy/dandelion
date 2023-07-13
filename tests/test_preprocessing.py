@@ -194,22 +194,24 @@ def test_create_germlines(create_testfolder, processed_files, database_paths):
 
 
 @pytest.mark.usefixtures("create_testfolder", "processed_files")
-def test_update_germlines_fail2(create_testfolder, processed_files):
-    """test_update_germlines_fail2"""
+def test_store_germline_references_fail2(create_testfolder, processed_files):
+    """test_store_germline_references_fail2"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     vdj = ddl.Dandelion(f)
     with pytest.raises(KeyError):
-        vdj.update_germline()
+        vdj.store_germline_reference()
 
 
 @pytest.mark.usefixtures(
     "create_testfolder", "processed_files", "database_paths"
 )
-def test_update_germlines(create_testfolder, processed_files, database_paths):
-    """test_update_germlines"""
+def test_store_germline_references(
+    create_testfolder, processed_files, database_paths
+):
+    """test_store_germline_references"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     vdj = ddl.Dandelion(f)
-    vdj.update_germline(germline=database_paths["germline"])
+    vdj.store_germline_reference(germline=database_paths["germline"])
     assert len(vdj.germline) > 0
 
 
@@ -338,40 +340,42 @@ def test_formatfasta2(create_testfolder, prefix, suffix, sep, remove):
 
 
 @pytest.mark.usefixtures("create_testfolder", "processed_files")
-def test_update_germlines_fail(create_testfolder, processed_files):
-    """test_update_germlines_fail"""
+def test_store_germline_references_fail(create_testfolder, processed_files):
+    """test_store_germline_references_fail"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     vdj = ddl.Dandelion(f)
     with pytest.raises(KeyError):
-        vdj.update_germline()
+        vdj.store_germline_reference()
 
 
 @pytest.mark.usefixtures(
     "create_testfolder", "processed_files", "database_paths", "fasta_10x"
 )
-def test_update_germlines2(
+def test_store_germline_references2(
     create_testfolder, processed_files, database_paths, fasta_10x
 ):
-    """test_update_germlines2"""
+    """test_store_germline_references2"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     vdj = ddl.Dandelion(f)
-    vdj.update_germline(germline=database_paths["germline"])
+    vdj.store_germline_reference(germline=database_paths["germline"])
     assert len(vdj.germline) > 0
     out_file = create_testfolder / "test_airr_reannotated.h5ddl"
     vdj.write_h5ddl(out_file)
     tmp = ddl.read_h5ddl(out_file)
     assert len(tmp.germline) > 0
-    vdj.update_germline(
+    vdj.store_germline_reference(
         germline=database_paths["germline"],
         corrected=create_testfolder / "filtered_contig.fasta",
     )
     assert len(vdj.germline) > 0
-    vdj.update_germline(
+    vdj.store_germline_reference(
         germline=database_paths["germline"], corrected=fasta_10x
     )
     assert len(vdj.germline) > 0
     with pytest.raises(TypeError):
-        vdj.update_germline(germline=database_paths["germline"], corrected=[])
+        vdj.store_germline_reference(
+            germline=database_paths["germline"], corrected=[]
+        )
 
 
 @pytest.mark.usefixtures("create_testfolder", "processed_files")
