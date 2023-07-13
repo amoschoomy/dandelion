@@ -317,7 +317,7 @@ def vdj_pseudobulk(
     obs_to_take : Optional[Union[str, List[str]]], optional
         Optional obs column(s) to identify the most common value of for each pseudobulk.
     mode : Optional[Literal["B", "abT", "gdT"]], optional
-        Optional mode for extractin the V(D)J genes. If set as `None`, it will use e.g. `v_call_VDJ` instead of `v_call_abT_VDJ`.
+        Optional mode for extracting the V(D)J genes. If set as `None`, it will use e.g. `v_call_VDJ` instead of `v_call_abT_VDJ`.
         If `extract_cols` is provided, then this argument is ignored.
     extract_cols : Optional[List[str]], optional
         Column names where VDJ/VJ information is stored so that this will be used instead of the standard columns.
@@ -542,7 +542,7 @@ def bin_expression(
     Returns
     -------
     pd.DataFrame
-        a dataframe with genes as rows, and pseudotime bins as columns, and averaged gene expression as the data
+        a data frame with genes as rows, and pseudotime bins as columns, and averaged gene expression as the data
     """
     # define bins
     bins = np.linspace(0, 1, bin_no + 1)
@@ -574,12 +574,12 @@ def chatterjee_corr(
     genes : List[str]
         List of genes selected to compute the correlation
     pseudotime_col : str
-        olumn in adata.obs where pseudotime is stored
+        column in adata.obs where pseudotime is stored
 
     Returns
     -------
     pd.DataFrame
-        a dataframe with genes as rows, with cor_res (correlation statistics),
+        a data frame with genes as rows, with cor_res (correlation statistics),
         pval (p-value),  adj_pval (p-value adjusted by BH method) as columns.
     """
     # get gene expression
@@ -598,7 +598,7 @@ def chatterjee_corr(
 
     pval = 1 - sp.stats.norm.cdf(stat, loc=0, scale=np.sqrt(2 / 5 / x.shape[0]))
 
-    # put results into dataframe cor_res
+    # put results into data frame cor_res
     cor_res = pd.DataFrame({"cor_stat": stat, "pval": pval})
     cor_res.index = genes
 

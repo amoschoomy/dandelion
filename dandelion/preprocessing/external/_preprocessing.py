@@ -290,13 +290,13 @@ def creategermlines(
     db_file : str
         path to AIRR table.
     germtypes : Optional[str], optional
-        germline type for reconstuction.
+        germline type for reconstruction.
     germline : Optional[str], optional
         location to germline fasta files.
     org : Literal["human", "mouse"], optional
         organism for germline sequences.
     genotype_fasta : Optional[str], optional
-        location to corrected v germine fasta file.
+        location to corrected v germline fasta file.
     v_field : Optional[Literal["v_call", "v_call_genotyped"]], optional
         name of column for v segment to perform reconstruction.
     cloned : bool, optional

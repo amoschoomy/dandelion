@@ -499,7 +499,7 @@ def assign_isotype(
     def two_gene_correction(
         self: pd.DataFrame, i: str, dictionary: Dict[str, str]
     ):
-        """Pairwise alignmet for two genes.
+        """Pairwise alignment for two genes.
 
         Parameters
         ----------
@@ -524,7 +524,7 @@ def assign_isotype(
     def three_gene_correction(
         self: pd.DataFrame, i: str, dictionary: Dict[str, str]
     ):
-        """Pairwise alignmet for three genes.
+        """Pairwise alignment for three genes.
 
         Parameters
         ----------
@@ -559,7 +559,7 @@ def assign_isotype(
     def four_gene_correction(
         self: pd.DataFrame, i: str, dictionary: Dict[str, str]
     ):
-        """Pairwise alignmet for four genes.
+        """Pairwise alignment for four genes.
 
         Parameters
         ----------
@@ -615,7 +615,7 @@ def assign_isotype(
         data: pd.DataFrame,
         primers_dict: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> pd.DataFrame:
-        """Pairiwise alignment for c genes.
+        """Pairwise alignment for c genes.
 
         Parameters
         ----------
@@ -627,7 +627,7 @@ def assign_isotype(
         Returns
         -------
         pd.DataFrame
-            Output dataframe with c_call adjusted.
+            Output data frame with c_call adjusted.
         """
         dat = data.copy()
         if primers_dict is None:
@@ -1734,7 +1734,7 @@ def reassign_alleles(
                 ]
                 ambiguous_table.reset_index(inplace=True, drop=True)
                 not_in_genotype_table.reset_index(inplace=True, drop=True)
-                # melting the dataframe
+                # melting the data frame
                 ambiguous_table_before = ambiguous_table.drop("after", axis=1)
                 ambiguous_table_before.rename(
                     columns={"before": "var"}, inplace=True
@@ -2020,7 +2020,7 @@ def create_germlines(
         Returns
         -------
         pd.DataFrame
-            If input is a pandas dataframe, this will be returned, otherwise it will modify the
+            If input is a pandas data frame, this will be returned, otherwise it will modify the
             Dandelion object in place.
 
         Raises
@@ -2113,7 +2113,7 @@ def create_germlines(
 
             else:
                 raise LookupError(
-                    "Please initialise the Dandelion object with a dataframe in data slot."
+                    "Please initialise the Dandelion object with a data frame in data slot."
                 )
         elif isinstance(data, pd.DataFrame):
             try:
@@ -2537,7 +2537,7 @@ def filter_contigs(
     simple : bool, optional
         simple filtering mode where only checks for potential gene assignment mismatches.
     save : Optional[str], optional
-        Only used if a pandas dataframe or dandelion object is provided. Specifying will save the formatted vdj table.
+        Only used if a pandas data frame or dandelion object is provided. Specifying will save the formatted vdj table.
     verbose : bool, optional
         whether to print progress.
     **kwargs
@@ -2866,7 +2866,7 @@ def quantify_mutations(
             ):
                 pd_df = rpy2.robjects.conversion.rpy2py(results)
         else:
-            # pd_df = pandas2ri.rpy2py_dataframe(results)
+            # pd_df = pandas2ri.rpy2py_data frame(results)
             pd_df = results.copy()
     else:
         dat_h = dat_[dat_["locus"] == "IGH"]
@@ -3316,7 +3316,7 @@ def calculate_threshold(
             "Automatic thresholding failed. Please visually inspect the resulting distribution fits"
             + " and choose a threshold value manually."
         )
-    # dist_ham = pandas2ri.rpy2py_dataframe(dist_ham)
+    # dist_ham = pandas2ri.rpy2py_data frame(dist_ham)
 
     if manual_threshold is None:
         tr = threshold
@@ -3413,7 +3413,7 @@ class FilterContigs:
         Parameters
         ----------
         data : pd.DataFrame
-            AIRR dataframe in Dandelion.data.
+            AIRR data frame in Dandelion.data.
         keep_highest_umi : bool
             whether or not to keep highest UMI contig.
         umi_foldchange_cutoff : Union[int, float]
@@ -4223,7 +4223,7 @@ class FilterContigsLite:
         Parameters
         ----------
         data : pd.DataFrame
-            AIRR dataframe in Dandelion.data.
+            AIRR data frame in Dandelion.data.
         verbose : bool
             whether or not to print progress.
         """
@@ -5546,7 +5546,7 @@ def check_contigs(
     filter_missing : bool, optional
         cells in V(D)J data not found in `AnnData` object will removed from the dandelion object.
     save : Optional[str], optional
-        Only used if a pandas dataframe or dandelion object is provided. Specifying will save the formatted vdj table
+        Only used if a pandas data frame or dandelion object is provided. Specifying will save the formatted vdj table
         with a `_checked.tsv` suffix extension.
     verbose : bool, optional
         whether to print progress when marking contigs.
@@ -5700,7 +5700,7 @@ class MarkAmbiguousContigs:
         Parameters
         ----------
         data : pd.DataFrame
-            AIRR dataframe in Dandelion.data.
+            AIRR data frame in Dandelion.data.
         umi_foldchange_cutoff : Union[int, float]
             fold-change cut off for decision.
         verbose : bool
@@ -6334,7 +6334,7 @@ def check_update_same_seq(
     Parameters
     ----------
     data : pd.DataFrame
-        AIRR dataframe in Dandelion.data.
+        AIRR data frame in Dandelion.data.
 
     Returns
     -------
@@ -6456,7 +6456,7 @@ def multimapper(filename: str) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        Mapped multimapper dataframe.
+        Mapped multimapper data frame.
     """
     df = pd.read_csv(filename, delimiter="\t")
     df_new = df.loc[
@@ -6647,7 +6647,7 @@ def check_multimapper(
     Returns
     -------
     pd.DataFrame
-        Mapped multimapper dataframe.
+        Mapped multimapper data frame.
     """
     if filename1 is not None:
         if filename2 is not None:

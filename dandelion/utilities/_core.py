@@ -34,7 +34,7 @@ class Dandelion:
     """
     `Dandelion` class object.
 
-    Main class object storing input/ouput slots for all functions.
+    Main class object storing input/output slots for all functions.
 
     Attributes
     ----------
@@ -830,11 +830,11 @@ class Dandelion:
                     returns the retrieval merged into one columns for each contig,
                     separated by `|` for unique elements.
                 `split and sum`
-                    returns the retrieval sumed in the VDJ and VJ columns (separately).
+                    returns the retrieval sum in the VDJ and VJ columns (separately).
                 `split and average`
                     returns the retrieval averaged in the VDJ and VJ columns (separately).
                 `sum`
-                    returns the retrieval sumed into one column for all contigs.
+                    returns the retrieval sum into one column for all contigs.
                 `average`
                     returns the retrieval averaged into one column for all contigs.
         collapse_alleles : bool, optional

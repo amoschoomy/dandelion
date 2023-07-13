@@ -393,7 +393,7 @@ def stackedbarplot(
     **kwargs,
 ) -> Tuple[Figure, Axes]:
     """
-    A stackedbarplot function to plot usage of V/J genes in the data split by groups.
+    A stacked bar plot function to plot usage of V/J genes in the data split by groups.
 
     Parameters
     ----------
@@ -420,7 +420,7 @@ def stackedbarplot(
     legend_options : Tuple[str, Tuple[float, float], int], optional
         a tuple holding 3 options for specify legend options: 1) loc (string), 2) bbox_to_anchor (tuple), 3) ncol (int).
     labels : Optional[List[str]], optional
-        Names of objects will be used for the legend if list of multiple dataframes supplied.
+        Names of objects will be used for the legend if list of multiple data frames supplied.
     min_clone_size : int, optional
         minimum clone size to keep.
     clone_key : Optional[str], optional
@@ -481,14 +481,14 @@ def stackedbarplot(
         **kwargs,
     ) -> Tuple[Figure, Axes]:
         """
-        Given a list of dataframes, with identical columns and index, create a clustered stacked bar plot.
+        Given a list of data frames, with identical columns and index, create a clustered stacked bar plot.
 
         Parameters
         ----------
         dfall : pd.DataFrame
-            dataframe for plotting.
+            data frame for plotting.
         labels : Optional[List[str]], optional
-            a list of the dataframe objects. Names of objects will be used for the legend.
+            a list of the data frame objects. Names of objects will be used for the legend.
         figsize : Tuple[Union[int, float], Union[int, float]], optional
             size of figure.
         title : str, optional
@@ -502,7 +502,7 @@ def stackedbarplot(
         hide_legend : bool, optional
             whether to show legend.
         H : Literal["/"], optional
-            is the hatch used for identification of the different dataframes
+            is the hatch used for identification of the different data frames
         **kwargs
             other kwargs passed to matplotlib.plt
 
@@ -656,7 +656,7 @@ def spectratype(
         1) loc (string), 2) bbox_to_anchor (tuple), 3) ncol (int).
     labels : Optional[List[str]], optional
         Names of objects will be used for the legend if list of
-        multiple dataframes supplied.
+        multiple data frames supplied.
     **kwargs
         other kwargs passed to matplotlib.pyplot.plot
 
@@ -705,9 +705,9 @@ def spectratype(
         Parameters
         ----------
         dfall : pd.DataFrame
-            dataframe for plotting.
+            data frame for plotting.
         labels : Optional[List[str]], optional
-            a list of the dataframe objects. Names of objects will be used for the legend.
+            a list of the data frame objects. Names of objects will be used for the legend.
         figsize : Tuple[Union[int, float], Union[int, float]], optional
             size of figure.
         title : str, optional

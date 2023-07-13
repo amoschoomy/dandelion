@@ -328,7 +328,7 @@ def generate_network(
         # here I'm using a temporary edge list to catch all cells that were identified as clones to forcefully
         # link them up if they were identical but clipped off during the mst step
 
-        # create a dataframe to recall the actual distance quickly
+        # create a data frame to recall the actual distance quickly
         tmp_totaldiststack = tmp_totaldist.stack().reset_index()
 
         # free up memory
@@ -527,7 +527,7 @@ def clone_degree(
     vdj_data : Dandelion
         `Dandelion` object after `tl.generate_network` has been run.
     weight : Optional[str], optional
-        Atribute name for retrieving edge weight in graph. None defaults to ignoring this. See `networkx.Graph.degree`.
+        Attribute name for retrieving edge weight in graph. None defaults to ignoring this. See `networkx.Graph.degree`.
     verbose : bool, optional
         Whether or not to show logging information.
 
@@ -542,7 +542,7 @@ def clone_degree(
     if isinstance(vdj_data, Dandelion):
         if vdj_data.graph is None:
             raise AttributeError(
-                "Graph not found. Plase run tl.generate_network."
+                "Graph not found. Please run tl.generate_network."
             )
         else:
             G = vdj_data.graph[0]
@@ -580,7 +580,7 @@ def clone_centrality(vdj_data: Dandelion, verbose: bool = True):
     if isinstance(vdj_data, Dandelion):
         if vdj_data.graph is None:
             raise AttributeError(
-                "Graph not found. Plase run tl.generate_network."
+                "Graph not found. Please run tl.generate_network."
             )
         else:
             G = vdj_data.graph[0]
@@ -617,7 +617,7 @@ def _generate_layout(
     vertices : list
         list of vertices
     edges : pd.DataFrame, optional
-        edge list in a pandas dataframe.
+        edge list in a pandas data frame.
     min_size : int, optional
         minimum clone size.
     weight : Optional[str], optional

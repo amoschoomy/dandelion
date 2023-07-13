@@ -348,7 +348,7 @@ def to_scirpy(data: Dandelion, transfer: bool = False, **kwargs) -> AnnData:
 
 def from_scirpy(adata: AnnData) -> Dandelion:
     """
-    Read a `scirpy` initialized `AnnData` oject and returns a `Dandelion` object.
+    Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
 
     Parameters
     ----------
@@ -381,14 +381,14 @@ def concat(
     prefixes: Optional[List[str]] = None,
 ) -> Dandelion:
     """
-    Concatenate dataframe and return as `Dandelion` object.
+    Concatenate data frames and return as `Dandelion` object.
 
     If both suffixes and prefixes are `None` and check_unique is True, then a sequential number suffix will be appended.
 
     Parameters
     ----------
     arrays : List[Union[pd.DataFrame, Dandelion]]
-        List of `Dandelion` class objects or pandas dataframe
+        List of `Dandelion` class objects or pandas data frames
     check_unique : bool, optional
         Check the new index for duplicates. Otherwise defer the check until necessary.
         Setting to False will improve the performance of this method.
@@ -469,7 +469,7 @@ def read_10x_vdj(
     verbose: bool = False,
 ) -> Union[Dandelion, pd.DataFrame]:
     """
-    A parser to read .csv and .json files directly from folder containing 10x cellranger-outouts.
+    A parser to read .csv and .json files directly from folder containing 10x cellranger-outputs.
 
     This function parses the 10x output files into an AIRR compatible format.
 
@@ -984,12 +984,12 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     df : pd.DataFrame
-        airr dataframe.
+        airr data frame.
 
     Returns
     -------
     pd.DataFrame
-        completed airr dataframe
+        completed airr data frame
     """
     if "complete_vdj" not in df:
         df["complete_vdj"] = ""
