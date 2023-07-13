@@ -9,7 +9,7 @@ import dandelion as ddl
 )
 def test_write_fasta(create_testfolder, fasta_10x, filename, expected):
     """test_write_fasta"""
-    out_fasta = str(create_testfolder) + "/" + filename + "_contig.fasta"
+    out_fasta = create_testfolder / (filename + "_contig.fasta")
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -27,9 +27,7 @@ def test_write_annotation(
     create_testfolder, annotation_10x, filename, expected
 ):
     """test_write_annotation"""
-    out_file = (
-        str(create_testfolder) + "/" + filename + "_contig_annotations.csv"
-    )
+    out_file = create_testfolder / (filename + "_contig_annotations.csv")
     annotation_10x.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == expected
 

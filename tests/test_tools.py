@@ -243,7 +243,7 @@ def test_diversity_shannon(create_testfolder, resample, normalize):
 @pytest.mark.usefixtures("create_testfolder", "json_10x_cr6", "dummy_adata_cr6")
 def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
     """test setup 2"""
-    json_file = str(create_testfolder) + "/test_all_contig_annotations.json"
+    json_file = create_testfolder / "test_all_contig_annotations.json"
     with open(json_file, "w") as outfile:
         json.dump(json_10x_cr6, outfile)
     vdj = ddl.read_10x_vdj(str(create_testfolder))

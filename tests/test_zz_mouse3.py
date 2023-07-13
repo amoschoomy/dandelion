@@ -9,7 +9,7 @@ import sys
 @pytest.mark.usefixtures("create_testfolder", "fasta_10x_mouse")
 def test_write_fasta(create_testfolder, fasta_10x_mouse):
     """test write fasta"""
-    out_fasta = str(create_testfolder) + "/filtered_contig.fasta"
+    out_fasta = create_testfolder / "filtered_contig.fasta"
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -22,7 +22,7 @@ def test_write_fasta(create_testfolder, fasta_10x_mouse):
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x_mouse")
 def test_write_annotation(create_testfolder, annotation_10x_mouse):
     """test write annot"""
-    out_file = str(create_testfolder) + "/filtered_contig_annotations.csv"
+    out_file = create_testfolder / "filtered_contig_annotations.csv"
     annotation_10x_mouse.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == 2
 

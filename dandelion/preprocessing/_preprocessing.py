@@ -180,27 +180,22 @@ def format_fasta(
     fh.close()
 
     if os.path.isfile(filePath):
-        basedir = os.path.dirname(filePath)
+        basedir = Path(os.path.dirname(filePath))
     elif os.path.isdir(filePath):
-        basedir = os.path.dirname(filePath)
+        basedir = Path(os.path.dirname(filePath))
     else:
-        basedir = os.getcwd()
+        basedir = Path(os.getcwd())
 
     if outdir is None:
-        out_dir = basedir.rstrip("/") + "/" + "dandelion/"
-    else:
-        if not outdir.endswith("/"):
-            out_dir = outdir + "/"
+        out_dir = basedir / "dandelion"
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
     # format the barcode and contig_id in the corresponding annotation file too
     # TODO: update this to use check_filepath
-    anno = (
-        basedir
-        + "/"
-        + os.path.basename(filePath).replace(".fasta", "_annotations.csv")
+    anno = basedir / os.path.basename(filePath).replace(
+        ".fasta", "_annotations.csv"
     )
     data = pd.read_csv(anno, dtype="object")
 
@@ -293,10 +288,10 @@ def format_fasta(
             data["barcode"] = [str(b) for b in data["barcode"]]
 
     # TODO: update this to use check_filepath
-    out_anno = out_dir + os.path.basename(filePath).replace(
+    out_anno = out_dir / os.path.basename(filePath).replace(
         ".fasta", "_annotations.csv"
     )
-    out_fasta = out_dir + os.path.basename(filePath)
+    out_fasta = out_dir / os.path.basename(filePath)
     fh1 = open(out_fasta, "w")
     fh1.close()
     out = ""
@@ -1400,7 +1395,7 @@ def reassign_alleles(
         filepathlist_light.append(filePath_light)
 
     # make output directory
-    outDir = combined_folder.rstrip("/")
+    outDir = Path(combined_folder)
     os.makedirs(outDir, exist_ok=True)
 
     # concatenate
@@ -1415,8 +1410,8 @@ def reassign_alleles(
                 + [">"]
                 + [
                     str(
-                        Path(outDir)
-                        / (outDir + "_heavy" + informat_dict[fileformat])
+                        outDir
+                        / (outDir.name + "_heavy" + informat_dict[fileformat])
                     )
                 ]
             )
@@ -1428,8 +1423,8 @@ def reassign_alleles(
                 + [">"]
                 + [
                     str(
-                        Path(outDir)
-                        / (outDir + "_light" + informat_dict[fileformat])
+                        outDir
+                        / (outDir.name + "_light" + informat_dict[fileformat])
                     )
                 ]
             )
@@ -1439,12 +1434,12 @@ def reassign_alleles(
             os.system(cmd2)
         except:  # pragma: no cover
             fh = open(
-                Path(outDir) / (outDir + "_heavy" + informat_dict[fileformat]),
+                outDir / (outDir.name + "_heavy" + informat_dict[fileformat]),
                 "w",
             )
             fh.close()
             with open(
-                Path(outDir) / (outDir + "_heavy" + informat_dict[fileformat]),
+                outDir / (outDir.name + "_heavy" + informat_dict[fileformat]),
                 "a",
             ) as out_file:
                 for filenum, filename in enumerate(filepathlist_heavy):
@@ -1454,12 +1449,12 @@ def reassign_alleles(
                                 continue
                             out_file.write(line)
             fh = open(
-                Path(outDir) / (outDir + "_light" + informat_dict[fileformat]),
+                outDir / (outDir.name + "_light" + informat_dict[fileformat]),
                 "w",
             )
             fh.close()
             with open(
-                Path(outDir) / (outDir + "_light" + informat_dict[fileformat]),
+                outDir / (outDir.name + "_light" + informat_dict[fileformat]),
                 "a",
             ) as out_file:
                 for filenum, filename in enumerate(filepathlist_light):
@@ -1472,11 +1467,11 @@ def reassign_alleles(
     else:
         shutil.copyfile(
             Path(filepathlist_heavy[0]),
-            Path(outDir) / (outDir + "_heavy" + informat_dict[fileformat]),
+            outDir / (outDir.name + "_heavy" + informat_dict[fileformat]),
         )
         shutil.copyfile(
             Path(filepathlist_light[0]),
-            Path(outDir) / (outDir + "_light" + informat_dict[fileformat]),
+            outDir / (outDir.name + "_light" + informat_dict[fileformat]),
         )
 
     novel_dict = {True: "YES", False: "NO"}
@@ -1487,8 +1482,8 @@ def reassign_alleles(
             )
             tigger_genotype(
                 str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + informat_dict[fileformat])
+                    outDir
+                    / (outDir.name + "_heavy" + informat_dict[fileformat])
                 ),
                 org=org,
                 v_germline=v_germline,
@@ -1497,8 +1492,8 @@ def reassign_alleles(
             )
             creategermlines(
                 str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + fileformat_dict[fileformat])
+                    outDir
+                    / (outDir.name + "_heavy" + fileformat_dict[fileformat])
                 ),
                 org=org,
                 germtypes=germ_types,
@@ -1513,8 +1508,8 @@ def reassign_alleles(
                 cloned=cloned,
             )
             _ = load_data(
-                Path(outDir)
-                / (outDir + "_heavy" + fileformat_passed_dict[fileformat])
+                outDir
+                / (outDir.name + "_heavy" + fileformat_passed_dict[fileformat])
             )
         except:
             try:
@@ -1524,8 +1519,8 @@ def reassign_alleles(
                 )
                 tigger_genotype(
                     str(
-                        Path(outDir)
-                        / (outDir + "_heavy" + informat_dict[fileformat])
+                        outDir
+                        / (outDir.name + "_heavy" + informat_dict[fileformat])
                     ),
                     org=org,
                     v_germline=v_germline,
@@ -1534,15 +1529,15 @@ def reassign_alleles(
                 )
                 creategermlines(
                     str(
-                        Path(outDir)
-                        / (outDir + "_heavy" + fileformat_dict[fileformat])
+                        outDir
+                        / (outDir.name + "_heavy" + fileformat_dict[fileformat])
                     ),
                     org=org,
                     germtypes=germ_types,
                     mode="heavy",
                     genotype_fasta=str(
-                        Path(outDir)
-                        / (outDir + "_heavy" + germline_dict[fileformat])
+                        outDir
+                        / (outDir.name + "_heavy" + germline_dict[fileformat])
                     ),
                     germline=germline,
                     v_field=v_field,
@@ -1550,9 +1545,9 @@ def reassign_alleles(
                 )
                 _ = load_data(
                     str(
-                        Path(outDir)
+                        outDir
                         / (
-                            outDir
+                            outDir.name
                             + "_heavy"
                             + fileformat_passed_dict[fileformat]
                         )
@@ -1570,8 +1565,8 @@ def reassign_alleles(
             )
             tigger_genotype(
                 str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + informat_dict[fileformat])
+                    outDir
+                    / (outDir.name + "_heavy" + informat_dict[fileformat])
                 ),
                 org=org,
                 v_germline=v_germline,
@@ -1580,15 +1575,15 @@ def reassign_alleles(
             )
             creategermlines(
                 str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + fileformat_dict[fileformat])
+                    outDir
+                    / (outDir.name + "_heavy" + fileformat_dict[fileformat])
                 ),
                 org=org,
                 germtypes=germ_types,
                 mode="heavy",
                 genotype_fasta=str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + germline_dict[fileformat])
+                    outDir
+                    / (outDir.name + "_heavy" + germline_dict[fileformat])
                 ),
                 germline=germline,
                 v_field=v_field,
@@ -1596,8 +1591,12 @@ def reassign_alleles(
             )
             _ = load_data(
                 str(
-                    Path(outDir)
-                    / (outDir + "_heavy" + fileformat_passed_dict[fileformat])
+                    outDir
+                    / (
+                        outDir.name
+                        + "_heavy"
+                        + fileformat_passed_dict[fileformat]
+                    )
                 )
             )
         except:
@@ -1608,7 +1607,7 @@ def reassign_alleles(
 
     if "tigger_failed" in locals():
         creategermlines(
-            str(Path(outDir) / (outDir + "_heavy" + informat_dict[fileformat])),
+            str(outDir / (outDir.name + "_heavy" + informat_dict[fileformat])),
             org=org,
             germtypes=germ_types,
             mode="heavy",
@@ -1618,7 +1617,7 @@ def reassign_alleles(
             cloned=cloned,
         )
         creategermlines(
-            str(Path(outDir) / (outDir + "_light" + informat_dict[fileformat])),
+            str(outDir / (outDir.name + "_light" + informat_dict[fileformat])),
             org=org,
             germtypes=germ_types,
             mode="light",
@@ -1631,19 +1630,19 @@ def reassign_alleles(
             "      For convenience, entries for heavy chain in `v_call` are copied to `v_call_genotyped`."
         )
         heavy = load_data(
-            Path(outDir) / (outDir + "_heavy" + germpass_dict[fileformat])
+            outDir / (outDir.name + "_heavy" + germpass_dict[fileformat])
         )
         heavy["v_call_genotyped"] = heavy["v_call"]
         logg.info(
             "      For convenience, entries for light chain `v_call` are copied to `v_call_genotyped`."
         )
         light = load_data(
-            Path(outDir) / (outDir + "_light" + germpass_dict[fileformat])
+            outDir / (outDir.name + "_light" + germpass_dict[fileformat])
         )
         light["v_call_genotyped"] = light["v_call"]
     else:
         creategermlines(
-            str(Path(outDir) / (outDir + "_light" + informat_dict[fileformat])),
+            str(outDir / (outDir.name + "_light" + informat_dict[fileformat])),
             org=org,
             germtypes=germ_types,
             mode="light",
@@ -1653,14 +1652,14 @@ def reassign_alleles(
             cloned=cloned,
         )
         heavy = load_data(
-            Path(outDir)
-            / (outDir + "_heavy" + fileformat_passed_dict[fileformat])
+            outDir
+            / (outDir.name + "_heavy" + fileformat_passed_dict[fileformat])
         )
         logg.info(
             "      For convenience, entries for light chain `v_call` are copied to `v_call_genotyped`."
         )
         light = load_data(
-            Path(outDir) / (outDir + "_light" + germpass_dict[fileformat])
+            outDir / (outDir.name + "_light" + germpass_dict[fileformat])
         )
         light["v_call_genotyped"] = light["v_call"]
 
@@ -1681,7 +1680,7 @@ def reassign_alleles(
     if plot:
         if "tigger_failed" not in locals():
             logg.info("Returning summary plot")
-            inferred_genotype = Path(outDir) / (
+            inferred_genotype = outDir / (
                 outDir + "_heavy" + inferred_fileformat_dict[fileformat]
             )
 
@@ -1798,9 +1797,7 @@ def reassign_alleles(
                     + theme(legend_title=element_blank())
                 )
                 if save_plot:
-                    savefile = str(
-                        Path(outDir) / (outDir + "_reassign_alleles.pdf")
-                    )
+                    savefile = outDir / (outDir.name + "_reassign_alleles.pdf")
                     save_as_pdf_pages([p], filename=savefile)
                     if show_plot:
                         print(p)
@@ -1893,13 +1890,13 @@ def create_germlines(
     if not isinstance(data, Dandelion):
         if germline is None:
             try:
-                gml = env["GERMLINE"]
+                gml = Path(env["GERMLINE"])
             except:
                 raise KeyError(
                     "Environmental variable GERMLINE must be set. "
                     + "Otherwise, please provide path to folder containing germline fasta files."
                 )
-            gml = gml + "imgt/" + org + "/vdj/"
+            gml = gml / "imgt" / org / "vdj"
         else:
             if os.path.isdir(germline):
                 env["GERMLINE"] = germline
@@ -1912,13 +1909,13 @@ def create_germlines(
         if len(data.germline) == 0:
             if germline is None:
                 try:
-                    gml = env["GERMLINE"]
+                    gml = Path(env["GERMLINE"])
                 except:
                     raise KeyError(
                         "Environmental variable GERMLINE must be set. "
                         + "Otherwise, please provide path to folder containing germline fasta files."
                     )
-                gml = gml + "imgt/" + org + "/vdj/"
+                gml = gml / "imgt" / org / "vdj"
             else:
                 if os.path.isdir(germline):
                     env["GERMLINE"] = germline
@@ -2477,7 +2474,7 @@ def filter_contigs(
     filter_missing: bool = True,
     productive_only: bool = True,
     simple: bool = False,
-    save: Optional[str] = None,
+    save: Optional[Union[str, Path]] = None,
     verbose: bool = True,
     **kwargs,
 ) -> Tuple[Dandelion, AnnData]:
@@ -2536,7 +2533,7 @@ def filter_contigs(
         whether or not to retain only productive contigs.
     simple : bool, optional
         simple filtering mode where only checks for potential gene assignment mismatches.
-    save : Optional[str], optional
+    save : Optional[Union[str, Path]], optional
         Only used if a pandas data frame or dandelion object is provided. Specifying will save the formatted vdj table.
     verbose : bool, optional
         whether to print progress.
@@ -2694,8 +2691,8 @@ def filter_contigs(
             )
         else:
             if save is not None:
-                if save.endswith(".tsv"):
-                    write_airr(_dat, str(save))
+                if str(save).endswith(".tsv"):
+                    write_airr(_dat, save)
                 else:
                     raise ValueError(
                         "{} not suitable. Please provide a file name that ends with .tsv".format(
@@ -4882,7 +4879,7 @@ def run_blastn(
                         + "Otherwise, please provide path to blast database"
                     )
                 )
-            bdb = bdb + org + "/" + org + "_BCR_C.fasta"
+            bdb = bdb / org / (org + "_BCR_C.fasta")
         else:
             env["BLASTDB"] = database
             bdb = database
@@ -4890,7 +4887,7 @@ def run_blastn(
     cmd = [
         "blastn",
         "-db",
-        bdb,
+        str(bdb),
         "-evalue",
         str(evalue),
         "-max_hsps",
@@ -4898,7 +4895,7 @@ def run_blastn(
         "-outfmt",
         outfmt,
         "-query",
-        fasta,
+        str(fasta),
     ]
 
     if dust is not None:

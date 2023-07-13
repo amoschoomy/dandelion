@@ -23,7 +23,7 @@ def test_loadtravdv2(airr_travdv):
 @pytest.mark.usefixtures("create_testfolder", "fasta_10x_travdv")
 def test_write_fasta_tr(create_testfolder, fasta_10x_travdv):
     """testwrite_fasta_tr"""
-    out_fasta = str(create_testfolder) + "/filtered_contig.fasta"
+    out_fasta = create_testfolder / "filtered_contig.fasta"
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -36,7 +36,7 @@ def test_write_fasta_tr(create_testfolder, fasta_10x_travdv):
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x_travdv")
 def test_write_annotation_tr(create_testfolder, annotation_10x_travdv):
     """test write annot"""
-    out_file = str(create_testfolder) + "/filtered_contig_annotations.csv"
+    out_file = create_testfolder / "filtered_contig_annotations.csv"
     annotation_10x_travdv.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == 2
 
@@ -65,7 +65,7 @@ def test_reannotategenes(create_testfolder, database_paths):
 def test_loadtravdv_reannotated(create_testfolder):
     """test check tradv"""
     vdj = ddl.Dandelion(
-        str(create_testfolder) + "/dandelion/filtered_contig_dandelion.tsv"
+        create_testfolder / "dandelion/filtered_contig_dandelion.tsv"
     )
     assert vdj.data.shape[0] == 23
     assert len([i for i in vdj.data["locus"] if i == "TRD"]) == 0
@@ -75,7 +75,7 @@ def test_loadtravdv_reannotated(create_testfolder):
 def test_travdv_filter(create_testfolder, dummy_adata_travdv):
     """test check tradv filter"""
     vdj = ddl.Dandelion(
-        str(create_testfolder) + "/dandelion/filtered_contig_dandelion.tsv"
+        create_testfolder / "dandelion/filtered_contig_dandelion.tsv"
     )
     assert vdj.data.shape[0] == 23
     assert len([i for i in vdj.data["locus"] if i == "TRD"]) == 0

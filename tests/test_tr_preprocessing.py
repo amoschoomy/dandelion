@@ -7,7 +7,7 @@ import dandelion as ddl
 @pytest.mark.usefixtures("create_testfolder", "fasta_10x_tr1")
 def test_write_fasta_tr1(create_testfolder, fasta_10x_tr1):
     """test_write_fasta_tr1"""
-    out_fasta = str(create_testfolder) + "/filtered_contig.fasta"
+    out_fasta = create_testfolder / "filtered_contig.fasta"
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -20,7 +20,7 @@ def test_write_fasta_tr1(create_testfolder, fasta_10x_tr1):
 @pytest.mark.usefixtures("create_testfolder", "fasta_10x_tr2")
 def test_write_fasta_tr2(create_testfolder, fasta_10x_tr2):
     """test_write_fasta_tr2"""
-    out_fasta = str(create_testfolder) + "/all_contig.fasta"
+    out_fasta = create_testfolder / "all_contig.fasta"
     fh = open(out_fasta, "w")
     fh.close()
     out = ""
@@ -33,7 +33,7 @@ def test_write_fasta_tr2(create_testfolder, fasta_10x_tr2):
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x_tr1")
 def test_write_annotation_tr1(create_testfolder, annotation_10x_tr1):
     """test_write_annotation_tr1"""
-    out_file = str(create_testfolder) + "/filtered_contig_annotations.csv"
+    out_file = create_testfolder / "filtered_contig_annotations.csv"
     annotation_10x_tr1.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == 3
 
@@ -41,7 +41,7 @@ def test_write_annotation_tr1(create_testfolder, annotation_10x_tr1):
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x_tr2")
 def test_write_annotation_tr2(create_testfolder, annotation_10x_tr2):
     """test_write_annotation_tr2"""
-    out_file = str(create_testfolder) + "/all_contig_annotations.csv"
+    out_file = create_testfolder / "all_contig_annotations.csv"
     annotation_10x_tr2.to_csv(out_file, index=False)
     assert len(list(create_testfolder.iterdir())) == 4
 

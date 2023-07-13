@@ -20,8 +20,8 @@ def test_find_clones_other_options(airr_generic):
 @pytest.mark.usefixtures("create_testfolder", "airr_generic")
 def test_find_clones_file(create_testfolder, airr_generic):
     """Test find clones from file."""
-    in_file = str(create_testfolder) + "/test_airr.tsv"
-    out_file = str(create_testfolder) + "/test_airr_clone.tsv"
+    in_file = create_testfolder / "test_airr.tsv"
+    out_file = create_testfolder / "test_airr_clone.tsv"
     airr_generic.to_csv(in_file, sep="\t", index=False)
     ddl.tl.find_clones(in_file)
     assert Path(out_file) in list(create_testfolder.iterdir())

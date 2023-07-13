@@ -8,8 +8,8 @@ import pytest
 @pytest.mark.usefixtures("create_testfolder", "dummy_adata_cr6", "json_10x_cr6")
 def test_filtercontigs(create_testfolder, dummy_adata_cr6, json_10x_cr6):
     """test_filtercontigs"""
-    json_file = str(create_testfolder) + "/test_all_contig_annotations.json"
-    out_file = str(create_testfolder) + "/test_filtered.tsv"
+    json_file = create_testfolder / "test_all_contig_annotations.json"
+    out_file = create_testfolder / "test_filtered.tsv"
     with open(json_file, "w") as outfile:
         json.dump(json_10x_cr6, outfile)
     vdj = ddl.read_10x_vdj(str(create_testfolder), filename_prefix="test_all")
@@ -70,7 +70,7 @@ def test_filtercontigs(create_testfolder, dummy_adata_cr6, json_10x_cr6):
 @pytest.mark.usefixtures("create_testfolder")
 def test_filtercontigs_no_adata(create_testfolder):
     """test_filtercontigs_no_adata"""
-    # json_file = str(create_testfolder) + "/test_all_contig_annotations.json"
+    # json_file = create_testfolder / "test_all_contig_annotations.json"
     vdj = ddl.read_10x_vdj(str(create_testfolder), filename_prefix="test_all")
     vdj2 = ddl.pp.filter_contigs(vdj)
     assert vdj.data.shape[0] == 26
