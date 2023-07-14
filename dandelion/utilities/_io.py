@@ -819,8 +819,8 @@ def change_file_location(
         filePath = check_filepath(
             data[i],
             filename_prefix=filename_prefix[i],
-            endswith=informat_dict[fileformat],
-            subdir="tmp",
+            ends_with=informat_dict[fileformat],
+            sub_dir="tmp",
         )
         if filePath is not None:
             tmp = check_travdv(filePath)
@@ -863,10 +863,10 @@ def move_to_tmp(
         filePath1 = check_filepath(
             data[i],
             filename_prefix=filename_prefix[i],
-            endswith="_annotations.csv",
+            ends_with="_annotations.csv",
         )
         filePath2 = check_filepath(
-            data[i], filename_prefix=filename_prefix[i], endswith=".fasta"
+            data[i], filename_prefix=filename_prefix[i], ends_with=".fasta"
         )
         for fp in [filePath1, filePath2]:
             fp = Path(fp)
@@ -891,22 +891,22 @@ def make_all(
             filePath1 = check_filepath(
                 data[i],
                 filename_prefix=filename_prefix[i],
-                endswith="_igblast_db-pass.tsv",
-                subdir="tmp",
+                ends_with="_igblast_db-pass.tsv",
+                sub_dir="tmp",
             )
         else:
             filePath1 = check_filepath(
                 data[i],
                 filename_prefix=filename_prefix[i],
-                endswith="_igblast_db-pass_genotyped.tsv",
-                subdir="tmp",
+                ends_with="_igblast_db-pass_genotyped.tsv",
+                sub_dir="tmp",
             )
             if filePath1 is None:
                 filePath1 = check_filepath(
                     data[i],
                     filename_prefix=filename_prefix[i],
-                    endswith="_igblast_db-pass.tsv",
-                    subdir="tmp",
+                    ends_with="_igblast_db-pass.tsv",
+                    sub_dir="tmp",
                 )
                 out_ex = "db-pass.tsv"
             else:
@@ -914,8 +914,8 @@ def make_all(
         filePath2 = check_filepath(
             data[i],
             filename_prefix=filename_prefix[i],
-            endswith="_igblast_db-fail.tsv",
-            subdir="tmp",
+            ends_with="_igblast_db-fail.tsv",
+            sub_dir="tmp",
         )
         if filePath1 is not None:
             df1 = pd.read_csv(filePath1, sep="\t")
@@ -927,31 +927,43 @@ def make_all(
                 df = pd.concat([df1, df2])
                 if loci == "tr":
                     write_airr(
-                        df, filePath1.rsplit("db-pass.tsv")[0] + "db-all.tsv"
+                        df,
+                        filePath1.parent
+                        / (
+                            filePath1.name.rsplit("db-pass.tsv")[0]
+                            + "db-all.tsv"
+                        ),
                     )
                 else:
                     write_airr(
                         df,
-                        filePath1.rsplit(out_ex)[0] + "db-all.tsv",
+                        filePath1.parent
+                        / (filePath1.name.rsplit(out_ex)[0] + "db-all.tsv"),
                     )
                 write_airr(df2, filePath2)
             else:
                 if loci == "tr":
                     write_airr(
-                        df1, filePath1.rsplit("db-pass.tsv")[0] + "db-all.tsv"
+                        df1,
+                        filePath1.parent
+                        / (
+                            filePath1.name.rsplit("db-pass.tsv")[0]
+                            + "db-all.tsv"
+                        ),
                     )
                 else:
                     write_airr(
                         df1,
-                        filePath1.rsplit(out_ex)[0] + "db-all.tsv",
+                        filePath1.parent
+                        / (filePath1.name.rsplit(out_ex)[0] + "db-all.tsv"),
                     )
 
 
 def rename_dandelion(
     data: List[str],
     filename_prefix: Optional[Union[List[str], str]] = None,
-    endswith="_igblast_db-pass_genotyped.tsv",
-    subdir: Optional[str] = None,
+    ends_with="_igblast_db-pass_genotyped.tsv",
+    sub_dir: Optional[str] = None,
 ):
     """Rename final dandlion file."""
     if type(data) is not list:
@@ -965,17 +977,14 @@ def rename_dandelion(
         filePath = check_filepath(
             data[i],
             filename_prefix=filename_prefix[i],
-            endswith=endswith,
-            subdir=subdir,
+            ends_with=ends_with,
+            sub_dir=sub_dir,
         )  # must be whatever's after contig
-        file_path = Path(filePath)
-        if subdir is None:
-            fp = filePath.rsplit(endswith)[0]
+        if sub_dir is None:
+            fp = filePath.parent / filePath.name.rsplit(ends_with)[0]
         else:
-            fp = str(
-                file_path.parent.parent / file_path.name.rsplit(endswith)[0]
-            )
-        shutil.move(file_path, Path(fp + "_dandelion.tsv"))
+            fp = filePath.parent.parent / filePath.name.rsplit(ends_with)[0]
+        shutil.move(filePath, Path(str(fp) + "_dandelion.tsv"))
 
 
 def check_complete(df: pd.DataFrame) -> pd.DataFrame:

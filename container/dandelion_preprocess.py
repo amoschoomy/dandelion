@@ -287,17 +287,14 @@ def main():
         # STEP FIVE - ddl.pp.quantify_mutations()
         # this adds the mu_count and mu_freq columns into the table
         for s in samples:
-            ddl.pp.quantify_mutations(
-                s
-                + "/dandelion/"
-                + str(args.file_prefix)
-                + "_contig_dandelion.tsv"
+            samp_path = (
+                Path(s)
+                / "dandelion"
+                / (str(args.file_prefix) + "_contig_dandelion.tsv"),
             )
+            ddl.pp.quantify_mutations(samp_path)
             ddl.pp.quantify_mutations(
-                s
-                + "/dandelion/"
-                + str(args.file_prefix)
-                + "_contig_dandelion.tsv",
+                samp_path,
                 frequency=True,
             )
 
@@ -305,7 +302,8 @@ def main():
     # need be
     if args.clean_output:
         for sample in samples:
-            os.system("rm -rf " + sample + "/dandelion/tmp")
+            tmp_path = Path(sample) / "dandelion" / "tmp"
+            tmp_path.unlink()
     logg.info("Pre-processing finished.\n", time=start)
 
 

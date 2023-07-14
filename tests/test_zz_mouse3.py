@@ -67,7 +67,6 @@ def test_reassignalleles(create_testfolder, database_paths_mouse):
 def test_updateblastdb(database_paths_mouse):
     """test update blast"""
     ddl.utl.makeblastdb(database_paths_mouse["blastdb_fasta"])
-    # assert len(list(Path(database_paths_mouse["blastdb"]).iterdir())) == 10
 
 
 @pytest.mark.usefixtures(

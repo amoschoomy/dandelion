@@ -57,7 +57,7 @@ def test_reannotategenes(create_testfolder, database_paths):
         germline=database_paths["germline"],
         loci="tr",
     )
-    assert len(list((create_testfolder / "dandelion/tmp").iterdir())) == 9
+    assert len(list((create_testfolder / "dandelion" / "tmp").iterdir())) == 9
     assert len(list((create_testfolder / "dandelion").iterdir())) == 2
 
 
@@ -65,7 +65,7 @@ def test_reannotategenes(create_testfolder, database_paths):
 def test_loadtravdv_reannotated(create_testfolder):
     """test check tradv"""
     vdj = ddl.Dandelion(
-        create_testfolder / "dandelion/filtered_contig_dandelion.tsv"
+        create_testfolder / "dandelion" / "filtered_contig_dandelion.tsv"
     )
     assert vdj.data.shape[0] == 23
     assert len([i for i in vdj.data["locus"] if i == "TRD"]) == 0
@@ -75,7 +75,7 @@ def test_loadtravdv_reannotated(create_testfolder):
 def test_travdv_filter(create_testfolder, dummy_adata_travdv):
     """test check tradv filter"""
     vdj = ddl.Dandelion(
-        create_testfolder / "dandelion/filtered_contig_dandelion.tsv"
+        create_testfolder / "dandelion" / "filtered_contig_dandelion.tsv"
     )
     assert vdj.data.shape[0] == 23
     assert len([i for i in vdj.data["locus"] if i == "TRD"]) == 0

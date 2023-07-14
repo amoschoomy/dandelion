@@ -92,9 +92,9 @@ def assigngenes_igblast(
 
 
 def makedb_igblast(
-    fasta: str,
-    igblast_output: Optional[str] = None,
-    germline: Optional[str] = None,
+    fasta: Union[str, Path],
+    igblast_output: Optional[Union[str, Path]] = None,
+    germline: Optional[Union[str, Path]] = None,
     org: Literal["human", "mouse"] = "human",
     extended: bool = True,
 ):
@@ -103,10 +103,10 @@ def makedb_igblast(
 
     Parameters
     ----------
-    fasta : str
-        fasta file use for reannotation.
-    igblast_output : Optional[str], optional
-        igblast output file.
+    fasta : Union[str, Path]
+        path to fasta file use for reannotation.
+    igblast_output : Optional[Union[str, Path]], optional
+        path to igblast output file.
     germline : Optional[str], optional
         path to germline database.
     org : Literal["human", "mouse"], optional
@@ -153,11 +153,11 @@ def makedb_igblast(
             "MakeDb.py",
             "igblast",
             "-i",
-            igbo,
+            str(igbo),
             "-s",
-            fasta,
+            str(fasta),
             "-r",
-            gml,
+            str(gml),
             "--10x",
             cellranger_annotation,
             "--extended",
@@ -166,11 +166,11 @@ def makedb_igblast(
             "MakeDb.py",
             "igblast",
             "-i",
-            igbo,
+            str(igbo),
             "-s",
-            fasta,
+            str(fasta),
             "-r",
-            gml,
+            str(gml),
             "--10x",
             cellranger_annotation,
             "--extended",
@@ -181,11 +181,11 @@ def makedb_igblast(
             "MakeDb.py",
             "igblast",
             "-i",
-            igbo,
+            str(igbo),
             "-s",
-            fasta,
+            str(fasta),
             "-r",
-            gml,
+            str(gml),
             "--10x",
             cellranger_annotation,
         ]
@@ -193,11 +193,11 @@ def makedb_igblast(
             "MakeDb.py",
             "igblast",
             "-i",
-            igbo,
+            str(igbo),
             "-s",
-            fasta,
+            str(fasta),
             "-r",
-            gml,
+            str(gml),
             "--10x",
             cellranger_annotation,
             "--failed",
@@ -209,22 +209,23 @@ def makedb_igblast(
     run(cmd2, env=env)  # logs are printed to terminal
 
 
-def parsedb_heavy(db_file: str):
+def parsedb_heavy(db_file: Union[str, Path]):
     """
     Parse AIRR table (heavy chain contigs only).
 
     Parameters
     ----------
-    db_file : str
+    db_file : Union[str, Path]
         path to AIRR table.
     """
-    outname = os.path.basename(db_file).split(".tsv")[0] + "_heavy"
+    db_file = Path(db_file)
+    outname = db_file.stem + "_heavy"
 
     cmd = [
         "ParseDb.py",
         "select",
         "-d",
-        db_file,
+        str(db_file),
         "-f",
         "locus",
         "-u",
@@ -240,23 +241,24 @@ def parsedb_heavy(db_file: str):
     run(cmd)  # logs are printed to terminal
 
 
-def parsedb_light(db_file: str):
+def parsedb_light(db_file: Union[str, Path]):
     """
     Parse AIRR table (light chain contigs only).
 
     Parameters
     ----------
-    db_file : str
+    db_file : Union[str, Path]
         path to AIRR table.
 
     """
-    outname = os.path.basename(db_file).split(".tsv")[0] + "_light"
+    db_file = Path(db_file)
+    outname = db_file.stem + "_light"
 
     cmd = [
         "ParseDb.py",
         "select",
         "-d",
-        db_file,
+        str(db_file),
         "-f",
         "locus",
         "-u",
@@ -273,427 +275,89 @@ def parsedb_light(db_file: str):
 
 
 def creategermlines(
-    db_file: str,
-    germtypes: Optional[str] = None,
-    germline: Optional[str] = None,
+    airr_file: Union[str, Path],
+    germline: Optional[List[Union[str, Path]]] = None,
     org: Literal["human", "mouse"] = "human",
-    genotype_fasta: Optional[str] = None,
-    v_field: Optional[Literal["v_call", "v_call_genotyped"]] = None,
-    cloned: bool = False,
+    genotyped_fasta: Optional[Union[str, Path]] = None,
     mode: Optional[Literal["heavy", "light"]] = None,
+    additional_args: List[str] = [],
 ):
     """
     Wrapper for CreateGermlines.py for reconstructing germline sequences.
 
     Parameters
     ----------
-    db_file : str
-        path to AIRR table.
-    germtypes : Optional[str], optional
-        germline type for reconstruction.
-    germline : Optional[str], optional
-        location to germline fasta files.
+    airr_file : Union[str, Path]
+        path to AIRR tsv file.
+    germline : Optional[List[Union[str, Path]]], optional
+        path to germline fasta files as a list.
     org : Literal["human", "mouse"], optional
         organism for germline sequences.
-    genotype_fasta : Optional[str], optional
-        location to corrected v germline fasta file.
-    v_field : Optional[Literal["v_call", "v_call_genotyped"]], optional
-        name of column for v segment to perform reconstruction.
-    cloned : bool, optional
-        whether or not to run with cloned option.
+    genotyped_fasta : Optional[str], optional
+        path to V genotyped fasta file.
     mode : Optional[Literal["heavy", "light"]], optional
         whether to run on heavy or light mode. If left as None, heavy and
         light will be run together.
-    verbose : bool, optional
-        whether or not to print the command used in terminal.
-
-    Raises
-    ------
-    KeyError
-        if $GERMLINE environmental variable is not set.
+    additional_args : List[str], optional
+        Additional arguments to pass to `CreateGermlines.py`.
     """
-    env = os.environ.copy()
+    env, gml, airr_file = set_germline_env(
+        germline=germline, org=org, input_file=airr_file
+    )
+
     if germline is None:
-        try:
-            gml = env["GERMLINE"]
-        except KeyError:
-            raise KeyError(
-                (
-                    "Environmental variable GERMLINE must be set."
-                    + " Otherwise, please provide path to folder"
-                    + " containing germline fasta files."
-                )
-            )
-        gml = gml + "imgt/" + org + "/vdj/"
-    else:
-        env["GERMLINE"] = germline
-        gml = germline
-
-    if germtypes is None:
-        germ_type = "dmask"
-    else:
-        germ_type = germtypes
-
-    if cloned:
         if mode == "heavy":
-            print(
-                (
-                    "            Reconstructing heavy chain {}".format(
-                        germ_type
-                    )
-                    + " germline sequences with {} for each clone.".format(
-                        v_field
-                    )
-                )
-            )
-            if genotype_fasta is None:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        gml + "/imgt_" + org + "_IGHV.fasta",
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
+            if genotyped_fasta is None:
+                gml_ref = [
+                    str(gml / ("imgt_" + org + "_IGHV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
+                ]
             else:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        genotype_fasta,
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        genotype_fasta,
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
+                gml_ref = [
+                    str(genotyped_fasta),
+                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
+                ]
         elif mode == "light":
-            print(
-                (
-                    "            Reconstructing light chain {}".format(
-                        germ_type
-                    )
-                    + " germline sequences with {} for each clone.".format(
-                        v_field
-                    )
-                )
-            )
-            if germline is None:
-                cmd = [
-                    "CreateGermlines.py",
-                    "-d",
-                    db_file,
-                    "-g",
-                    germ_type,
-                    "--cloned",
-                    "-r",
-                    gml + "/imgt_" + org + "_IGKV.fasta",
-                    gml + "/imgt_" + org + "_IGKJ.fasta",
-                    gml + "/imgt_" + org + "_IGLV.fasta",
-                    gml + "/imgt_" + org + "_IGLJ.fasta",
-                    "--vf",
-                    v_field,
-                ]
-            else:
-                cmd = [
-                    "CreateGermlines.py",
-                    "-d",
-                    db_file,
-                    "-g",
-                    germ_type,
-                    "--cloned",
-                    "-r",
-                    gml,
-                    "--vf",
-                    v_field,
-                ]
+            gml_ref = [
+                str(gml / ("imgt_" + org + "_IGKV.fasta")),
+                str(gml / ("imgt_" + org + "_IGKJ.fasta")),
+                str(gml / ("imgt_" + org + "_IGLV.fasta")),
+                str(gml / ("imgt_" + org + "_IGLJ.fasta")),
+            ]
         elif mode is None:
-            print(
-                (
-                    "            Reconstructing {}".format(germ_type)
-                    + " germline sequences with {} for each clone.".format(
-                        v_field
-                    )
-                )
-            )
-            if genotype_fasta is None:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        gml + "/imgt_" + org + "_IGHV.fasta",
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        gml + "/imgt_" + org + "_IGKV.fasta",
-                        gml + "/imgt_" + org + "_IGKJ.fasta",
-                        gml + "/imgt_" + org + "_IGLV.fasta",
-                        gml + "/imgt_" + org + "_IGLJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
+            if genotyped_fasta is None:
+                gml_ref = [
+                    str(gml / ("imgt_" + org + "_IGHV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
+                    str(gml / ("imgt_" + org + "_IGKV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGKJ.fasta")),
+                    str(gml / ("imgt_" + org + "_IGLV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGLJ.fasta")),
+                ]
             else:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        genotype_fasta,
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        gml + "/imgt_" + org + "_IGKV.fasta",
-                        gml + "/imgt_" + org + "_IGKJ.fasta",
-                        gml + "/imgt_" + org + "_IGLV.fasta",
-                        gml + "/imgt_" + org + "_IGLJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "--cloned",
-                        "-r",
-                        genotype_fasta,
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
+                gml_ref = [
+                    str(genotyped_fasta),
+                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
+                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
+                    str(gml / ("imgt_" + org + "_IGKV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGKJ.fasta")),
+                    str(gml / ("imgt_" + org + "_IGLV.fasta")),
+                    str(gml / ("imgt_" + org + "_IGLJ.fasta")),
+                ]
     else:
-        if mode == "heavy":
-            print(
-                (
-                    "            Reconstructing heavy chain {}".format(
-                        germ_type
-                    )
-                    + " germline sequences with {}.".format(v_field)
-                )
-            )
-            if genotype_fasta is None:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        gml + "/imgt_" + org + "_IGHV.fasta",
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
-            else:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        genotype_fasta,
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        genotype_fasta,
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
-        elif mode == "light":
-            print(
-                (
-                    "            Reconstructing light chain {}".format(
-                        germ_type
-                    )
-                    + " germline sequences with {}.".format(v_field)
-                )
-            )
-            if germline is None:
-                cmd = [
-                    "CreateGermlines.py",
-                    "-d",
-                    db_file,
-                    "-g",
-                    germ_type,
-                    "-r",
-                    gml + "/imgt_" + org + "_IGKV.fasta",
-                    gml + "/imgt_" + org + "_IGKJ.fasta",
-                    gml + "/imgt_" + org + "_IGLV.fasta",
-                    gml + "/imgt_" + org + "_IGLJ.fasta",
-                    "--vf",
-                    v_field,
-                ]
-            else:
-                cmd = [
-                    "CreateGermlines.py",
-                    "-d",
-                    db_file,
-                    "-g",
-                    germ_type,
-                    "-r",
-                    gml,
-                    "--vf",
-                    v_field,
-                ]
-        elif mode is None:
-            print(
-                (
-                    "            Reconstructing {}".format(germ_type)
-                    + " germline sequences with {} for each clone.".format(
-                        v_field
-                    )
-                )
-            )
-            if genotype_fasta is None:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        gml + "/imgt_" + org + "_IGHV.fasta",
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        gml + "/imgt_" + org + "_IGKV.fasta",
-                        gml + "/imgt_" + org + "_IGKJ.fasta",
-                        gml + "/imgt_" + org + "_IGLV.fasta",
-                        gml + "/imgt_" + org + "_IGLJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
-            else:
-                if germline is None:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        genotype_fasta,
-                        gml + "/imgt_" + org + "_IGHD.fasta",
-                        gml + "/imgt_" + org + "_IGHJ.fasta",
-                        gml + "/imgt_" + org + "_IGKV.fasta",
-                        gml + "/imgt_" + org + "_IGKJ.fasta",
-                        gml + "/imgt_" + org + "_IGLV.fasta",
-                        gml + "/imgt_" + org + "_IGLJ.fasta",
-                        "--vf",
-                        v_field,
-                    ]
-                else:
-                    cmd = [
-                        "CreateGermlines.py",
-                        "-d",
-                        db_file,
-                        "-g",
-                        germ_type,
-                        "-r",
-                        genotype_fasta,
-                        gml,
-                        "--vf",
-                        v_field,
-                    ]
+        if not isinstance(germline, list):
+            germline = [germline]
+        gml_ref = germline
+    cmd = [
+        "CreateGermlines.py",
+        "-d",
+        str(airr_file),
+        "-r",
+    ]
+    cmd = cmd + [str(gml) for gml in gml_ref] + additional_args
 
     logg.info("Running command: %s\n" % (" ".join(cmd)))
     run(cmd, env=env)  # logs are printed to terminal

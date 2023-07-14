@@ -4,6 +4,11 @@ import pytest
 import scipy.sparse
 
 from anndata import AnnData
+from pathlib import Path
+from typing import Dict
+
+DATABASE_PATH = Path("container") / "database"
+HBLASTDB_PATH = DATABASE_PATH / "blast" / "human"
 
 
 def setup_anndata(obs: pd.DataFrame) -> AnnData:
@@ -40,13 +45,20 @@ def create_testfolder(tmp_path_factory):
 
 
 @pytest.fixture
-def database_paths():
-    """Database paths for tests."""
+def database_paths() -> Dict[str, Path]:
+    """
+    Fixture to get the database paths.
+
+    Returns
+    -------
+    Dict[str, Path]
+        Dictionary with the database paths.
+    """
     db = {
-        "igblast_db": "container/database/igblast/",
-        "germline": "container/database/germlines/imgt/human/vdj/",
-        "blastdb": "container/database/blast/human/",
-        "blastdb_fasta": "container/database/blast/human/human_BCR_C.fasta",
+        "igblast_db": DATABASE_PATH / "igblast",
+        "germline": DATABASE_PATH / "germlines" / "imgt" / "human" / "vdj",
+        "blastdb": HBLASTDB_PATH,
+        "blastdb_fasta": HBLASTDB_PATH / "human_BCR_C.fasta",
     }
     return db
 
@@ -57,7 +69,7 @@ def processed_files():
     fl = {
         "filtered": "filtered_contig_dandelion.tsv",
         "all": "all_contig_dandelion.tsv",
-        "germline-dmask": "filtered_contig_dandelion_germline_dmask.tsv",
+        "germ-pass": "filtered_contig_dandelion_germ-pass.tsv",
     }
     return fl
 

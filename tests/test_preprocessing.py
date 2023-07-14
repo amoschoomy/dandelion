@@ -143,7 +143,6 @@ def test_reassignalleles(
 def test_updateblastdb(database_paths):
     """test_updateblastdb"""
     ddl.utl.makeblastdb(database_paths["blastdb_fasta"])
-    # assert len(list(Path(database_paths["blastdb"]).iterdir())) == 10
 
 
 @pytest.mark.usefixtures("create_testfolder", "database_paths")
@@ -186,9 +185,7 @@ def test_create_germlines(create_testfolder, processed_files, database_paths):
     """test_create_germlines"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
     ddl.pp.create_germlines(f, germline=database_paths["germline"])
-    f2 = create_testfolder / str(
-        "dandelion/" + processed_files["germline-dmask"]
-    )
+    f2 = create_testfolder / "dandelion" / processed_files["germ-pass"]
     dat = pd.read_csv(f2, sep="\t")
     assert not dat["germline_alignment_d_mask"].empty
 
