@@ -27,3 +27,4 @@ test_mouse/test_mouse_light_igblast_db-pass_germ-pass.tsv
 container/database/blast/human/human_BCR_C.fasta.nin
 container/database/blast/mouse/mouse_BCR_C.fasta.nin
 .hypothesis/
+.vscode/settings.json
