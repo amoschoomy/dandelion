@@ -54,13 +54,13 @@ from dandelion.tools._tools import transfer
 
 
 def format_fasta(
-    fasta: str,
+    fasta: Union[str, Path],
     prefix: Optional[str] = None,
     suffix: Optional[str] = None,
     sep: Optional[str] = None,
     remove_trailing_hyphen_number: bool = True,
     high_confidence_filtering: bool = False,
-    outdir: Optional[str] = None,
+    out_dir: Optional[Union[str, Path]] = None,
     filename_prefix: Optional[str] = None,
 ):
     """
@@ -68,21 +68,20 @@ def format_fasta(
 
     Parameters
     ----------
-    fasta : str
+    fasta : Union[str, Path]
         path to fasta file.
     prefix : Optional[str], optional
         prefix to append to the headers/contig ids.
     suffix : Optional[str], optional
         suffix to append to the headers/contig ids.
     sep : Optional[str], optional
-        separator after prefix or before suffix to append to the headers/contig
-        ids.
+        separator after prefix or before suffix to append to the headers/contig ids.
     remove_trailing_hyphen_number : bool, optional
         whether or not to remove the trailing hyphen number e.g. '-1' from the
-        ell/contig barcodes.
+        cell/contig barcodes.
     high_confidence_filtering : bool, optional
         whether ot not to filter to only `high confidence` contigs.
-    outdir : Optional[str], optional
+    out_dir : Optional[str], optional
         path to output location. `None` defaults to 'dandelion'.
     filename_prefix : Optional[str], optional
         prefix of file name preceding '_contig'. `None` defaults to 'filtered'.
@@ -92,29 +91,27 @@ def format_fasta(
     FileNotFoundError
         if path to fasta file is unknown.
     """
-    if filename_prefix is None:
-        filename_pre = "filtered"
-    else:
-        filename_pre = filename_prefix
+    filename_pre = "filtered" if filename_prefix is None else filename_prefix
 
-    filePath = None
-    filePath = check_fastapath(fasta, filename_prefix=filename_pre)
+    file_path = check_filepath(
+        fasta,
+        filename_prefix=filename_pre,
+        ends_with=".fasta",
+        within_dandelion=False,
+    )
 
-    if filePath is None:
+    if file_path is None:
         raise FileNotFoundError(
             "Path to fasta file is unknown. Please "
             + "specify path to fasta file or folder containing fasta file. "
             + "Starting folder should only contain 1 fasta file."
         )
-
-    fh = open(filePath, "r")
+    fh = open(file_path, "r")
     seqs = {}
-
     if sep is None:
         separator = "_"
     else:
         separator = str(sep)
-
     for header, sequence in fasta_iterator(fh):
         if prefix is None and suffix is None:
             seqs[header] = sequence
@@ -173,29 +170,18 @@ def format_fasta(
             else:
                 newheader = str(header)
             seqs[newheader] = sequence
-
     fh.close()
-
-    if os.path.isfile(filePath):
-        basedir = Path(os.path.dirname(filePath))
-    elif os.path.isdir(filePath):
-        basedir = Path(os.path.dirname(filePath))
-    else:
-        basedir = Path(os.getcwd())
-
-    if outdir is None:
-        out_dir = basedir / "dandelion"
-
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-
+    base_dir = file_path.parent if file_path.is_file() else Path.cwd()
+    out_dir = base_dir / "dandelion" if out_dir is None else Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
     # format the barcode and contig_id in the corresponding annotation file too
-    # TODO: update this to use check_filepath
-    anno = basedir / os.path.basename(filePath).replace(
-        ".fasta", "_annotations.csv"
+    anno = check_filepath(
+        fasta,
+        filename_prefix=filename_pre,
+        ends_with="_annotations.csv",
+        within_dandelion=False,
     )
     data = pd.read_csv(anno, dtype="object")
-
     if prefix is not None:
         if suffix is not None:
             if remove_trailing_hyphen_number:
@@ -283,16 +269,16 @@ def format_fasta(
         else:
             data["contig_id"] = [str(c) for c in data["contig_id"]]
             data["barcode"] = [str(b) for b in data["barcode"]]
-
-    # TODO: update this to use check_filepath
-    out_anno = out_dir / os.path.basename(filePath).replace(
-        ".fasta", "_annotations.csv"
+    anno = check_filepath(
+        fasta,
+        filename_prefix=filename_pre,
+        ends_with="_annotations.csv",
+        within_dandelion=False,
     )
-    out_fasta = out_dir / os.path.basename(filePath)
+    out_anno = out_dir / (file_path.stem + "_annotations.csv")
+    out_fasta = out_dir / file_path.name
     fh1 = open(out_fasta, "w")
     fh1.close()
-    out = ""
-
     if high_confidence_filtering:
         hiconf_contigs = [
             x
@@ -300,23 +286,19 @@ def format_fasta(
             if y in TRUES
         ]
         seqs = {hiconf: seqs[hiconf] for hiconf in hiconf_contigs}
-
         data = data[data["contig_id"].isin(hiconf_contigs)]
-
-    for l in seqs:
-        out = ">" + l + "\n" + seqs[l] + "\n"
-        Write_output(out, out_fasta)
+    write_fasta(fasta_dict=seqs, out_fasta=out_fasta)
     data.to_csv(out_anno, index=False)
 
 
 def format_fastas(
-    fastas: List[str],
+    fastas: List[Union[str, Path]],
     prefix: Optional[List[str]] = None,
     suffix: Optional[List[str]] = None,
     sep: Optional[str] = None,
     remove_trailing_hyphen_number: bool = True,
     high_confidence_filtering: bool = False,
-    outdir: Optional[str] = None,
+    out_dir: Optional[Union[str, Path]] = None,
     filename_prefix: Optional[Union[List[str], str]] = None,
 ):
     """
@@ -324,7 +306,7 @@ def format_fastas(
 
     Parameters
     ----------
-    fastas : List[str]
+    fastas : List[Union[str, Path]]
         list of paths to fasta files.
     prefix : Optional[List[str]], optional
         list of prefixes to append to headers/contig ids in each fasta file.
@@ -338,31 +320,30 @@ def format_fastas(
         cell/contig barcodes.
     high_confidence_filtering : bool, optional
         whether ot not to filter to only `high confidence` contigs.
-    outdir : Optional[str], optional
+    out_dir : Optional[Union[str, Path]], optional
         path to out put location.
     filename_prefix : Optional[Union[List[str], str]], optional
         list of prefixes of file names preceding '_contig'. `None` defaults to
         'filtered'.
     """
-    if type(fastas) is not list:
-        fastas = [fastas]
-    if type(filename_prefix) is not list:
+    fastas = [fastas] if not isinstance(fastas, list) else fastas
+    if not isinstance(filename_prefix, list):
         filename_prefix = [filename_prefix]
-    if all(t is None for t in filename_prefix):
-        filename_prefix = [None for f in fastas]
-
+        if len(filename_prefix) == 1:
+            if len(fastas) > 1:
+                filename_prefix = filename_prefix * len(fastas)
     if prefix is not None:
-        if type(prefix) is not list:
+        if not isinstance(prefix, list):
             prefix = [prefix]
         prefix_dict = dict(zip(fastas, prefix))
     if suffix is not None:
-        if type(suffix) is not list:
+        if not isinstance(suffix, list):
             suffix = [suffix]
         suffix_dict = dict(zip(fastas, suffix))
 
     for i in tqdm(
         range(0, len(fastas)),
-        desc="Formating fasta(s) ",
+        desc="Formatting fasta(s) ",
         bar_format="{l_bar}{bar:10}{r_bar}{bar:-10b}",
     ):
         if prefix is None and suffix is None:
@@ -373,7 +354,7 @@ def format_fastas(
                 sep=None,
                 remove_trailing_hyphen_number=remove_trailing_hyphen_number,
                 high_confidence_filtering=high_confidence_filtering,
-                outdir=outdir,
+                out_dir=out_dir,
                 filename_prefix=filename_prefix[i],
             )
         elif prefix is not None:
@@ -385,7 +366,7 @@ def format_fastas(
                     sep=sep,
                     remove_trailing_hyphen_number=remove_trailing_hyphen_number,
                     high_confidence_filtering=high_confidence_filtering,
-                    outdir=outdir,
+                    out_dir=out_dir,
                     filename_prefix=filename_prefix[i],
                 )
             else:
@@ -396,7 +377,7 @@ def format_fastas(
                     sep=sep,
                     remove_trailing_hyphen_number=remove_trailing_hyphen_number,
                     high_confidence_filtering=high_confidence_filtering,
-                    outdir=outdir,
+                    out_dir=out_dir,
                     filename_prefix=filename_prefix[i],
                 )
         else:
@@ -408,7 +389,7 @@ def format_fastas(
                     sep=sep,
                     remove_trailing_hyphen_number=remove_trailing_hyphen_number,
                     high_confidence_filtering=high_confidence_filtering,
-                    outdir=outdir,
+                    out_dir=out_dir,
                     filename_prefix=filename_prefix[i],
                 )
             else:
@@ -419,14 +400,13 @@ def format_fastas(
                     sep=None,
                     remove_trailing_hyphen_number=remove_trailing_hyphen_number,
                     high_confidence_filtering=high_confidence_filtering,
-                    outdir=outdir,
+                    out_dir=out_dir,
                     filename_prefix=filename_prefix[i],
                 )
 
 
 def assign_isotype(
-    fasta: str,
-    fileformat: Literal["blast", "changeo", "airr"] = "blast",
+    fasta: Union[str, Path],
     org: Literal["human", "mouse"] = "human",
     evalue: float = 1e-4,
     correct_c_call: bool = True,
@@ -435,20 +415,17 @@ def assign_isotype(
     save_plot: bool = False,
     show_plot: bool = True,
     figsize: Tuple[Union[int, float], Union[int, float]] = (4, 4),
-    blastdb: Optional[str] = None,
-    allele: bool = False,
+    blastdb: Optional[Union[str, Path]] = None,
     filename_prefix: Optional[str] = None,
-    verbose: bool = False,
+    additional_args: List[str] = [],
 ):
     """
     Annotate contigs with constant region call using blastn.
 
     Parameters
     ----------
-    fasta : str
+    fasta : Union[str, Path]
         path to fasta file.
-    fileformat : Literal["blast", "changeo", "airr"], optional
-        format of V(D)J file/objects.
     org : Literal["human", "mouse"], optional
         organism of reference folder.
     evalue : float, optional
@@ -472,15 +449,12 @@ def assign_isotype(
         whether or not to show plot.
     figsize : Tuple[Union[int, float], Union[int, float]], optional
         size of figure.
-    blastdb : Optional[str], optional
-        path to blast database. Defaults to `BLASTDB` environmental variable.
-    allele : bool, optional
-        whether or not to return allele calls.
+    blastdb : Optional[Union[str, Path]], optional
+        path to blast database. Defaults to `$BLASTDB` environmental variable.
     filename_prefix : Optional[str], optional
         prefix of file name preceding '_contig'. `None` defaults to 'filtered'.
-    verbose : bool, optional
-        whether or not to print the blast command in terminal.
-
+    additional_args : List[str], optional
+        additional arguments to pass to `blastn`.
     Raises
     ------
     FileNotFoundError
@@ -669,11 +643,11 @@ def assign_isotype(
         return dat
 
     # main function from here
-    format_dict = {
-        "changeo": "_igblast_db-pass",
-        "blast": "_igblast_db-pass",
-        "airr": "_igblast_gap",
-    }
+    # format_dict = {
+    #     "changeo": "_igblast_db-pass",
+    #     "blast": "_igblast_db-pass",
+    #     "airr": "_igblast_gap",
+    # }
 
     filePath = check_filepath(
         fasta, filename_prefix=filename_prefix, ends_with=".fasta"
@@ -699,7 +673,7 @@ def assign_isotype(
             + "qstart qend sstart send evalue bitscore qseq sseq"
         ),
         dust="no",
-        verbose=verbose,
+        additional_args=additional_args,
     )
     blast_out.drop_duplicates(subset="sequence_id", keep="first", inplace=True)
 
@@ -842,7 +816,7 @@ def assign_isotype(
                 + theme(legend_title=element_blank())
             )
         if save_plot:
-            _file3 = "{}/assign_isotype.pdf".format(os.path.dirname(filePath))
+            _file3 = filePath.parent / "assign_isotype.pdf"
             save_as_pdf_pages([p], filename=_file3)
             if show_plot:  # pragma: no cover
                 print(p)
@@ -857,19 +831,18 @@ def assign_isotype(
 
 
 def assign_isotypes(
-    fastas: List[str],
-    fileformat: Literal["blast", "changeo", "airr"] = "blast",
+    fastas: List[Union[str, Path]],
     org: Literal["human", "mouse"] = "human",
+    evalue: float = 1e4,
     correct_c_call: bool = True,
     correction_dict: Optional[Dict[str, Dict[str, str]]] = None,
     plot: bool = True,
     save_plot: bool = False,
     show_plot: bool = True,
     figsize: Tuple[Union[int, float], Union[int, float]] = (4, 4),
-    blastdb: Optional[str] = None,
-    allele: bool = False,
+    blastdb: Optional[Union[str, Path]] = None,
     filename_prefix: Optional[Union[List, str]] = None,
-    verbose: bool = False,
+    additional_args: List[str] = [],
 ):
     """
     Annotate contigs with constant region call using blastn.
@@ -878,10 +851,14 @@ def assign_isotypes(
     ----------
     fastas : List[str]
         list of paths to fasta files.
-    fileformat : Literal["blast", "changeo", "airr"], optional
-        format of V(D)J file/objects.
     org : Literal["human", "mouse"], optional
         organism of reference folder.
+    evalue : float, optional
+        This is the statistical significance threshold for reporting matches
+        against database sequences. Lower EXPECT thresholds are more stringent
+        and report only high similarity matches. Choose higher EXPECT value
+        (for example 1 or more) if you expect a low identity between your query
+        sequence and the targets.
     correct_c_call : bool, optional
         whether or not to adjust the c_calls after blast based on provided primers specified in `primer_dict` option.
     correction_dict : Optional[Dict[str, Dict[str, str]]], optional
@@ -895,14 +872,12 @@ def assign_isotypes(
         whether or not to show plots.
     figsize : Tuple[Union[int, float], Union[int, float]], optional
         size of figure.
-    blastdb : Optional[str], optional
-        path to blast database. Defaults to `BLASTDB` environmental variable.
-    allele : bool, optional
-        whether or not to return allele calls.
+    blastdb : Optional[Union[str, Path]], optional
+        path to blast database. Defaults to `$BLASTDB` environmental variable.
     filename_prefix : Optional[Union[List, str]], optional
         list of prefixes of file names preceding '_contig'. `None` defaults to 'filtered'.
-    verbose : bool, optional
-        whether or not to print the blast command in terminal.
+    additional_args : List[str], optional
+        additional arguments to pass to `blastn`.
     """
     if type(fastas) is not list:
         fastas = [fastas]
@@ -916,8 +891,8 @@ def assign_isotypes(
     for i in range(0, len(fastas)):
         assign_isotype(
             fastas[i],
-            fileformat=fileformat,
             org=org,
+            evalue=evalue,
             correct_c_call=correct_c_call,
             correction_dict=correction_dict,
             plot=plot,
@@ -925,9 +900,8 @@ def assign_isotypes(
             show_plot=show_plot,
             figsize=figsize,
             blastdb=blastdb,
-            allele=allele,
             filename_prefix=filename_prefix[i],
-            verbose=verbose,
+            additional_args=additional_args,
         )
 
 
@@ -948,7 +922,13 @@ def reannotate_genes(
     reassign_dj: bool = True,
     overwrite: bool = True,
     dust: Optional[Union[Literal["yes", "no"], str]] = "no",
-    verbose: bool = False,
+    additional_args: Dict[str, List[str]] = {
+        "assigngenes": [],
+        "makedb": [],
+        "igblastn": [],
+        "blastn_j": [],
+        "blastn_d": [],
+    },
 ):
     """
     Reannotate cellranger fasta files with igblastn and parses to airr format.
@@ -970,12 +950,12 @@ def reannotate_genes(
     loci : Literal["ig", "tr"], optional
         mode for igblastn. 'ig' for BCRs, 'tr' for TCRs.
     extended : bool, optional
-        whether or not to transfer additional 10X annotions to output file.
+        whether or not to transfer additional 10X annotations to output file.
     filename_prefix : Optional[Union[List[str], str]], optional
         list of prefixes of file names preceding '_contig'. `None` defaults
         to 'filtered'.
     flavour : Literal["strict", "original"], optional
-        Either 'strict' or 'original'. Determines how igblastnshould
+        Either 'strict' or 'original'. Determines how igblastn should
         be run. Running in 'strict' flavour will add the additional the
         evalue and min_d_match options to the run.
     min_j_match : int, optional
@@ -1016,8 +996,11 @@ def reannotate_genes(
         dustmasker options. Filter query sequence with DUST
         Format: 'yes', or 'no' to disable. Accepts str.
         If None, defaults to `20 64 1`.
-    verbose : bool, optional
-        Whether or not to print log commands.
+    additional_args : Dict[str, List[str]], optional
+        additional arguments to pass to `AssignGenes.py`, `MakeDb.py`, `igblastn` and `blastn`.
+        This accepts a dictionary with keys as the name of the sub-function (`assigngenes`, `makedb`,
+        `igblastn`, `blastn_j` and `blastn_d`) and the records as lists of arguments to pass to the
+        relevant scripts/tools.
 
     Raises
     ------
@@ -1054,7 +1037,7 @@ def reannotate_genes(
                     + "Please specify path to fasta file or folder containing fasta file."
                 )
 
-        logg.info("Processing {} \n".format(filePath))
+        logg.info(f"Processing {str(filePath)} \n")
 
         if flavour == "original":
             assigngenes_igblast(
@@ -1062,6 +1045,7 @@ def reannotate_genes(
                 igblast_db=igblast_db,
                 org=org,
                 loci=loci,
+                additional_args=additional_args["assigngenes"],
             )
         elif flavour == "strict":
             run_igblastn(
@@ -1071,13 +1055,14 @@ def reannotate_genes(
                 loci=loci,
                 evalue=v_evalue,
                 min_d_match=min_d_match,
-                verbose=verbose,
+                additional_args=additional_args["igblastn"],
             )
         makedb_igblast(
-            fasta=filePath,
+            filePath,
             org=org,
             germline=germline,
             extended=extended,
+            additional_args=additional_args["makedb"],
         )
         # block this for now, until I figure out if it's
         # worth it
@@ -1094,7 +1079,7 @@ def reannotate_genes(
                     dust=dust,
                     word_size=min_j_match,
                     overwrite=overwrite,
-                    verbose=verbose,
+                    additional_args=additional_args["blastn_j"],
                 )
                 assign_DJ(
                     fasta=filePath,
@@ -1107,7 +1092,7 @@ def reannotate_genes(
                     dust=dust,
                     word_size=min_d_match,
                     overwrite=overwrite,
-                    verbose=verbose,
+                    additional_args=additional_args["blastn_d"],
                 )
                 ensure_columns_transferred(
                     fasta=filePath,
@@ -1127,14 +1112,14 @@ def reannotate_genes(
 
 
 def return_pass_fail_filepaths(
-    fasta: str,
+    fasta: Union[str, Path],
     filename_prefix: Optional[str] = None,
 ) -> Tuple[str, str, str]:
     """Return necessary file paths for internal use only.
 
     Parameters
     ----------
-    fasta : str
+    fasta : Union[str, Path]
         path to fasta file.
     filename_prefix : Optional[str], optional
         prefix of file name preceding '_contig'. `None` defaults to 'filtered'.
@@ -1160,13 +1145,11 @@ def return_pass_fail_filepaths(
             )
         )
     # read the original object
-    pass_path = "{}/tmp/{}.tsv".format(
-        os.path.dirname(file_path),
-        os.path.basename(file_path).split(".fasta")[0] + "_igblast_db-pass",
+    pass_path = (
+        file_path.parent / "tmp" / (file_path.stem + "_igblast_db-pass.tsv")
     )
-    fail_path = "{}/tmp/{}.tsv".format(
-        os.path.dirname(file_path),
-        os.path.basename(file_path).split(".fasta")[0] + "_igblast_db-fail",
+    fail_path = (
+        file_path.parent / "tmp" / (file_path.stem + "_igblast_db-fail.tsv")
     )
     return file_path, pass_path, fail_path
 
@@ -1314,16 +1297,6 @@ def reassign_alleles(
         "changeo": "_igblast_db-pass_germ-pass.tsv",
         "blast": "_igblast_db-pass_germ-pass.tsv",
         "airr": "_igblast_gap_germ-pass.tsv",
-    }
-    heavy_dict = {
-        "changeo": "_igblast_db-pass_heavy_parse-select.tsv",
-        "blast": "_igblast_db-pass_heavy_parse-select.tsv",
-        "airr": "_igblast_gap_heavy_parse-select.tsv",
-    }
-    light_dict = {
-        "changeo": "_igblast_db-pass_light_parse-select.tsv",
-        "blast": "_igblast_db-pass_light_parse-select.tsv",
-        "airr": "_igblast_gap_light_parse-select.tsv",
     }
     fileformat_dict = {
         "changeo": "_igblast_db-pass_genotyped.tsv",
@@ -1808,7 +1781,9 @@ def reassign_alleles(
         else:
             out_file = dat_[dat_["sample_id"] == s]
         outfilepath = filePath_dict[s]
-        write_airr(out_file, outfilepath.parent / (outfilepath.stem + "_genotyped.tsv"))
+        write_airr(
+            out_file, outfilepath.parent / (outfilepath.stem + "_genotyped.tsv")
+        )
 
 
 def create_germlines(
@@ -2128,12 +2103,10 @@ def filter_contigs(
             )
 
         if os.path.isfile(str(data)):
+            data_path = Path(data)
             write_airr(
                 _dat,
-                "{}/{}_filtered.tsv".format(
-                    os.path.dirname(data),
-                    os.path.basename(data).split(".tsv")[0],
-                ),
+                data_path.parent / (data_path.stem + "_filtered.tsv"),
             )
         else:
             if save is not None:
@@ -2984,9 +2957,7 @@ class FilterContigs:
                                                 if v < max_igm_count
                                             ]
                                             for dk in drop_keys:
-                                                self.drop_contig.append(
-                                                    drop_keys
-                                                )
+                                                self.drop_contig.append(dk)
                                         else:
                                             self.h_doublet.append(cell)
                                 if len(h_ccall_p_igd_count) > 1:
@@ -3006,9 +2977,7 @@ class FilterContigs:
                                                 if v < max_igd_count
                                             ]
                                             for dk in drop_keys:
-                                                self.drop_contig.append(
-                                                    drop_keys
-                                                )
+                                                self.drop_contig.append(dk)
                                         else:
                                             self.h_doublet.append(cell)
                             else:
@@ -3077,9 +3046,7 @@ class FilterContigs:
                                                 if v < max_trb_count
                                             ]
                                             for dk in drop_keys:
-                                                self.drop_contig.append(
-                                                    drop_keys
-                                                )
+                                                self.drop_contig.append(dk)
                                         else:
                                             self.h_doublet.append(cell)
                                 if len(h_locus_p_trd_count) > 1:
@@ -3099,9 +3066,7 @@ class FilterContigs:
                                                 if v < max_trd_count
                                             ]
                                             for dk in drop_keys:
-                                                self.drop_contig.append(
-                                                    drop_keys
-                                                )
+                                                self.drop_contig.append(dk)
                                         else:
                                             self.h_doublet.append(cell)
                             else:
@@ -4000,22 +3965,22 @@ class FilterContigsLite:
 
 
 def run_igblastn(
-    fasta: str,
-    igblast_db: Optional[str] = None,
+    fasta: Union[str, Path],
+    igblast_db: Optional[Union[str, Path]] = None,
     org: Literal["human", "mouse"] = "human",
     loci: Literal["ig", "tr"] = "ig",
     evalue: float = 1e-4,
     min_d_match: int = 9,
-    verbose: bool = False,
+    additional_args: List[str] = [],
 ):
     """
     Reannotate with IgBLASTn.
 
     Parameters
     ----------
-    fasta : str
-        fasta file for reannotation.
-    igblast_db : Optional[str], optional
+    fasta : Union[str, Path]
+        path to fasta file for reannotation.
+    igblast_db : Optional[Union[str, Path]], optional
         path to igblast database.
     org : Literal["human", "mouse"], optional
         organism for germline sequences.
@@ -4029,46 +3994,27 @@ def run_igblastn(
         sequence and the targets.
     min_d_match : int, optional
         minimum D nucleotide match.
-    verbose : bool, optional
-        whether or not to print the command used in terminal.
-
-    Raises
-    ------
-    KeyError
-        if `IGDATA` environmental variable is not set.
+    additional_args: List[str], optional
+        additional arguments to pass to `igblastn`.
     """
-    env = os.environ.copy()
-    if igblast_db is None:
-        try:
-            igdb = env["IGDATA"]
-        except KeyError:
-            raise KeyError(
-                (
-                    "Environmental variable IGDATA must be set. Otherwise,"
-                    + " please provide path to igblast database"
-                )
-            )
-    else:
-        env["IGDATA"] = igblast_db
-        igdb = env["IGDATA"]
-
-    outfolder = Path(fasta).parent.resolve() / "tmp"
-    os.makedirs(outfolder, exist_ok=True)
+    env, igdb, fasta = set_igblast_env(igblast_db=igblast_db, input_file=fasta)
+    outfolder = fasta.parent / "tmp"
+    outfolder.mkdir(parents=True, exist_ok=True)
     informat_dict = {"blast": "_igblast.fmt7", "airr": "_igblast.tsv"}
 
     loci_type = {"ig": "Ig", "tr": "TCR"}
     outformat = {"blast": "7 std qseq sseq btop", "airr": "19"}
 
-    dbpath = Path(igdb) / "database"
+    dbpath = igdb / "database"
     imgt_org_loci = "imgt_" + org + "_" + loci + "_"
     vpath = dbpath / (imgt_org_loci + "v")
     dpath = dbpath / (imgt_org_loci + "d")
     jpath = dbpath / (imgt_org_loci + "j")
     cpath = dbpath / (imgt_org_loci + "c")
-    auxpath = Path(igdb) / "optional_file" / (org + "_gl.aux")
+    auxpath = igdb / "optional_file" / (org + "_gl.aux")
 
     for fileformat in ["blast", "airr"]:
-        outfile = str(Path(fasta).stem + informat_dict[fileformat])
+        outfile = str(fasta.stem + informat_dict[fileformat])
         if loci == "tr":
             cmd = [
                 "igblastn",
@@ -4091,7 +4037,7 @@ def run_igblastn(
                 "-query",
                 str(fasta),
                 "-out",
-                "{}/{}".format(str(outfolder), str(outfile)),
+                str(outfolder / outfile),
                 "-evalue",
                 str(evalue),
                 "-min_D_match",
@@ -4123,7 +4069,7 @@ def run_igblastn(
                 "-query",
                 str(fasta),
                 "-out",
-                "{}/{}".format(str(outfolder), str(outfile)),
+                str(outfolder / outfile),
                 "-evalue",
                 str(evalue),
                 "-min_D_match",
@@ -4131,13 +4077,13 @@ def run_igblastn(
                 "-c_region_db",
                 str(cpath),
             ]
-
+        cmd = cmd + additional_args
         logg.info("Running command: %s\n" % (" ".join(cmd)))
         run(cmd, env=env)  # logs are printed to terminal
 
 
 def assign_DJ(
-    fasta: str,
+    fasta: Union[str, Path],
     org: Literal["human", "mouse"] = "human",
     loci: Literal["ig", "tr"] = "tr",
     call: Literal["d", "j"] = "j",
@@ -4152,14 +4098,14 @@ def assign_DJ(
     ),
     filename_prefix: Optional[str] = None,
     overwrite: bool = False,
-    verbose: bool = False,
+    additional_args: List[str] = [],
 ):
     """
     Annotate contigs with constant region call using blastn.
 
     Parameters
     ----------
-    fasta : str
+    fasta : Union[str, Path]
         path to fasta file.
     org : Literal["human", "mouse"], optional
         organism of reference folder.
@@ -4195,17 +4141,17 @@ def assign_DJ(
         prefix of file name preceding '_contig'. `None` defaults to 'filtered'.
     overwrite : bool, optional
         whether or not to overwrite the assignments.
-    verbose : bool, optional
-        whether or not to print the blast command in terminal.
+    additional_args: List[str], optional
+        additional arguments to pass to `blastn`.
     """
     # main function from here
-    filePath, passfile, failfile = return_pass_fail_filepaths(
+    file_path, passfile, failfile = return_pass_fail_filepaths(
         fasta, filename_prefix=filename_prefix
     )
 
     # run blast
     blast_out = run_blastn(
-        fasta=filePath,
+        fasta=file_path,
         database=database,
         org=org,
         loci=loci,
@@ -4215,7 +4161,7 @@ def assign_DJ(
         outfmt=outfmt,
         dust=dust,
         word_size=word_size,
-        verbose=verbose,
+        additional_args=additional_args,
     )
 
     transfer_assignment(
@@ -4231,7 +4177,7 @@ def assign_DJ(
 
 
 def run_blastn(
-    fasta: str,
+    fasta: Union[str, Path],
     database: Optional[str],
     org: Literal["human", "mouse"] = "human",
     loci: Literal["ig", "tr"] = "ig",
@@ -4244,14 +4190,14 @@ def run_blastn(
     ),
     dust: Optional[Union[Literal["yes", "no"], str]] = None,
     word_size: Optional[int] = None,
-    verbose: bool = False,
+    additional_args: List[str] = [],
 ) -> pd.DataFrame:
     """
     Annotate contigs using blastn.
 
     Parameters
     ----------
-    fasta : str
+    fasta : Union[str, Path]
         path to fasta file.
     database : Optional[str]
         path to database.
@@ -4283,53 +4229,68 @@ def run_blastn(
     word_size : Optional[int], optional
         Word size for wordfinder algorithm (length of best perfect match).
         Must be >=4. `None` defaults to 4.
-    verbose : bool, optional
-        whether or not to print the blast command in terminal.
+    additional_args: List[str], optional
+        additional arguments to pass to `blastn`.
+
+    Returns
+    -------
+    pd.DataFrame
+        reannotated information after blastn.Annotate contigs using blastn.
+
+    Parameters
+    ----------
+    fasta : Union[str, Path]
+        path to fasta file.
+    database : Optional[str]
+        path to database.
+        Defaults to `IGDATA` environmental variable if v/d/j_call.
+        Defaults to `BLASTDB` environmental variable if c_call.
+    org : Literal["human", "mouse"], optional
+        organism of reference folder.
+    loci : Literal["ig", "tr"], optional
+        locus. 'ig' or 'tr',
+    call : Literal["v", "d", "j", "c"], optional
+        Either 'v', 'd', 'j' or 'c' gene.
+    max_hsps : int, optional
+        Maximum number of HSPs (alignments) to keep for any single query-subject pair.
+        The HSPs shown will be the best as judged by expect value. This number should
+        be an integer that is one or greater. Setting it to one will show only the best
+        HSP for every query-subject pair. Only affects the output file in the tmp folder.
+    evalue : float, optional
+        This is the statistical significance threshold for reporting matches
+        against database sequences. Lower EXPECT thresholds are more stringent
+        and report only high similarity matches. Choose higher EXPECT value
+        (for example 1 or more) if you expect a low identity between your query
+        sequence and the targets.
+    outfmt : str, optional
+        blastn output format.
+    dust : Optional[Union[Literal["yes", "no"], str]], optional
+        dustmasker options. Filter query sequence with DUST
+        Format: 'yes', or 'no' to disable. Accepts str.
+        If None, defaults to `20 64 1`.
+    word_size : Optional[int], optional
+        Word size for wordfinder algorithm (length of best perfect match).
+        Must be >=4. `None` defaults to 4.
+    additional_args: List[str], optional
+        additional arguments to pass to `blastn`.
 
     Returns
     -------
     pd.DataFrame
         reannotated information after blastn.
-
-    Raises
-    ------
-    KeyError
-        if `IGDATA` environmental variable is not set.
     """
-    env = os.environ.copy()
     if call != "c":
-        if database is None:
-            try:
-                bdb = env["IGDATA"]
-            except KeyError:
-                raise KeyError(
-                    (
-                        "Environmental variable IGDATA must be set. "
-                        + "Otherwise, please provide path to igblast database."
-                    )
-                )
-            bdb = bdb + "database/imgt_" + org + "_" + loci + "_" + call
-        else:
-            env["IGDATA"] = database
-            bdb = database
-            if not bdb.endswith("_" + loci + "_" + call):
-                bdb = bdb + "database/imgt_" + org + "_" + loci + "_" + call
+        env, bdb, fasta = set_igblast_env(igblast_db=database, input_file=fasta)
+        bdb = bdb / "database" / ("imgt_" + org + "_" + loci + "_" + call)
     else:
+        env, bdb, fasta = set_blast_env(blast_db=database, input_file=fasta)
         if database is None:
-            try:
-                bdb = env["BLASTDB"]
-            except KeyError:
-                raise KeyError(
-                    (
-                        "Environmental variable BLASTDB must be set. "
-                        + "Otherwise, please provide path to blast database"
-                    )
-                )
             bdb = bdb / org / (org + "_BCR_C.fasta")
         else:
-            env["BLASTDB"] = database
-            bdb = database
-
+            if not bdb.stem.endswith("_" + loci + "_" + call):
+                bdb = (
+                    bdb / "database" / ("imgt_" + org + "_" + loci + "_" + call)
+                )
     cmd = [
         "blastn",
         "-db",
@@ -4343,17 +4304,12 @@ def run_blastn(
         "-query",
         str(fasta),
     ]
-
     if dust is not None:
         cmd = cmd + ["-dust", str(dust)]
     if word_size is not None:
         cmd = cmd + ["-word_size", str(word_size)]
-
-    blast_out = "{}/tmp/{}.tsv".format(
-        os.path.dirname(fasta),
-        os.path.basename(fasta).split(".fasta")[0] + "_" + call + "_blast",
-    )
-
+    cmd = cmd + additional_args
+    blast_out = fasta.parent / "tmp" / (fasta.stem + "_" + call + "_blast.tsv")
     logg.info("Running command: %s\n" % (" ".join(cmd)))
     with open(blast_out, "w") as out:
         run(cmd, stdout=out, env=env)
@@ -4394,7 +4350,7 @@ def run_blastn(
                 call + "_germline_alignment",
             ]
         )
-    write_blastn(dat, blast_out)
+    write_blastn(data=dat, save=blast_out)
     dat = load_data(dat)
     return dat
 
@@ -5070,12 +5026,9 @@ def check_contigs(
             "No contigs passed filtering. Are you sure that the cell barcodes are matching?"
         )
     if os.path.isfile(str(data)):
+        data_path = Path(data)
         write_airr(
-            dat,
-            "{}/{}_checked.tsv".format(
-                os.path.dirname(data),
-                os.path.basename(data).split(".tsv")[0],
-            ),
+            dat, data_path.parent / "{}_checked.tsv".format(data_path.stem)
         )
     else:
         if save is not None:

@@ -590,13 +590,8 @@ def find_clones(
                 dat_[clone_key].update(pd.Series(dat[clone_key]))
     # dat_[clone_key].replace('', 'unassigned')
     if os.path.isfile(str(vdj_data)):
-        write_airr(
-            dat_,
-            "{}/{}_clone.tsv".format(
-                os.path.dirname(vdj_data),
-                os.path.basename(vdj_data).split(".tsv")[0],
-            ),
-        )
+        data_path = Path(vdj_data)
+        write_airr(dat_, data_path.parent / (data_path.stem + "_clone.tsv"))
 
     logg.info(
         " finished",
@@ -980,9 +975,6 @@ def define_clones(
         dat_ = load_data(vdj_data.data)
     else:
         dat_ = load_data(vdj_data)
-    if os.path.isfile(str(vdj_data)):
-        dat_ = load_data(vdj_data)
-
     if "ambiguous" in dat_:
         dat = dat_[dat_["ambiguous"] == "F"].copy()
     else:
@@ -990,51 +982,39 @@ def define_clones(
     dat_h = dat[dat["locus"] == "IGH"]
     dat_l = dat[dat["locus"].isin(["IGK", "IGL"])]
 
-    if os.path.isfile(str(vdj_data)):
-        tmpFolder = "{}/tmp".format(os.path.dirname(vdj_data))
-        outFolder = "{}".format(os.path.dirname(vdj_data))
+    if os.path.isfile(vdj_data):
+        vdj_path = Path(vdj_data)
+        tmpFolder = vdj_path.parent / "tmp"
+        outFolder = vdj_path.parent
     else:
         import tempfile
 
-        tmpFolder = "{}/tmp".format(tempfile.TemporaryDirectory().name)
-        outFolder = "{}".format(tempfile.TemporaryDirectory().name)
+        outFolder = Path(tempfile.TemporaryDirectory().name)
+        tmpFolder = outFolder / "tmp"
 
-    if not os.path.exists(tmpFolder):
-        os.makedirs(tmpFolder)
-    if not os.path.exists(outFolder):
-        os.makedirs(outFolder)
+    for _ in [outFolder, tmpFolder]:
+        _.mkdir(parents=True, exist_ok=True)
 
-    if os.path.isfile(str(vdj_data)):
-        h_file1 = "{}/{}_heavy-clone.tsv".format(
-            tmpFolder, os.path.basename(vdj_data).split(".tsv")[0]
-        )
-        h_file2 = "{}/{}_heavy-clone.tsv".format(
-            outFolder, os.path.basename(vdj_data).split(".tsv")[0]
-        )
-        l_file = "{}/{}_light.tsv".format(
-            tmpFolder, os.path.basename(vdj_data).split(".tsv")[0]
-        )
-        outfile = "{}/{}_clone.tsv".format(
-            outFolder, os.path.basename(vdj_data).split(".tsv")[0]
-        )
+    if "vdj_path" in locals():
+        h_file1 = tmpFolder / (vdj_path.stem + "_heavy-clone.tsv")
+        h_file2 = outFolder / (vdj_path.stem + "_heavy-clone.tsv")
+        l_file = tmpFolder / (vdj_path.stem + "_light.tsv")
+        outfile = outFolder / (vdj_path.stem + "_clone.tsv")
     else:
-        if outFilePrefix is not None:
-            out_FilePrefix = outFilePrefix
-        else:
-            out_FilePrefix = "dandelion_define_clones"
-        h_file1 = "{}/{}_heavy-clone.tsv".format(tmpFolder, out_FilePrefix)
-        h_file2 = "{}/{}_heavy-clone.tsv".format(outFolder, out_FilePrefix)
-        l_file = "{}/{}_light.tsv".format(tmpFolder, out_FilePrefix)
-        outfile = "{}/{}_clone.tsv".format(outFolder, out_FilePrefix)
-
+        out_FilePrefix = (
+            "dandelion_define_clones"
+            if outFilePrefix is None
+            else outFilePrefix
+        )
+        h_file1 = tmpFolder / (out_FilePrefix + "_heavy-clone.tsv")
+        h_file2 = outFolder / (out_FilePrefix + "_heavy-clone.tsv")
+        l_file = tmpFolder / (out_FilePrefix + "_light.tsv")
+        outfile = outFolder / (out_FilePrefix + "_clone.tsv")
     write_airr(dat_h, h_file1)
     write_airr(dat_l, l_file)
-
-    if "v_call_genotyped" in dat.columns:
-        v_field = "v_call_genotyped"
-    else:
-        v_field = "v_call"
-
+    v_field = (
+        "v_call_genotyped" if "v_call_genotyped" in dat.columns else "v_call"
+    )
     if dist is None:
         if isinstance(vdj_data, Dandelion):
             if vdj_data.threshold is not None:
@@ -1295,24 +1275,13 @@ def define_clones(
     dat_[str(clone_key)] = pd.Series(cloned_["clone_id"])
     dat_[str(clone_key)].fillna("", inplace=True)
     if isinstance(vdj_data, Dandelion):
-        if vdj_data.germline is not None:
-            germline_ = vdj_data.germline
-        else:
-            germline_ = None
-        if vdj_data.layout is not None:
-            layout_ = vdj_data.layout
-        else:
-            layout_ = None
-        if vdj_data.graph is not None:
-            graph_ = vdj_data.graph
-        else:
-            graph_ = None
-        if vdj_data.threshold is not None:
-            threshold_ = vdj_data.threshold
-        else:
-            threshold_ = None
-
-        if ("clone_id" in vdj_data.data.columns) and (clone_key is not None):
+        germline_ = vdj_data.germline if vdj_data.germline is not None else None
+        layout_ = vdj_data.layout if vdj_data.layout is not None else None
+        graph_ = vdj_data.graph if vdj_data.graph is not None else None
+        threshold_ = (
+            vdj_data.threshold if vdj_data.threshold is not None else None
+        )
+        if ("clone_id" in vdj_data.data) and (clone_key is not None):
             vdj_data.__init__(
                 data=dat_,
                 germline=germline_,
@@ -1322,9 +1291,7 @@ def define_clones(
                 retrieve=clone_key,
                 retrieve_mode="merge and unique only",
             )
-        elif ("clone_id" not in vdj_data.data.columns) and (
-            clone_key is not None
-        ):
+        elif ("clone_id" not in vdj_data.data) and (clone_key is not None):
             vdj_data.__init__(
                 data=dat_,
                 germline=germline_,

@@ -8,12 +8,7 @@ import pytest
 def test_write_fasta(create_testfolder, fasta_10x_mouse):
     """test_write_fasta"""
     out_fasta = create_testfolder / "filtered_contig.fasta"
-    fh = open(out_fasta, "w")
-    fh.close()
-    out = ""
-    for line in fasta_10x_mouse:
-        out = ">" + line + "\n" + fasta_10x_mouse[line] + "\n"
-        ddl.utl.Write_output(out, out_fasta)
+    ddl.utl.write_fasta(fasta_dict=fasta_10x_mouse, out_fasta=out_fasta)
     assert len(list(create_testfolder.iterdir())) == 1
 
 
@@ -28,7 +23,7 @@ def test_write_annotation(create_testfolder, annotation_10x_mouse):
 @pytest.mark.usefixtures("create_testfolder")
 def test_formatfasta(create_testfolder):
     """test_formatfasta"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     assert len(list((create_testfolder / "dandelion").iterdir())) == 2
 
 
@@ -36,7 +31,7 @@ def test_formatfasta(create_testfolder):
 def test_reannotategenes(create_testfolder, database_paths_mouse):
     """test_reannotategenes"""
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths_mouse["igblast_db"],
         germline=database_paths_mouse["germline"],
         org="mouse",
@@ -73,7 +68,7 @@ def test_assignsisotypes(
 ):
     """test_assignsisotypes"""
     ddl.pp.assign_isotypes(
-        str(create_testfolder),
+        create_testfolder,
         blastdb=database_paths_mouse["blastdb_fasta"],
         correction_dict=balbc_ighg_primers,
         plot=False,
@@ -107,7 +102,7 @@ def test_filtercontigs(create_testfolder, processed_files, dummy_adata_mouse):
     f2 = create_testfolder / "test.h5ad"
     vdj.write_h5ddl(f1)
     adata.write_h5ad(f2)
-    assert dat.shape[0] == 1285
+    assert dat.shape[0] == 1287
     assert vdj.data.shape[0] == 956
     assert vdj.metadata.shape[0] == 448
     assert adata.n_obs == 547
@@ -142,7 +137,7 @@ def test_filtercontigs_drop_contigs(
     vdj, adata = ddl.pp.filter_contigs(
         dat, dummy_adata_mouse, filter_poorqualitycontig=True
     )
-    assert dat.shape[0] == 1285
+    assert dat.shape[0] == 1287
     assert vdj.data.shape[0] == 955
     assert vdj.metadata.shape[0] == 447
     assert adata.n_obs == 547

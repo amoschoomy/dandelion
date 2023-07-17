@@ -16,12 +16,7 @@ except KeyError:
 def test_write_fasta(create_testfolder, fasta_10x):
     """test_write_fasta"""
     fastafilename = str(create_testfolder / "all_contig.fasta")
-    fh = open(fastafilename, "w")
-    fh.close()
-    out = ""
-    for line in fasta_10x:
-        out = ">" + line + "\n" + fasta_10x[line] + "\n"
-        ddl.utl.Write_output(out, fastafilename)
+    ddl.utl.write_fasta(fasta_dict=fasta_10x, out_fasta=fastafilename)
 
 
 @pytest.mark.usefixtures("create_testfolder", "annotation_10x")
@@ -37,14 +32,14 @@ def test_write_annotation(
 @pytest.mark.usefixtures("create_testfolder")
 def test_formatfasta(create_testfolder):
     """test_formatfasta"""
-    ddl.pp.format_fastas(str(create_testfolder), filename_prefix="all")
+    ddl.pp.format_fastas(create_testfolder, filename_prefix="all")
 
 
 @pytest.mark.usefixtures("create_testfolder", "database_paths")
 def test_reannotategenes(create_testfolder, database_paths):
     """test_reannotategenes"""
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths["igblast_db"],
         germline=database_paths["germline"],
         filename_prefix="all",
@@ -61,7 +56,7 @@ def test_updateblastdb(database_paths):
 def test_assignsisotypes(create_testfolder, database_paths):
     """test_assignsisotypes"""
     ddl.pp.assign_isotypes(
-        str(create_testfolder),
+        create_testfolder,
         blastdb=database_paths["blastdb_fasta"],
         filename_prefix="all",
         save_plot=True,

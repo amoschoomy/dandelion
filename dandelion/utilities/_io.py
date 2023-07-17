@@ -123,12 +123,35 @@ def fasta_iterator(fh: str):
             return
 
 
-def Write_output(out: str, file: str):
+def write_fasta(
+    fasta_dict: Dict[str, str], out_fasta: Union[str, Path], overwrite=True
+):
+    """
+    Generic fasta writer using fasta_iterator
+
+    Parameters
+    ----------
+    fasta_dict : Dict[str, str]
+        dictionary containing fasta headers and sequences as keys and records respectively.
+    out_fasta : str
+        path to write fasta file to.
+    overwrite : bool, optional
+        whether or not to overwrite the output file (out_fasta).
+    """
+    if overwrite:
+        fh = open(out_fasta, "w")
+        fh.close()
+    out = ""
+    for l in fasta_dict:
+        out = ">" + l + "\n" + fasta_dict[l] + "\n"
+        write_output(out, out_fasta)
+
+
+def write_output(out: str, file: Union[str, Path]):
     """General line writer."""
     fh = open(file, "a")
     fh.write(out)
     fh.close()
-    return ()
 
 
 def read_pkl(filename: str = "dandelion_data.pkl.pbz2") -> Dandelion:

@@ -246,7 +246,7 @@ def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
     json_file = create_testfolder / "test_all_contig_annotations.json"
     with open(json_file, "w") as outfile:
         json.dump(json_10x_cr6, outfile)
-    vdj = ddl.read_10x_vdj(str(create_testfolder))
+    vdj = ddl.read_10x_vdj(create_testfolder)
     vdj, adata = ddl.pp.filter_contigs(vdj, dummy_adata_cr6)
     assert vdj.data.shape[0] == 17
     assert vdj.metadata.shape[0] == 8

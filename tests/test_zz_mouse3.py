@@ -10,12 +10,7 @@ import sys
 def test_write_fasta(create_testfolder, fasta_10x_mouse):
     """test write fasta"""
     out_fasta = create_testfolder / "filtered_contig.fasta"
-    fh = open(out_fasta, "w")
-    fh.close()
-    out = ""
-    for line in fasta_10x_mouse:
-        out = ">" + line + "\n" + fasta_10x_mouse[line] + "\n"
-        ddl.utl.Write_output(out, out_fasta)
+    ddl.utl.write_fasta(fasta_dict=fasta_10x_mouse, out_fasta=out_fasta)
     assert len(list(create_testfolder.iterdir())) == 1
 
 
@@ -30,16 +25,16 @@ def test_write_annotation(create_testfolder, annotation_10x_mouse):
 @pytest.mark.usefixtures("create_testfolder")
 def test_formatfasta(create_testfolder):
     """test format fasta"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     assert len(list((create_testfolder / "dandelion").iterdir())) == 2
 
 
 @pytest.mark.usefixtures("create_testfolder", "database_paths_mouse")
 def test_reannotategenes_strict(create_testfolder, database_paths_mouse):
     """test reannotate"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths_mouse["igblast_db"],
         germline=database_paths_mouse["germline"],
         flavour="strict",
@@ -77,7 +72,7 @@ def test_assignsisotypes(
 ):
     """test assign isotype"""
     ddl.pp.assign_isotypes(
-        str(create_testfolder),
+        create_testfolder,
         blastdb=database_paths_mouse["blastdb_fasta"],
         correction_dict=balbc_ighg_primers,
         plot=False,

@@ -9,6 +9,7 @@ from .fixtures import setup_anndata, DATABASE_PATH
 
 MBLASTDB_PATH = DATABASE_PATH / "blast" / "mouse"
 
+
 @pytest.fixture
 def database_paths_mouse() -> Dict[str, Path]:
     """
@@ -21,9 +22,9 @@ def database_paths_mouse() -> Dict[str, Path]:
     """
     db = {
         "igblast_db": DATABASE_PATH / "igblast",
-        "germline": DATABASE_PATH / "germlines"/"imgt"/"mouse"/"vdj",
+        "germline": DATABASE_PATH / "germlines" / "imgt" / "mouse" / "vdj",
         "blastdb": MBLASTDB_PATH,
-        "blastdb_fasta": MBLASTDB_PATH/"mouse_BCR_C.fasta",
+        "blastdb_fasta": MBLASTDB_PATH / "mouse_BCR_C.fasta",
     }
     return db
 

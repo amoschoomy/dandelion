@@ -24,12 +24,7 @@ def test_loadtravdv2(airr_travdv):
 def test_write_fasta_tr(create_testfolder, fasta_10x_travdv):
     """testwrite_fasta_tr"""
     out_fasta = create_testfolder / "filtered_contig.fasta"
-    fh = open(out_fasta, "w")
-    fh.close()
-    out = ""
-    for line in fasta_10x_travdv:
-        out = ">" + line + "\n" + fasta_10x_travdv[line] + "\n"
-        ddl.utl.Write_output(out, out_fasta)
+    ddl.utl.write_fasta(fasta_dict=fasta_10x_travdv, out_fasta=out_fasta)
     assert len(list(create_testfolder.iterdir())) == 1
 
 
@@ -44,7 +39,7 @@ def test_write_annotation_tr(create_testfolder, annotation_10x_travdv):
 @pytest.mark.usefixtures("create_testfolder")
 def test_formatfasta(create_testfolder):
     """test format fasta"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     assert len(list((create_testfolder / "dandelion").iterdir())) == 2
 
 
@@ -52,7 +47,7 @@ def test_formatfasta(create_testfolder):
 def test_reannotategenes(create_testfolder, database_paths):
     """test reannotate"""
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths["igblast_db"],
         germline=database_paths["germline"],
         loci="tr",

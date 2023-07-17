@@ -7,12 +7,7 @@ import dandelion as ddl
 def test_write_fasta(create_testfolder, fasta_10x_mouse):
     """test_write_fasta"""
     out_fasta = create_testfolder / "filtered_contig.fasta"
-    fh = open(out_fasta, "w")
-    fh.close()
-    out = ""
-    for l in fasta_10x_mouse:
-        out = ">" + l + "\n" + fasta_10x_mouse[l] + "\n"
-        ddl.utl.Write_output(out, out_fasta)
+    ddl.utl.write_fasta(fasta_dict=fasta_10x_mouse, out_fasta=out_fasta)
     assert len(list(create_testfolder.iterdir())) == 1
 
 
@@ -27,7 +22,7 @@ def test_write_annotation(create_testfolder, annotation_10x_mouse):
 @pytest.mark.usefixtures("create_testfolder")
 def test_formatfasta(create_testfolder):
     """test_formatfasta"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     assert len(list((create_testfolder / "dandelion").iterdir())) == 2
 
 
@@ -40,9 +35,9 @@ def test_updateblastdb(database_paths_mouse):
 @pytest.mark.usefixtures("create_testfolder", "database_paths_mouse")
 def test_reannotategenes_original(create_testfolder, database_paths_mouse):
     """test_reannotategenes_original"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths_mouse["igblast_db"],
         germline=database_paths_mouse["germline"],
         flavour="original",
@@ -54,9 +49,9 @@ def test_reannotategenes_original(create_testfolder, database_paths_mouse):
 @pytest.mark.usefixtures("create_testfolder", "database_paths_mouse")
 def test_reannotategenes_other(create_testfolder, database_paths_mouse):
     """test_reannotategenes_other"""
-    ddl.pp.format_fastas(str(create_testfolder))
+    ddl.pp.format_fastas(create_testfolder)
     ddl.pp.reannotate_genes(
-        str(create_testfolder),
+        create_testfolder,
         igblast_db=database_paths_mouse["igblast_db"],
         germline=database_paths_mouse["germline"],
         extended=False,
