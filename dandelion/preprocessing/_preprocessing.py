@@ -1114,7 +1114,7 @@ def reannotate_genes(
 def return_pass_fail_filepaths(
     fasta: Union[str, Path],
     filename_prefix: Optional[str] = None,
-) -> Tuple[str, str, str]:
+) -> Tuple[Path, Path, Path]:
     """Return necessary file paths for internal use only.
 
     Parameters
@@ -1126,7 +1126,7 @@ def return_pass_fail_filepaths(
 
     Returns
     -------
-    Tuple[str, str, str]
+    Tuple[Path, Path, Path]
         file paths for downstream functions.
 
     Raises
@@ -1189,11 +1189,11 @@ def ensure_columns_transferred(
         "_germline_alignment_blastn",
         "_source",
     ]
-    if os.path.isfile(passfile):
+    if passfile.is_file():
         db_pass = load_data(passfile)
     else:
         db_pass = None
-    if os.path.isfile(failfile):
+    if failfile.is_file():
         db_fail = load_data(failfile)
     else:
         db_fail = None
