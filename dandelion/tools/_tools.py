@@ -982,7 +982,7 @@ def define_clones(
     dat_h = dat[dat["locus"] == "IGH"]
     dat_l = dat[dat["locus"].isin(["IGK", "IGL"])]
 
-    if os.path.isfile(vdj_data):
+    if os.path.isfile(str(vdj_data)):
         vdj_path = Path(vdj_data)
         tmpFolder = vdj_path.parent / "tmp"
         outFolder = vdj_path.parent
