@@ -1835,10 +1835,12 @@ def create_germlines(
             additional_args=additional_args,
         )
     else:
-        tmpfile = Path(tempfile.TemporaryDirectory().name) / "tmp.tsv"
+        tmppath = Path(tempfile.TemporaryDirectory().name)
+        tmppath.mkdir(parents=True, exist_ok=True)
+        tmpfile = tmppath / "tmp.tsv"
         vdj_data.write_airr(filename=tmpfile)
         if len(vdj_data.germline) > 0:
-            tmpgmlfile = Path(tempfile.TemporaryDirectory().name) / "germ.fasta"
+            tmpgmlfile = tmppath / "germ.fasta"
             write_fasta(fasta_dict=vdj_data.germline, out_fasta=tmpgmlfile)
             creategermlines(
                 airr_file=tmpfile,
