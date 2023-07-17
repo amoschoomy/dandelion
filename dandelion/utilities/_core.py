@@ -756,7 +756,7 @@ class Dandelion:
 
         if type(gml) is not list:
             gml = [gml]
-        
+
         gml = [str(g) for g in gml]
 
         germline_ref = readGermlines(gml)
