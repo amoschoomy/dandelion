@@ -53,3 +53,19 @@ def test_manual_threshold_and_define_clones(create_testfolder):
     assert not vdj.data.clone_id.empty
     ddl.tl.define_clones(vdj, key_added="changeo_clone")
     assert not vdj.data.changeo_clone.empty
+
+
+@pytest.mark.usefixtures("create_testfolder")
+@pytest.mark.skipif(sys.platform == "darwin", reason="macos CI stalls.")
+def test_define_clones_outdir(create_testfolder):
+    """test threshold"""
+    f = create_testfolder / "test.tsv"
+    out = pd.read_csv(f, sep="\t")
+    vdj = ddl.Dandelion(out)
+    vdj.threshold = 0.1
+    out_path = (
+        create_testfolder / "test" / "test"
+    )  # this path shouldn't exist initially
+    ddl.tl.define_clones(vdj, out_dir=out_path)
+    assert len(list(out_path.iterdir())) == 3
+    assert len(list((out_path / "tmp").iterdir())) == 2
