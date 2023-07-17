@@ -905,6 +905,7 @@ def define_clones(
     ncpu: Optional[int] = None,
     outFilePrefix: Optional[int] = None,
     key_added: Optional[int] = None,
+    out_dir: Optional[Union[str, Path]] = None,
     additional_args: List[str] = [],
 ) -> Dandelion:
     """
@@ -947,6 +948,8 @@ def define_clones(
         If specified, the out file name will have this prefix. `None` defaults to 'dandelion_define_clones'
     key_added : Optional[int], optional
         Column name to add for define_clones.
+    out_dir : Optional[Union[str, Path]], optional
+        If specified, the files will be written to this directory.
     additional_args : List[str], optional
         Additional arguments to pass to `DefineClones.py`.
 
@@ -986,6 +989,10 @@ def define_clones(
         vdj_path = Path(vdj_data)
         tmpFolder = vdj_path.parent / "tmp"
         outFolder = vdj_path.parent
+    elif out_dir is not None:
+        vdj_path = Path(out_dir)
+        tmpFolder = vdj_path / "tmp"
+        outFolder = vdj_path
     else:
         import tempfile
 
@@ -1033,9 +1040,9 @@ def define_clones(
     cmd = [
         "DefineClones.py",
         "-d",
-        h_file1,
+        str(h_file1),
         "-o",
-        h_file2,
+        str(h_file2),
         "--act",
         action,
         "--model",
@@ -1106,6 +1113,7 @@ def define_clones(
 
         return assign_dict
 
+    # TODO: might need to remove this function to drop requirement to maintain this as a dependency internally
     def _lightCluster(heavy_file, light_file, out_file, doublets, fileformat):
         """
         Split heavy chain clones based on light chains.
