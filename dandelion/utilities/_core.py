@@ -687,7 +687,7 @@ class Dandelion:
         env = os.environ.copy()
         if germline is None:
             try:
-                gml = env["GERMLINE"]
+                gml = Path(env["GERMLINE"])
             except:
                 raise KeyError(
                     (
@@ -695,7 +695,7 @@ class Dandelion:
                         + "please provide path to folder containing germline IGHV, IGHD, and IGHJ fasta files."
                     )
                 )
-            gml = gml + "imgt/" + org + "/vdj/"
+            gml = gml / "imgt" / org / "vdj"
         else:
             if type(germline) is list:
                 if len(germline) < 3:
@@ -756,6 +756,8 @@ class Dandelion:
 
         if type(gml) is not list:
             gml = [gml]
+        
+        gml = [str(g) for g in gml]
 
         germline_ref = readGermlines(gml)
         if corrected is not None:

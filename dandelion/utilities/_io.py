@@ -803,7 +803,8 @@ def parse_annotation(data: pd.DataFrame) -> defaultdict:
 
 
 def change_file_location(
-    data: List[str], filename_prefix: Optional[Union[List[str], str]] = None
+    data: List[Union[str, Path]],
+    filename_prefix: Optional[Union[List[str], str]] = None,
 ):
     """
     Move file from tmp folder to dandelion folder.
@@ -812,7 +813,7 @@ def change_file_location(
 
     Parameters
     ----------
-    data : List[str]
+    data : List[Union[str, Path]]
         list of data folders containing the .tsv files. if provided as a single string, it will first be converted to a
         list; this allows for the function to be run on single/multiple samples.
     filename_prefix : Optional[Union[List[str], str]], optional
@@ -847,7 +848,7 @@ def change_file_location(
         )
         if filePath is not None:
             tmp = check_travdv(filePath)
-            _airrfile = filePath.replace("_db-pass.tsv", ".tsv")
+            _airrfile = str(filePath).replace("_db-pass.tsv", ".tsv")
             airr_output = load_data(_airrfile)
             cols_to_merge = [
                 "junction_aa_length",

@@ -267,28 +267,6 @@ def check_filepath(
         return None
 
 
-def check_fastapath(fasta, filename_prefix: Optional[str] = None):
-    """Check fastapath."""
-    if filename_prefix is None:
-        filename_pre = "filtered"
-    else:
-        filename_pre = filename_prefix
-
-    filePath = None
-    if os.path.isfile(str(fasta)) and str(fasta).endswith(".fasta"):
-        filePath = fasta
-    elif os.path.isdir(str(fasta)):
-        files = os.listdir(fasta)
-        for file in files:
-            out_ = fasta.rstrip("/") + "/"
-            if str(file).endswith(".fasta"):
-                if str(file).split(".fasta")[0] == filename_pre + "_contig":
-                    filePath = out_ + os.path.basename(file)
-                else:
-                    continue
-    return filePath
-
-
 def cmp(a, b):
     """Python2.x cmp function."""
     return (a > b) - (a < b)

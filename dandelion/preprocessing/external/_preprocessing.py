@@ -309,8 +309,6 @@ def tigger_genotype(
     additional_args : List[str], optional
         Additional arguments to pass to `tigger-genotype.R`.
     """
-    start_time = time()
-
     env, gml, airr_file = set_germline_env(
         germline=germline, org=org, input_file=airr_file
     )
