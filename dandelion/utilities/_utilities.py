@@ -556,13 +556,13 @@ def check_travdv(data):
     return data
 
 
-def load_data(obj: Optional[Union[pd.DataFrame, str]]) -> pd.DataFrame:
+def load_data(obj: Optional[Union[pd.DataFrame, str, Path]]) -> pd.DataFrame:
     """
     Read in or copy dataframe object and set sequence_id as index without dropping.
 
     Parameters
     ----------
-    obj : Optional[Union[pd.DataFrame, str]]
+    obj : Optional[Union[pd.DataFrame, str, Path]]
         file path to .tsv file or pandas DataFrame object.
 
     Returns

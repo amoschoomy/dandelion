@@ -121,7 +121,7 @@ def main():
     ddl.logging.print_header()
     # sponge up command line arguments to begin with
     args = parse_args()
-    start = logg.info("\nBeginning preprocessing\n")
+    start = logg.info("\nBegin preprocessing\n")
 
     if args.keep_trailing_hyphen_number:
         keep_trailing_hyphen_number_log = False
@@ -136,7 +136,6 @@ def main():
     logg.info(
         "command line parameters:\n",
         deep=(
-            f"\n"
             f"--------------------------------------------------------------\n"
             f"    --meta = {args.meta}\n"
             f"    --chain = {args.chain}\n"
@@ -149,7 +148,7 @@ def main():
             f"    --keep_trailing_hyphen_number = {keep_trailing_hyphen_number_log}\n"
             f"    --skip_reassign_dj = {skip_reassign_dj_log}\n"
             f"    --clean_output = {args.clean_output}\n"
-            f"--------------------------------------------------------------\n"
+            f": --------------------------------------------------------------\n"
         ),
     )
 
@@ -291,7 +290,7 @@ def main():
             samp_path = (
                 Path(s)
                 / "dandelion"
-                / (str(args.file_prefix) + "_contig_dandelion.tsv"),
+                / (str(args.file_prefix) + "_contig_dandelion.tsv")
             )
             ddl.pp.quantify_mutations(samp_path)
             ddl.pp.quantify_mutations(

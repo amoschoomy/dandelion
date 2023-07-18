@@ -817,7 +817,7 @@ def assign_isotype(
             )
         if save_plot:
             _file3 = filePath.parent / "assign_isotype.pdf"
-            save_as_pdf_pages([p], filename=_file3)
+            save_as_pdf_pages([p], filename=_file3, verbose=False)
             if show_plot:  # pragma: no cover
                 print(p)
         else:  # pragma: no cover
@@ -1753,7 +1753,7 @@ def reassign_alleles(
                     savefile = str(
                         out_dir / (out_dir.stem + "_reassign_alleles.pdf")
                     )
-                    save_as_pdf_pages([p], filename=savefile)
+                    save_as_pdf_pages([p], filename=savefile, verbose=False)
                     if show_plot:
                         print(p)
                 else:
@@ -2769,7 +2769,7 @@ def calculate_threshold(
             + theme(legend_position="none")
         )
         if save_plot is not None:
-            save_as_pdf_pages([p], filename=save_plot)
+            save_as_pdf_pages([p], filename=save_plot, verbose=False)
         print(p)
     else:
         logg.info(

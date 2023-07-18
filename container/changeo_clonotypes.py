@@ -59,13 +59,12 @@ def main():
     logg.info("Software versions:\n")
     ddl.logging.print_header()
 
-    start = logg.info("\nBeginning assigning change-o clonotypes\n")
+    start = logg.info("\nBegin assigning change-o clonotypes\n")
 
     # parse arguments
     args, additional_args = parse_args()
 
     loginfo = (
-        f"\n"
         f"--------------------------------------------------------------\n"
         f"    --h5ddl = {args.h5ddl}\n"
         f"    --manual_threshold = {str(args.manual_threshold)}\n"
@@ -78,7 +77,7 @@ def main():
         loginfo += f"    additional arguments:\n"
         loginfo += f"    {additional_argsx}\n"
     loginfo += (
-        f"--------------------------------------------------------------\n"
+        f": --------------------------------------------------------------\n"
     )
 
     logg.info(
