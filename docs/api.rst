@@ -81,7 +81,7 @@ Utilities: `utl`
    
    load_data
    makeblastdb   
-   read_h5
+   read_h5ddl
    read_pkl
    read_10x_airr
    read_10x_vdj
@@ -89,6 +89,7 @@ Utilities: `utl`
    concat
    to_scirpy
    from_scirpy
+   write_fasta
    
 
 Dandelion
