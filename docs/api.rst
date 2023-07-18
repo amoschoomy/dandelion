@@ -103,7 +103,6 @@ Dandelion
    store_germline_reference
    update_metadata
    write
-   write_h5
    write_h5ddl
    write_pkl
    write_airr
