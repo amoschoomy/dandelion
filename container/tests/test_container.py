@@ -2,21 +2,14 @@
 import os
 import pandas as pd
 import dandelion as ddl
-from pathlib import Path
+
 from unittest.mock import patch
 from subprocess import run
-
-SHARE_PATH = Path("/share")
-TEST_PATH = Path("/test")
-PREPROC_PATH = SHARE_PATH / "dandelion_preprocess.py"
-CLONO_PATH = SHARE_PATH / "changeo_clonotypes.py"
 
 
 def test_callscript():
     """Test script to run preprocessing."""
-    p = run(
-        ["python", str(PREPROC_PATH), "-h"],
-        ["python", str(PREPROC_PATH), "-h"],
+    p = run(["python", "/share/dandelion_preprocess.py", "-h"],
         capture_output=True,
         encoding="utf8",
     )
@@ -27,13 +20,10 @@ def test_callscript():
 def test_container():
     """Test script to run container."""
     os.system(
-        f"cd /tests; python {str(PREPROC_PATH)} --meta test.csv --file_prefix filtered;"
+        "cd /tests; python /share/dandelion_preprocess.py --meta test.csv --file_prefix filtered;"
     )
     dat = pd.read_csv(
-        TEST_PATH
-        / "sample_test_10x"
-        / "dandelion"
-        / "filtered_contig_dandelion.tsv",
+        "/tests/sample_test_10x/dandelion/filtered_contig_dandelion.tsv",
         sep="\t",
     )
     assert not dat["c_call"].empty
@@ -52,9 +42,6 @@ def test_container():
 def test_threshold(mock_show):
     """Test script to run container."""
     os.system(
-        f"cd /tests; python {str(PREPROC_PATH)} --h5ddl sample_test_10x/demo-vdj.h5ddl;"
-    )
-    dat = ddl.read_h5ddl(
-        TEST_PATH / "sample_test_10x" / "demo-vdj_changeo.h5ddl"
-    )
+        "cd /tests; python /share/changeo_clonotypes.py --h5ddl sample_test_10x/demo-vdj.h5ddl;"
+    dat = ddl.read_h5ddl("/tests/sample_test_10x/demo-vdj_changeo.h5ddl")
     assert not dat.data.changeo_clone_id.empty
