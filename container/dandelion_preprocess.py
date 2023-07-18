@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import scanpy as sc
 
+from pathlib import Path
 from scanpy import logging as logg
 
 sc.settings.verbosity = 3
