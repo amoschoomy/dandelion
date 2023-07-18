@@ -9,7 +9,8 @@ from subprocess import run
 
 def test_callscript():
     """Test script to run preprocessing."""
-    p = run(["python", "/share/dandelion_preprocess.py", "-h"],
+    p = run(
+        ["python", "/share/dandelion_preprocess.py", "-h"],
         capture_output=True,
         encoding="utf8",
     )
@@ -43,5 +44,6 @@ def test_threshold(mock_show):
     """Test script to run container."""
     os.system(
         "cd /tests; python /share/changeo_clonotypes.py --h5ddl sample_test_10x/demo-vdj.h5ddl;"
+    )
     dat = ddl.read_h5ddl("/tests/sample_test_10x/demo-vdj_changeo.h5ddl")
     assert not dat.data.changeo_clone_id.empty
