@@ -12,10 +12,7 @@ sphinx:
 # Build documentation with MkDocs
 #mkdocs:
 #  configuration: mkdocs.yml
-
-build:
-  os: ubuntu-22.04
-
+  
 # Optionally set the version of Python and requirements required to build your docs
 # conda:
 #   environment: docs/environment.yml
