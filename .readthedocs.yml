@@ -15,15 +15,18 @@ sphinx:
 
 build:
   os: ubuntu-22.04
-
-# Optionally set the version of Python and requirements required to build your docs
-# conda:
-#   environment: docs/environment.yml
-# Optionally set the version of Python and requirements required to build your docs
-python:
-  version: 3.8
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
+  tools:
+    python: "3.8"
+  commands:
+    - pip install .[docs]
+# # Optionally set the version of Python and requirements required to build your docs
+# # conda:
+# #   environment: docs/environment.yml
+# # Optionally set the version of Python and requirements required to build your docs
+# python:
+#   version: 3.8
+#   install:
+#     - method: pip
+#       path: .
+#       extra_requirements:
+#         - docs
