@@ -847,6 +847,7 @@ def clone_overlap(
     },
     node_label_size: int = 10,
     as_heatmap: bool = False,
+    return_heatmap_data: bool = False,
     **kwargs,
 ) -> nxv.CircosPlot:
     """
@@ -883,6 +884,8 @@ def clone_overlap(
         size of labels if node_labels = True
     as_heatmap : bool, optional
         whether to return plot as heatmap.
+    return_heatmap_data : bool, optional
+        whether to return heatmap data as a pandas dataframe.
     **kwargs
         passed to `matplotlib.pyplot.savefig`.
 
@@ -1050,6 +1053,8 @@ def clone_overlap(
     if as_heatmap:
         hm = nx.to_pandas_adjacency(G)
         sns.clustermap(hm, **kwargs)
+        if return_heatmap_data:
+            return hm
     else:
         ax = nxv.circos(
             G,
