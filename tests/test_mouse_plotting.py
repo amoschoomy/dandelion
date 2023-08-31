@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import dandelion as ddl
+import pandas as pd
 import pytest
 
 
@@ -65,3 +66,11 @@ def test_clone_overlap(
         groupby="sample_idx",
         as_heatmap=True,
     )
+
+    out = ddl.pl.clone_overlap(
+        dummy_adata_mouse,
+        groupby="sample_idx",
+        as_heatmap=True,
+        return_heatmap_data=True,
+    )
+    assert isinstance(out, pd.DataFrame)
