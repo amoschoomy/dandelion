@@ -61,6 +61,14 @@ def test_clone_overlap(
     )
     assert G is not None
 
+    G = ddl.pl.clone_overlap(
+        dummy_adata_mouse,
+        groupby="sample_idx",
+        weighted_overlap=True,
+        scale_edge_lambda=lambda x: x * 10,
+    )
+    assert G is not None
+
     ddl.pl.clone_overlap(
         dummy_adata_mouse,
         groupby="sample_idx",
