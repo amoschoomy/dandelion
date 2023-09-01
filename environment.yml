@@ -1,30 +1,30 @@
 name: dandelion
 channels:
-- conda-forge
-- bioconda
-- anaconda
-- defaults
+  - conda-forge
+  - bioconda
+  - anaconda
+  - defaults
 dependencies:
-- numpy
-- pandas
-- pandoc
-- pyyaml
-- changeo
-- seaborn
-- statsmodels
-- pytables
-- pytest
-- graph-tool
-- pip
-- tbb
-- pip:
-  - numba
-  - matplotlib<=3.5.3
-  - nbsphinx
-  - sphinx-autodoc-typehints
-  - annoy==1.16.3
-  - rpy2>=3.4.2
-  - pytest-cov
-  - -r requirements.txt
-  - scirpy
-  - scrublet
+  - numpy
+  - pandas
+  - pandoc
+  - pyyaml
+  - changeo
+  - seaborn
+  - statsmodels
+  - pytables
+  - pytest
+  - graph-tool
+  - pip
+  - tbb
+  - pip:
+      - numba
+      - matplotlib
+      - nbsphinx
+      - sphinx-autodoc-typehints
+      - annoy==1.16.3
+      - rpy2>=3.4.2
+      - pytest-cov
+      - -r requirements.txt
+      - scirpy
+      - scrublet
