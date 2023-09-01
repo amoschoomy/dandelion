@@ -66,6 +66,7 @@ def test_clone_overlap(
         groupby="sample_idx",
         weighted_overlap=True,
         scale_edge_lambda=lambda x: x * 10,
+        return_graph=True,
     )
     assert G is not None
 
