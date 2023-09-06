@@ -28,3 +28,5 @@ container/database/blast/human/human_BCR_C.fasta.nin
 container/database/blast/mouse/mouse_BCR_C.fasta.nin
 .hypothesis/
 .vscode/
+
+env
