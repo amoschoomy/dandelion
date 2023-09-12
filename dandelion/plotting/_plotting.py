@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 
 from anndata import AnnData
-from itertools import combinations, cycle
+from itertools import product, cycle
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import networkx as nx
@@ -929,14 +929,14 @@ def clone_overlap(
                 edges[x] = [
                     y + ({str(clone_): x},)
                     for y in list(
-                        combinations(
+                        product(
                             [
                                 i
                                 for i in overlap.loc[x][
                                     overlap.loc[x] > 0
                                 ].index
                             ],
-                            2,
+                            repeat=2,
                         )
                     )
                 ]
@@ -944,8 +944,9 @@ def clone_overlap(
         tmp_overlap = overlap.astype(bool).sum(axis=1)
         combis = {
             x: list(
-                combinations(
-                    [i for i in overlap.loc[x][overlap.loc[x] > 0].index], 2
+                product(
+                    [i for i in overlap.loc[x][overlap.loc[x] > 0].index],
+                    repeat=2,
                 )
             )
             for x in tmp_overlap.index
@@ -976,14 +977,14 @@ def clone_overlap(
                         },
                     )
                     for y in list(
-                        combinations(
+                        product(
                             [
                                 i
                                 for i in overlap.loc[x][
                                     overlap.loc[x] > 0
                                 ].index
                             ],
-                            2,
+                            repeat=2,
                         )
                     )
                 ]
