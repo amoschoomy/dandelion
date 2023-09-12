@@ -1065,6 +1065,8 @@ def clone_overlap(
         if return_heatmap_data:
             return hm
     else:
+        # remove self loops
+        G.remove_edges_from(nx.selfloop_edges(G))
         ax = nxv.circos(
             G,
             group_by=colorby,
