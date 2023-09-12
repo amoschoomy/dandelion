@@ -1675,14 +1675,14 @@ def clustering(distance_dict, threshold, sequences_dict):
         (i1, i2): distance_dict[(i1, i2)] <= threshold
         if (i1, i2) in distance_dict
         else False
-        for i1, i2 in product(i_unique,repeat= 2)
+        for i1, i2 in product(i_unique, repeat=2)
     }
     i_pair_d.update(
         {
             (i2, i1): distance_dict[(i2, i1)] <= threshold
             if (i2, i1) in distance_dict
             else False
-            for i1, i2 in product(i_unique,repeat= 2)
+            for i1, i2 in product(i_unique, repeat=2)
         }
     )
     # so which indices should not be part of a clone?
