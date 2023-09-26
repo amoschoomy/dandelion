@@ -28,6 +28,7 @@ jobs:
           files: |
             *.{yml,yaml,py}
             **/*.{yml,yaml,py}
+            requirements.txt
             container/database
             container/tests
             container/*.{yml,yaml,py}

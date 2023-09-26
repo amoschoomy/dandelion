@@ -91,6 +91,13 @@ def parse_args():
         ),
     )
     parser.add_argument(
+        "--skip_correct_c",
+        action="store_false",
+        help=(
+            "If passed, skips correcting c calls at assign_isotypes stage. Only if Chain == IG."
+        ),
+    )
+    parser.add_argument(
         "--keep_trailing_hyphen_number",
         action="store_false",
         help=(
@@ -133,6 +140,11 @@ def main():
     else:
         skip_reassign_dj_log = True
 
+    if args.skip_correct_c:
+        skip_correct_c_log = False
+    else:
+        skip_correct_c_log = True
+
     logg.info(
         "command line parameters:\n",
         deep=(
@@ -147,6 +159,7 @@ def main():
             f"    --filter_to_high_confidence = {args.filter_to_high_confidence}\n"
             f"    --keep_trailing_hyphen_number = {keep_trailing_hyphen_number_log}\n"
             f"    --skip_reassign_dj = {skip_reassign_dj_log}\n"
+            f"    --skip_correct_c = {skip_correct_c_log}\n"
             f"    --clean_output = {args.clean_output}\n"
             f": --------------------------------------------------------------\n"
         ),
@@ -277,12 +290,24 @@ def main():
 
         # STEP FOUR - ddl.pp.assign_isotypes()
         # also no tricks here
+        if args.org == "mouse":
+            correction_dict = {
+                "IGHG2": {
+                    "IGHG2A": "GCCAAAACAACAGCCCCATCGGTCTATCCACTGGCCCCTGTGTGTGGAGATACAACTGGC",
+                    "IGHG2B": "GCCAAAACAACACCCCCATCAGTCTATCCACTGGCCCCTGGGTGTGGAGATACAACTGGT",
+                    "IGHG2C": "GCCAAAACAACAGCCCCATCGGTCTATCCACTGGCCCCTGTGTGTGGAGGTACAACTGGC",
+                }
+            }
+        else:
+            correction_dict = None  # TODO: next time maybe can provide a fasta file with the sequences to correct to
         ddl.pp.assign_isotypes(
             samples,
             org=args.org,
             save_plot=True,
             show_plot=False,
             filename_prefix=filename_prefixes,
+            correct_c_call=args.skip_correct_c,
+            correction_dict=correction_dict,
         )
         # STEP FIVE - ddl.pp.quantify_mutations()
         # this adds the mu_count and mu_freq columns into the table

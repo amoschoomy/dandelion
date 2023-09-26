@@ -13,7 +13,7 @@ from anndata import AnnData
 from changeo.Gene import getGene
 from collections import defaultdict, Counter
 from distance import hamming
-from itertools import combinations
+from itertools import product
 from scanpy import logging as logg
 from scipy.sparse import csr_matrix
 from scipy.spatial.distance import pdist, squareform
@@ -1675,19 +1675,19 @@ def clustering(distance_dict, threshold, sequences_dict):
         (i1, i2): distance_dict[(i1, i2)] <= threshold
         if (i1, i2) in distance_dict
         else False
-        for i1, i2 in combinations(i_unique, 2)
+        for i1, i2 in product(i_unique, repeat=2)
     }
     i_pair_d.update(
         {
             (i2, i1): distance_dict[(i2, i1)] <= threshold
             if (i2, i1) in distance_dict
             else False
-            for i1, i2 in combinations(i_unique, 2)
+            for i1, i2 in product(i_unique, repeat=2)
         }
     )
     # so which indices should not be part of a clone?
     canbetogether = defaultdict(list)
-    for ii1, ii2 in combinations(i_unique, 2):
+    for ii1, ii2 in product(i_unique, repeat=2):
         if i_pair_d[(ii1, ii2)] or i_pair_d[(ii2, ii1)]:
             if (ii1, ii2) in distance_dict:
                 canbetogether[ii1].append((ii1, ii2))
