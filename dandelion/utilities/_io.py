@@ -13,6 +13,7 @@ pickle.HIGHEST_PROTOCOL = 4
 import networkx as nx
 import numpy as np
 import pandas as pd
+import awkward as ak
 
 from anndata import AnnData
 from collections import defaultdict, OrderedDict
@@ -1032,3 +1033,27 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
             df.at[i, "productive"] = "F"
             df.at[i, "complete_vdj"] = "F"
     return df
+
+def convert_obsm_airr_to_data(data:ak.highlevel.Array) -> pd.DataFrame:
+
+    # or maybe inplace replace class attributes?
+    d = ak.to_dataframe(data)
+    d['index'] = d['sequence_id']
+    d.set_index('index', inplace=True)
+    d.rename_axis('sequence_id', inplace=True)
+    d['cell_id'] = d['sequence_id'].str.rsplit('_', n=2).str[0]
+    return d
+
+def convert_data_to_obsm_airr(data:pd.DataFrame) -> ak.highlevel.Array:
+    df = data.copy()
+    for col in df.columns:
+        df.loc[df[col]=="unassigned",col] = None
+    # Group the DataFrame by cell_id and convert each group to a list of dictionaries
+    grouped = df.groupby('cell_id').apply(lambda x: x.drop('cell_id', axis=1).to_dict('records'))
+
+    # Convert the Series of lists to a list of lists
+    list_of_lists = grouped.tolist()
+
+    # Convert the list of lists to an Awkward Array
+    array = ak.Array(list_of_lists)
+    return array
