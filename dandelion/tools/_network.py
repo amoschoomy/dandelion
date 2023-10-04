@@ -112,10 +112,11 @@ def generate_network(
             )
         else:
             logg.info("Downsampling to {} cells.".format(str(downsample)))
-            dat_h = dat[dat["locus"].isin(["IGH", "TRB", "TRD"])].copy()
-            dat_l = dat[dat["locus"].isin(["IGK", "IGL", "TRA", "TRG"])].copy()
+            dat_h = dat[np.in1d(dat["locus"], ["IGH", "TRB", "TRD"])]
+            dat_l = dat[np.in1d(dat["locus"], ["IGK", "IGL", "TRA", "TRG"])]
+
             dat_h = dat_h.sample(downsample)
-            dat_l = dat_l[dat_l["cell_id"].isin(list(dat_h["cell_id"]))].copy()
+            dat_l = dat_l[dat_l["cell_id"].isin(list(dat_h["cell_id"]))]
             dat_ = pd.concat([dat_h, dat_l], ignore_index=True)
             dat_ = sanitize_data(dat_, ignore=clonekey)
     else:
