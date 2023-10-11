@@ -137,9 +137,16 @@ def generate_network(
             membership[ij][i].value = 1
     membership = {i: list(j) for i, j in dict(membership).items()}
     tmp_ = np.zeros((dat_seq.shape[0], dat_seq.shape[0]))
-    df = pd.DataFrame(tmp_)
-    df.index = dat_seq.index
-    df.columns = dat_seq.index
+    dict_ = {i: {j: tmp_[i, j] for j in range(dat_seq.shape[0])} for i in range(dat_seq.shape[0])}
+
+    # df = pd.DataFrame(tmp_)
+    # df.index = dat_seq.index
+    # df.columns = dat_seq.index
+    # Equivalent of df.index
+    index = list(dict_.keys())
+
+    # Equivalent of df.columns
+    columns = list(dict_[index[0]].keys())
     dmat = Tree()
     for t in tqdm(
         membership,
@@ -180,7 +187,7 @@ def generate_network(
                         [tmp_dmatx, pd.DataFrame(_tmpdmat, columns=[di]).T]
                     )
                 dmat[x] = tmp_dmatx.copy()
-            dmat[x] = dmat[x].reindex(index=df.index, columns=df.columns)
+            dmat[x] = dmat[x].reindex(index=dat_seq.index, columns=dat_seq.index)
             dmat[x] = dmat[x].values
 
         dist_mat_list = [dmat[x] for x in dmat if type(dmat[x]) is np.ndarray]
@@ -345,9 +352,11 @@ def generate_network(
             False if len(list(set(i.split("|")))) == 1 else True
             for i in tmp_totaldiststack.index
         ]
+
         tmp_totaldiststack = tmp_totaldiststack[tmp_totaldiststack.keep].drop(
             "keep", axis=1
         )
+
 
         tmp_edge_list = Tree()
         for c in tqdm(
@@ -405,7 +414,7 @@ def generate_network(
         vertice_list = list(out.metadata.index)
     else:
         edge_list_final = None
-        vertice_list = list(df.index)
+        vertice_list = list(index)
     # and finally the vertex list which is super easy
 
     # and now to actually generate the network
