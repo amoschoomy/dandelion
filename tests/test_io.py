@@ -295,3 +295,17 @@ def test_librarytype(airr_generic):
     tmp = ddl.Dandelion(airr_generic, library_type="tr-gd")
     assert tmp.data.shape[0] == 17
     assert tmp.metadata.shape[0] == 15
+
+def test_convert_obsm_airr_to_data(create_testfolder):
+    vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
+    anndata = ddl.utl.to_scirpy(vdj)
+    result = ddl.utl.convert_obsm_airr_to_data(anndata.obsm["airr"])
+    assert result.shape == vdj.data.shape
+    assert result.shape[0] == 26
+
+def test_convert_data_to_obsm_airr(create_testfolder):
+    vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
+    anndata = ddl.utl.to_scirpy(vdj)
+    result = ddl.utl.convert_data_to_obsm_airr(vdj.data)
+    assert len(anndata.obsm["airr"]) == len(result)
+    assert anndata.obsm["airr"].type.show() == result.type.show()
