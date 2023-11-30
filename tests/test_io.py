@@ -66,7 +66,8 @@ def test_readwrite_h5ddl(create_testfolder):
     assert not vdj2.data.np2_length.empty
     assert not vdj2.data.junction_length.empty
     with pytest.raises(ValueError):
-        vdj.write_h5ddl(out_file2, complib="blosc:lz4", compression="blosc:lz4")
+        vdj.write_h5ddl(out_file2, complib="blosc:lz4",
+                        compression="blosc:lz4")
 
 
 @pytest.mark.usefixtures("create_testfolder")
@@ -296,12 +297,14 @@ def test_librarytype(airr_generic):
     assert tmp.data.shape[0] == 17
     assert tmp.metadata.shape[0] == 15
 
+
 def test_convert_obsm_airr_to_data(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
     anndata = ddl.utl.to_scirpy(vdj)
     result = ddl.utl.convert_obsm_airr_to_data(anndata.obsm["airr"])
     assert result.shape == vdj.data.shape
     assert result.shape[0] == 26
+
 
 def test_convert_data_to_obsm_airr(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
