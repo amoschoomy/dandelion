@@ -20,10 +20,8 @@ import json
 import os
 import re
 import shutil
-from mudata import MuData
 import _pickle as cPickle
 import pickle
-import dandelion
 
 pickle.HIGHEST_PROTOCOL = 4
 
