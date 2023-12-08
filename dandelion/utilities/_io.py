@@ -1039,9 +1039,7 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def from_ak(
-    airr: ak.highlevel.Array, **kwargs
-) -> pd.DataFrame:
+def from_ak(airr: ak.highlevel.Array, **kwargs) -> pd.DataFrame:
     """
     Convert an AIRR-formatted array to a pandas DataFrame.
 
