@@ -1040,7 +1040,7 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def convert_obsm_airr_to_data(
-    adata: ak.highlevel.Array, **kwargs
+    airr: ak.highlevel.Array, **kwargs
 ) -> pd.DataFrame:
     from scirpy.io import to_airr_cells
 
@@ -1050,21 +1050,27 @@ def convert_obsm_airr_to_data(
         raise ImportError(
             "Please install dandelion: pip install sc-dandelion."
         ) from None
-    airr_cells = to_airr_cells(adata, **kwargs)
+    d = ak.to_dataframe(airr)
+    d['index'] = d['sequence_id']
+    d.set_index('index', inplace=True)
+    d.rename_axis('sequence_id', inplace=True)
+    d['cell_id'] = d['sequence_id'].str.rsplit('_', n=2).str[0]
+    return d
+    # airr_cells = to_airr_cells(adata, **kwargs)
 
-    contig_dicts = {}
-    for tmp_cell in airr_cells:
-        for i, chain in enumerate(tmp_cell.to_airr_records(), start=1):
-            # dandelion-specific modifications
-            chain.update(
-                {
-                    "sequence_id": f"{tmp_cell.cell_id}_contig_{i}",
-                }
-            )
-            contig_dicts[chain["sequence_id"]] = chain
+    # contig_dicts = {}
+    # for tmp_cell in airr_cells:
+    #     for i, chain in enumerate(tmp_cell.to_airr_records(), start=1):
+    #         # dandelion-specific modifications
+    #         chain.update(
+    #             {
+    #                 "sequence_id": f"{tmp_cell.cell_id}_contig_{i}",
+    #             }
+    #         )
+    #         contig_dicts[chain["sequence_id"]] = chain
 
-    data = pd.DataFrame.from_dict(contig_dicts, orient="index")
-    return data
+    # data = pd.DataFrame.from_dict(contig_dicts, orient="index")
+    # return data
 
 
 def convert_data_to_obsm_airr(
@@ -1192,3 +1198,30 @@ def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
             data.data[h] = None
     airr, obs = convert_data_to_obsm_airr(data.data)
     return _create_anndata(airr, obs)
+
+def from_scirpy_v2(adata: AnnData) -> Dandelion:
+    """
+    Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
+
+    Parameters
+    ----------
+    adata : AnnData
+        `scirpy` initialized `AnnData` object.
+
+    Returns
+    -------
+    Dandelion
+        `Dandelion` object.
+
+    Raises
+    ------
+    ImportError
+        if `scirpy` not installed.
+    """
+    try:
+        import scirpy as ir
+    except:
+        raise ImportError("Please install scirpy. pip install scirpy")
+
+    data = convert_obsm_airr_to_data(adata.obsm["airr"])
+    return Dandelion(data)
