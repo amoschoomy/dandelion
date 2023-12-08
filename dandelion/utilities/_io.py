@@ -1042,35 +1042,23 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
 def convert_obsm_airr_to_data(
     airr: ak.highlevel.Array, **kwargs
 ) -> pd.DataFrame:
-    from scirpy.io import to_airr_cells
+    """
+    Convert an AIRR-formatted array to a pandas DataFrame.
 
-    try:
-        import dandelion as ddl
-    except ImportError:
-        raise ImportError(
-            "Please install dandelion: pip install sc-dandelion."
-        ) from None
-    d = ak.to_dataframe(airr)
-    d['index'] = d['sequence_id']
-    d.set_index('index', inplace=True)
-    d.rename_axis('sequence_id', inplace=True)
-    d['cell_id'] = d['sequence_id'].str.rsplit('_', n=2).str[0]
-    return d
-    # airr_cells = to_airr_cells(adata, **kwargs)
+    Args:
+        airr (ak.highlevel.Array): The AIRR-formatted array to be converted.
+        **kwargs: Additional keyword arguments.
 
-    # contig_dicts = {}
-    # for tmp_cell in airr_cells:
-    #     for i, chain in enumerate(tmp_cell.to_airr_records(), start=1):
-    #         # dandelion-specific modifications
-    #         chain.update(
-    #             {
-    #                 "sequence_id": f"{tmp_cell.cell_id}_contig_{i}",
-    #             }
-    #         )
-    #         contig_dicts[chain["sequence_id"]] = chain
+    Returns:
+        pd.DataFrame: The converted pandas DataFrame.
+    """
 
-    # data = pd.DataFrame.from_dict(contig_dicts, orient="index")
-    # return data
+    df = ak.to_dataframe(airr)
+    df["index"] = df["sequence_id"]
+    df.set_index("index", inplace=True)
+    df.rename_axis("sequence_id", inplace=True)
+    df["cell_id"] = df["sequence_id"].str.rsplit("_", n=2).str[0]
+    return df
 
 
 def convert_data_to_obsm_airr(
@@ -1078,13 +1066,23 @@ def convert_data_to_obsm_airr(
     use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
     infer_locus: bool = True,
     cell_attributes: Collection[str] = "is_cell",
-    include_fields: Any = None,
-    **kwargs,
 ) -> Tuple[ak.Array, pd.DataFrame]:
+    """
+    Convert data from a DataFrame to an AnnData object with AIRR format.
+
+    Args:
+        data (pd.DataFrame): The input DataFrame containing the data.
+        use_umi_count_col (Union[bool, Literal["auto"]], optional): Whether to use the `umi_count` column for duplicate counts. Defaults to "auto".
+        infer_locus (bool, optional): Whether to infer the locus from gene names if not provided. Defaults to True.
+        cell_attributes (Collection[str], optional): Collection of cell attribute fields. Defaults to "is_cell".
+
+    Returns:
+        Tuple[ak.Array, pd.DataFrame]: A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
+    """
     airr_cells = {}
 
     def _decide_use_umi_count_col(chain_dict):
-        """Logic to decide whether or not to use counts form the `umi_counts` column."""
+        """Logic to decide whether or not to use counts from the `umi_counts` column."""
         if (
             "umi_count" in chain_dict
             and use_umi_count_col == "auto"
@@ -1141,10 +1139,29 @@ def convert_data_to_obsm_airr(
 
 
 def _read_airr_rearrangement_df(df: pd.DataFrame):
+    """
+    Convert a pandas DataFrame to a list of dictionaries representing the records.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+
+    Returns:
+        List[Dict]: A list of dictionaries representing the records in the DataFrame.
+    """
     return df.to_dict(orient="records")
 
 
 def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
+    """
+    Create an AnnData object with the given AIRR array and observation DataFrame.
+
+    Parameters:
+        airr (ak.Array): The AIRR array.
+        obs (pd.DataFrame): The observation DataFrame.
+
+    Returns:
+        AnnData: The created AnnData object.
+    """
     obsm = {
         "airr": airr,
     }
@@ -1158,7 +1175,7 @@ def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
     return adata
 
 
-def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
+def to_scirpy_v2(data: Dandelion, transfer: bool = False) -> AnnData:
     """
     Convert a `Dandelion` object to scirpy's format.
 
@@ -1169,8 +1186,6 @@ def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
     transfer : bool
         Whether to execute :func:`dandelion.tl.transfer` to transfer all data
         to the :class:`anndata.AnnData` instance.
-    **kwargs
-        Additional arguments passed to :func:`scirpy.io.read_airr`.
 
     Returns
     -------
@@ -1178,10 +1193,6 @@ def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
         `AnnData` object in the format initialized by `scirpy`.
 
     """
-    try:
-        import scirpy as ir
-    except:
-        raise ImportError("Please install scirpy. pip install scirpy")
 
     if "duplicate_count" not in data.data and "umi_count" in data.data:
         data.data["duplicate_count"] = data.data["umi_count"]
@@ -1197,7 +1208,11 @@ def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
         if h not in data.data:
             data.data[h] = None
     airr, obs = convert_data_to_obsm_airr(data.data)
-    return _create_anndata(airr, obs)
+    adata = _create_anndata(airr, obs)
+    if transfer:
+        tf(adata, data)  # need to make a version that is not so verbose?
+    return adata
+
 
 def from_scirpy_v2(adata: AnnData) -> Dandelion:
     """
@@ -1213,15 +1228,7 @@ def from_scirpy_v2(adata: AnnData) -> Dandelion:
     Dandelion
         `Dandelion` object.
 
-    Raises
-    ------
-    ImportError
-        if `scirpy` not installed.
     """
-    try:
-        import scirpy as ir
-    except:
-        raise ImportError("Please install scirpy. pip install scirpy")
 
     data = convert_obsm_airr_to_data(adata.obsm["airr"])
     return Dandelion(data)
