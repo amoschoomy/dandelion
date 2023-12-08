@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 from dandelion.utilities._utilities import *
 from dandelion.utilities._core import *
-from typing import Union, Optional, List
+from dandelion.tools._tools import transfer as tf
+from scirpy.io import AirrCell
+from scirpy.io._io import _infer_locus_from_gene_names
+
+from typing import Any, Collection, Union, Optional, List
 from scanpy import logging as logg
 from pathlib import Path
 from collections import defaultdict, OrderedDict
@@ -16,9 +20,10 @@ import json
 import os
 import re
 import shutil
-
+from mudata import MuData
 import _pickle as cPickle
 import pickle
+import dandelion
 
 pickle.HIGHEST_PROTOCOL = 4
 
@@ -1034,28 +1039,156 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def convert_obsm_airr_to_data(data: ak.highlevel.Array) -> pd.DataFrame:
+def convert_obsm_airr_to_data(
+    adata: ak.highlevel.Array, **kwargs
+) -> pd.DataFrame:
+    from scirpy.io import to_airr_cells
 
-    # or maybe inplace replace class attributes?
-    d = ak.to_dataframe(data)
-    d['index'] = d['sequence_id']
-    d.set_index('index', inplace=True)
-    d.rename_axis('sequence_id', inplace=True)
-    d['cell_id'] = d['sequence_id'].str.rsplit('_', n=2).str[0]
-    return d
+    try:
+        import dandelion as ddl
+    except ImportError:
+        raise ImportError(
+            "Please install dandelion: pip install sc-dandelion."
+        ) from None
+    airr_cells = to_airr_cells(adata, **kwargs)
+
+    contig_dicts = {}
+    for tmp_cell in airr_cells:
+        for i, chain in enumerate(tmp_cell.to_airr_records(), start=1):
+            # dandelion-specific modifications
+            chain.update(
+                {
+                    "sequence_id": f"{tmp_cell.cell_id}_contig_{i}",
+                }
+            )
+            contig_dicts[chain["sequence_id"]] = chain
+
+    data = pd.DataFrame.from_dict(contig_dicts, orient="index")
+    return data
 
 
-def convert_data_to_obsm_airr(data: pd.DataFrame) -> ak.highlevel.Array:
-    df = data.copy()
-    for col in df.columns:
-        df.loc[df[col] == "unassigned", col] = None
-    # Group the DataFrame by cell_id and convert each group to a list of dictionaries
-    grouped = df.groupby('cell_id').apply(
-        lambda x: x.drop('cell_id', axis=1).to_dict('records'))
+def convert_data_to_obsm_airr(
+    data: pd.DataFrame,
+    use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
+    infer_locus: bool = True,
+    cell_attributes: Collection[str] = "is_cell",
+    include_fields: Any = None,
+    **kwargs,
+) -> Tuple[ak.Array, pd.DataFrame]:
+    airr_cells = {}
 
-    # Convert the Series of lists to a list of lists
-    list_of_lists = grouped.tolist()
+    def _decide_use_umi_count_col(chain_dict):
+        """Logic to decide whether or not to use counts form the `umi_counts` column."""
+        if (
+            "umi_count" in chain_dict
+            and use_umi_count_col == "auto"
+            and "duplicate_count" not in chain_dict
+        ):
+            logger.warning("Renaming the non-standard `umi_count` column to `duplicate_count`. ")  # type: ignore
+            return True
+        elif use_umi_count_col is True:
+            return True
+        else:
+            return False
 
-    # Convert the list of lists to an Awkward Array
-    array = ak.Array(list_of_lists)
-    return array
+    iterator = _read_airr_rearrangement_df(data)
+
+    for chain_dict in iterator:
+        cell_id = chain_dict.pop("cell_id")
+        chain_dict.update(
+            {
+                req: None
+                for req in RearrangementSchema.required
+                if req not in chain_dict
+            }
+        )
+        try:
+            tmp_cell = airr_cells[cell_id]
+        except KeyError:
+            tmp_cell = AirrCell(
+                cell_id=cell_id,
+                cell_attribute_fields=cell_attributes,
+            )
+            airr_cells[cell_id] = tmp_cell
+
+        if _decide_use_umi_count_col(chain_dict):
+            chain_dict["duplicate_count"] = RearrangementSchema.to_int(
+                chain_dict.pop("umi_count")
+            )
+
+        if infer_locus and "locus" not in chain_dict:
+            chain_dict["locus"] = _infer_locus_from_gene_names(chain_dict)
+
+        tmp_cell.add_chain(chain_dict)
+    import awkward as ak
+
+    # data frame from cell-level attributes
+    obs = pd.DataFrame.from_records(iter(airr_cells.values())).set_index(
+        "cell_id"
+    )
+    # AnnData requires indices to be strings
+    # A range index would automatically be converted by AnnData, but then the `obsm` object doesn't
+    # match the index anymore.
+    obs.index = obs.index.astype(str)
+    return ak.Array(c.chains for c in airr_cells.values()), obs
+    # return _create_anndata(airr_cells.values())
+
+
+def _read_airr_rearrangement_df(df: pd.DataFrame):
+    return df.to_dict(orient="records")
+
+
+def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
+    obsm = {
+        "airr": airr,
+    }
+
+    adata = AnnData(
+        X=None,
+        obs=obs,
+        obsm=obsm,
+    )
+
+    return adata
+
+
+def to_scirpy_v2(data: Dandelion, **kwargs) -> AnnData:
+    """
+    Convert a `Dandelion` object to scirpy's format.
+
+    Parameters
+    ----------
+    data : Dandelion
+        `Dandelion` object
+    transfer : bool
+        Whether to execute :func:`dandelion.tl.transfer` to transfer all data
+        to the :class:`anndata.AnnData` instance.
+    **kwargs
+        Additional arguments passed to :func:`scirpy.io.read_airr`.
+
+    Returns
+    -------
+    AnnData
+        `AnnData` object in the format initialized by `scirpy`.
+
+    """
+    try:
+        import scirpy as ir
+    except:
+        raise ImportError("Please install scirpy. pip install scirpy")
+
+    if "duplicate_count" not in data.data and "umi_count" in data.data:
+        data.data["duplicate_count"] = data.data["umi_count"]
+    for h in [
+        "sequence",
+        "rev_comp",
+        "sequence_alignment",
+        "germline_alignment",
+        "v_cigar",
+        "d_cigar",
+        "j_cigar",
+    ]:
+        if h not in data.data:
+            data.data[h] = None
+    airr, obs = convert_data_to_obsm_airr(data.data)
+    return _create_anndata(airr, obs)
