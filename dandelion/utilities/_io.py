@@ -1039,7 +1039,7 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def convert_obsm_airr_to_data(
+def from_ak(
     airr: ak.highlevel.Array, **kwargs
 ) -> pd.DataFrame:
     """
@@ -1061,7 +1061,7 @@ def convert_obsm_airr_to_data(
     return df
 
 
-def convert_data_to_obsm_airr(
+def to_ak(
     data: pd.DataFrame,
     use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
     infer_locus: bool = True,
@@ -1175,7 +1175,7 @@ def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
     return adata
 
 
-def to_scirpy_v2(data: Dandelion, transfer: bool = False) -> AnnData:
+def to_scirpy(data: Dandelion, transfer: bool = False) -> AnnData:
     """
     Convert a `Dandelion` object to scirpy's format.
 
@@ -1207,14 +1207,14 @@ def to_scirpy_v2(data: Dandelion, transfer: bool = False) -> AnnData:
     ]:
         if h not in data.data:
             data.data[h] = None
-    airr, obs = convert_data_to_obsm_airr(data.data)
+    airr, obs = to_ak(data.data)
     adata = _create_anndata(airr, obs)
     if transfer:
         tf(adata, data)  # need to make a version that is not so verbose?
     return adata
 
 
-def from_scirpy_v2(adata: AnnData) -> Dandelion:
+def from_scirpy(adata: AnnData) -> Dandelion:
     """
     Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
 
@@ -1230,5 +1230,5 @@ def from_scirpy_v2(adata: AnnData) -> Dandelion:
 
     """
 
-    data = convert_obsm_airr_to_data(adata.obsm["airr"])
+    data = from_ak(adata.obsm["airr"])
     return Dandelion(data)

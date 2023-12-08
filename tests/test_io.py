@@ -299,10 +299,9 @@ def test_librarytype(airr_generic):
 
 def test_convert_obsm_airr_to_data(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
-    # anndata = ddl.utl.to_scirpy_v2(vdj)
-    anndata = ddl.utl.to_scirpy_v2(vdj)
+    anndata = ddl.utl.to_scirpy(vdj)
 
-    result = ddl.utl.convert_obsm_airr_to_data(anndata.obsm["airr"])
+    result = ddl.utl.from_ak(anndata.obsm["airr"])
 
     assert result.shape == vdj.data.shape
     assert result.shape[0] == 26
@@ -310,8 +309,8 @@ def test_convert_obsm_airr_to_data(create_testfolder):
 
 def test_convert_data_to_obsm_airr(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
-    anndata = ddl.utl.to_scirpy_v2(vdj)
-    obsm_airr, obs = ddl.utl.convert_data_to_obsm_airr(vdj.data)
+    anndata = ddl.utl.to_scirpy(vdj)
+    obsm_airr, obs = ddl.utl.to_ak(vdj.data)
     assert len(anndata.obsm["airr"]) == len(obsm_airr)
     assert anndata.obsm["airr"].type.show() == obsm_airr.type.show()
     assert anndata.obs.shape == obs.shape
@@ -326,14 +325,14 @@ def test_to_scirpy_v2(create_testfolder, annotation_10x, fasta_10x):
     vdj = ddl.read_10x_vdj(create_testfolder)
     assert vdj.data.shape[0] == 35
     assert vdj.metadata.shape[0] == 15
-    adata = ddl.utl.to_scirpy_v2(vdj)
+    adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
     ddl.utl.write_fasta(fasta_dict=fasta_10x, out_fasta=fasta_file)
     vdj = ddl.read_10x_vdj(create_testfolder)
     assert vdj.data.shape[0] == 35
     assert vdj.metadata.shape[0] == 15
     assert not vdj.data.sequence.empty
-    adata = ddl.utl.to_scirpy_v2(vdj)
+    adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
     os.remove(fasta_file)
     vdjx = ddl.from_scirpy(adata)
@@ -349,15 +348,15 @@ def test_from_scirpy_v2(create_testfolder, annotation_10x, fasta_10x):
     vdj = ddl.read_10x_vdj(create_testfolder)
     assert vdj.data.shape[0] == 35
     assert vdj.metadata.shape[0] == 15
-    adata = ddl.utl.to_scirpy_v2(vdj)
+    adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
     ddl.utl.write_fasta(fasta_dict=fasta_10x, out_fasta=fasta_file)
     vdj = ddl.read_10x_vdj(create_testfolder)
     assert vdj.data.shape[0] == 35
     assert vdj.metadata.shape[0] == 15
     assert not vdj.data.sequence.empty
-    adata = ddl.utl.to_scirpy_v2(vdj)
+    adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
     os.remove(fasta_file)
-    vdjx = ddl.utl.from_scirpy_v2(adata)
+    vdjx = ddl.utl.from_scirpy(adata)
     assert vdjx.data.shape[0] == 35
