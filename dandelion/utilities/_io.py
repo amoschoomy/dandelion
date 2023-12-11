@@ -1182,7 +1182,7 @@ def _create_mudata(adata: AnnData):
     Returns:
         MuData: The created MuData object.
     """
-    return MuData({"airr":adata})
+    return MuData({"airr": adata})
 
 
 def to_scirpy(
@@ -1228,7 +1228,7 @@ def to_scirpy(
     return adata
 
 
-def from_scirpy(data: Union[AnnData,MuData]) -> Dandelion:
+def from_scirpy(data: Union[AnnData, MuData]) -> Dandelion:
     """
     Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
 
