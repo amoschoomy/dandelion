@@ -4,6 +4,7 @@ from dandelion.utilities._core import *
 from dandelion.tools._tools import transfer as tf
 from scirpy.io import AirrCell
 from scirpy.io._io import _infer_locus_from_gene_names
+from mudata import MuData
 
 from typing import Any, Collection, Union, Optional, List
 from scanpy import logging as logg
@@ -1171,7 +1172,22 @@ def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
     return adata
 
 
-def to_scirpy(data: Dandelion, transfer: bool = False) -> AnnData:
+def _create_mudata(adata: AnnData):
+    """
+    Create a MuData object from an AnnData object.
+
+    Parameters:
+        adata (AnnData): The AnnData object.
+
+    Returns:
+        MuData: The created MuData object.
+    """
+    return MuData({"airr":adata})
+
+
+def to_scirpy(
+    data: Dandelion, transfer: bool = False, anndata: bool = True
+) -> Union[AnnData, MuData]:
     """
     Convert a `Dandelion` object to scirpy's format.
 
@@ -1207,10 +1223,12 @@ def to_scirpy(data: Dandelion, transfer: bool = False) -> AnnData:
     adata = _create_anndata(airr, obs)
     if transfer:
         tf(adata, data)  # need to make a version that is not so verbose?
+    if not anndata:
+        return _create_mudata(adata)
     return adata
 
 
-def from_scirpy(adata: AnnData) -> Dandelion:
+def from_scirpy(data: Union[AnnData,MuData]) -> Dandelion:
     """
     Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
 
@@ -1226,5 +1244,7 @@ def from_scirpy(adata: AnnData) -> Dandelion:
 
     """
 
-    data = from_ak(adata.obsm["airr"])
+    if isinstance(data, MuData):
+        data = data.mod["airr"]
+    data = from_ak(data.obsm["airr"])
     return Dandelion(data)

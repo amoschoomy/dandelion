@@ -334,29 +334,10 @@ def test_to_scirpy_v2(create_testfolder, annotation_10x, fasta_10x):
     assert not vdj.data.sequence.empty
     adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
+    mdata = ddl.utl.to_scirpy(vdj,anndata=False)
+    assert mdata.mod["airr"].shape[0] == 15
     os.remove(fasta_file)
     vdjx = ddl.from_scirpy(adata)
     assert vdjx.data.shape[0] == 35
-
-
-@pytest.mark.usefixtures("create_testfolder", "annotation_10x", "fasta_10x")
-def test_from_scirpy_v2(create_testfolder, annotation_10x, fasta_10x):
-    """test_from_scirpy"""
-    fasta_file = create_testfolder / "test_filtered_contig.fasta"
-    annot_file = create_testfolder / "test_filtered_contig_annotations.csv"
-    annotation_10x.to_csv(annot_file, index=False)
-    vdj = ddl.read_10x_vdj(create_testfolder)
-    assert vdj.data.shape[0] == 35
-    assert vdj.metadata.shape[0] == 15
-    adata = ddl.utl.to_scirpy(vdj)
-    assert adata.obs.shape[0] == 15
-    ddl.utl.write_fasta(fasta_dict=fasta_10x, out_fasta=fasta_file)
-    vdj = ddl.read_10x_vdj(create_testfolder)
-    assert vdj.data.shape[0] == 35
-    assert vdj.metadata.shape[0] == 15
-    assert not vdj.data.sequence.empty
-    adata = ddl.utl.to_scirpy(vdj)
-    assert adata.obs.shape[0] == 15
-    os.remove(fasta_file)
-    vdjx = ddl.utl.from_scirpy(adata)
+    vdjx = ddl.from_scirpy(mdata)
     assert vdjx.data.shape[0] == 35
