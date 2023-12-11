@@ -1231,7 +1231,7 @@ def to_scirpy(
     """
 
     if "duplicate_count" not in data.data and "umi_count" in data.data:
-            data.data["duplicate_count"] = data.data["umi_count"]
+        data.data["duplicate_count"] = data.data["umi_count"]
     for h in [
         "sequence",
         "rev_comp",
