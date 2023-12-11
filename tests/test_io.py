@@ -334,7 +334,7 @@ def test_to_scirpy_v2(create_testfolder, annotation_10x, fasta_10x):
     assert not vdj.data.sequence.empty
     adata = ddl.utl.to_scirpy(vdj)
     assert adata.obs.shape[0] == 15
-    mdata = ddl.utl.to_scirpy(vdj, anndata=False)
+    mdata = ddl.utl.to_scirpy(vdj, to_mudata=True)
     assert mdata.mod["airr"].shape[0] == 15
     os.remove(fasta_file)
     vdjx = ddl.from_scirpy(adata)

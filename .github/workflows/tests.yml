@@ -166,8 +166,8 @@ jobs:
 
       - name: Install Dandelion
         run: |
-          python -m pip install .
-          python -m pip install palantir
+          python -m pip install ".[scirpy]"
+          python -m pip install palantir==1.0.1
           python -m pip install git+https://github.com/emdann/milopy.git
 
       - name: Install ubuntu R dependencies

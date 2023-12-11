@@ -142,8 +142,8 @@ jobs:
 
       - name: Install Dandelion
         run: |
-          python -m pip install git+https://github.com/emdann/milopy.git palantir
-          python -m pip install .
+          python -m pip install git+https://github.com/emdann/milopy.git palantir==1.0.1
+          python -m pip install ".[scirpy]"
 
       - name: Install ubuntu R dependencies
         if: matrix.config.os == 'ubuntu-latest'

@@ -2,16 +2,12 @@
 from dandelion.utilities._utilities import *
 from dandelion.utilities._core import *
 from dandelion.tools._tools import transfer as tf
-from scirpy.io import AirrCell
-from scirpy.io._io import _infer_locus_from_gene_names
-from mudata import MuData
 
 from typing import Any, Collection, Union, Optional, List
 from scanpy import logging as logg
 from pathlib import Path
 from collections import defaultdict, OrderedDict
 from anndata import AnnData
-import awkward as ak
 import pandas as pd
 import numpy as np
 import networkx as nx
@@ -1038,7 +1034,7 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def from_ak(airr: ak.highlevel.Array, **kwargs) -> pd.DataFrame:
+def from_ak(airr: "Array") -> pd.DataFrame:
     """
     Convert an AIRR-formatted array to a pandas DataFrame.
 
@@ -1050,11 +1046,19 @@ def from_ak(airr: ak.highlevel.Array, **kwargs) -> pd.DataFrame:
         pd.DataFrame: The converted pandas DataFrame.
     """
 
+    import awkward as ak
+
     df = ak.to_dataframe(airr)
-    df["index"] = df["sequence_id"]
-    df.set_index("index", inplace=True)
-    df.rename_axis("sequence_id", inplace=True)
-    df["cell_id"] = df["sequence_id"].str.rsplit("_", n=2).str[0]
+    # df["index"] = df["sequence_id"]
+    # df.set_index("index", inplace=True)
+    # df.rename_axis("sequence_id", inplace=True)
+    if "sequence_id" in df.columns:
+        df.set_index("sequence_id", drop=False, inplace=True)
+    if "cell_id" not in df.columns:
+        df["cell_id"] = [c.split("_contig")[0] for c in df["sequence_id"]]
+    else:
+        raise KeyError("'sequence_id' not found in columns of input")
+    # df["cell_id"] = df["sequence_id"].str.split("_contig").str[0]
     return df
 
 
@@ -1063,7 +1067,7 @@ def to_ak(
     use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
     infer_locus: bool = True,
     cell_attributes: Collection[str] = "is_cell",
-) -> Tuple[ak.Array, pd.DataFrame]:
+) -> Tuple["Array", pd.DataFrame]:
     """
     Convert data from a DataFrame to an AnnData object with AIRR format.
 
@@ -1074,7 +1078,7 @@ def to_ak(
         cell_attributes (Collection[str], optional): Collection of cell attribute fields. Defaults to "is_cell".
 
     Returns:
-        Tuple[ak.Array, pd.DataFrame]: A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
+        Tuple[Array, pd.DataFrame]: A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
     """
     airr_cells = {}
 
@@ -1106,6 +1110,8 @@ def to_ak(
         try:
             tmp_cell = airr_cells[cell_id]
         except KeyError:
+            from scirpy.io import AirrCell
+
             tmp_cell = AirrCell(
                 cell_id=cell_id,
                 cell_attribute_fields=cell_attributes,
@@ -1118,10 +1124,11 @@ def to_ak(
             )
 
         if infer_locus and "locus" not in chain_dict:
+            from scirpy.io._io import _infer_locus_from_gene_names
+
             chain_dict["locus"] = _infer_locus_from_gene_names(chain_dict)
 
         tmp_cell.add_chain(chain_dict)
-    import awkward as ak
 
     # data frame from cell-level attributes
     obs = pd.DataFrame.from_records(iter(airr_cells.values())).set_index(
@@ -1131,8 +1138,9 @@ def to_ak(
     # A range index would automatically be converted by AnnData, but then the `obsm` object doesn't
     # match the index anymore.
     obs.index = obs.index.astype(str)
+    import awkward as ak
+
     return ak.Array(c.chains for c in airr_cells.values()), obs
-    # return _create_anndata(airr_cells.values())
 
 
 def _read_airr_rearrangement_df(df: pd.DataFrame):
@@ -1148,66 +1156,82 @@ def _read_airr_rearrangement_df(df: pd.DataFrame):
     return df.to_dict(orient="records")
 
 
-def _create_anndata(airr: ak.Array, obs: pd.DataFrame):
+def _create_anndata(
+    airr: "Array", obs: pd.DataFrame, adata: Optional[AnnData] = None
+) -> AnnData:
     """
-    Create an AnnData object with the given AIRR array and observation DataFrame.
+    Create an AnnData object with the given AIRR array and observation data.
 
     Parameters:
-        airr (ak.Array): The AIRR array.
-        obs (pd.DataFrame): The observation DataFrame.
+        airr (Array): The AIRR array.
+        obs (pd.DataFrame): The observation data.
+        adata (Optional[AnnData]): An existing AnnData object to update. If None, a new AnnData object will be created.
 
     Returns:
-        AnnData: The created AnnData object.
+        AnnData: The AnnData object with the AIRR array and observation data.
     """
-    obsm = {
-        "airr": airr,
-    }
 
-    adata = AnnData(
-        X=None,
-        obs=obs,
-        obsm=obsm,
-    )
+    obsm = {"airr": airr}
+
+    if adata is None:
+        adata = AnnData(X=None, obs=obs, obsm=obsm)
+    else:
+        adata.obsm = obsm if adata.obsm is None else adata.obsm
+        adata.obsm["airr"] = airr
 
     return adata
 
 
-def _create_mudata(adata: AnnData):
+def _create_mudata(
+    gex: AnnData, adata: AnnData, key: Tuple[str, str] = ("gex", "airr")
+) -> "MuData":
     """
-    Create a MuData object from an AnnData object.
+    Create a MuData object from the given AnnData objects.
 
     Parameters:
-        adata (AnnData): The AnnData object.
+        gex (AnnData): The AnnData object containing gene expression data.
+        adata (AnnData): The AnnData object containing additional data.
+        key (Tuple[str, str], optional): The keys to use for the gene expression and additional data in the MuData object. Defaults to ("gex", "airr").
 
     Returns:
         MuData: The created MuData object.
+
+    Raises:
+        ImportError: If the mudata package is not installed.
     """
-    return MuData({"airr": adata})
+
+    try:
+        from mudata import MuData
+    except ImportError:
+        raise ImportError("Please install mudata. pip install mudata")
+    if gex is not None:
+        return MuData({key[0]: gex, key[1]: adata})
+    return MuData({key[1]: adata})
 
 
 def to_scirpy(
-    data: Dandelion, transfer: bool = False, anndata: bool = True
-) -> Union[AnnData, MuData]:
+    data: Dandelion,
+    transfer: bool = False,
+    to_mudata: bool = False,
+    gex: Optional[AnnData] = None,
+    key: Tuple[str, str] = ("gex", "airr"),
+) -> Union[AnnData, "MuData"]:
     """
-    Convert a `Dandelion` object to scirpy's format.
+    Convert Dandelion data to scirpy-compatible format.
 
-    Parameters
-    ----------
-    data : Dandelion
-        `Dandelion` object
-    transfer : bool
-        Whether to execute :func:`dandelion.tl.transfer` to transfer all data
-        to the :class:`anndata.AnnData` instance.
+    Args:
+        data (Dandelion): The Dandelion object containing the data to be converted.
+        transfer (bool, optional): Whether to transfer additional information from Dandelion to the converted data. Defaults to False.
+        to_mudata (bool, optional): Whether to convert the data to MuData format instead of AnnData. Defaults to False.
+        anndata (Optional[AnnData], optional): An existing AnnData object to be used as the base for the converted data. Defaults to None.
+        key (Tuple[str, str], optional): A tuple specifying the keys for the 'gex' and 'airr' fields in the converted data. Defaults to ("gex", "airr").
 
-    Returns
-    -------
-    AnnData
-        `AnnData` object in the format initialized by `scirpy`.
-
+    Returns:
+        Union[AnnData, "MuData"]: The converted data in either AnnData or MuData format.
     """
 
     if "duplicate_count" not in data.data and "umi_count" in data.data:
-        data.data["duplicate_count"] = data.data["umi_count"]
+            data.data["duplicate_count"] = data.data["umi_count"]
     for h in [
         "sequence",
         "rev_comp",
@@ -1221,30 +1245,27 @@ def to_scirpy(
             data.data[h] = None
     airr, obs = to_ak(data.data)
     adata = _create_anndata(airr, obs)
+
     if transfer:
         tf(adata, data)  # need to make a version that is not so verbose?
-    if not anndata:
-        return _create_mudata(adata)
+
+    if to_mudata:
+        return _create_mudata(gex, adata, key)
     return adata
 
 
-def from_scirpy(data: Union[AnnData, MuData]) -> Dandelion:
+def from_scirpy(data: Union[AnnData, "MuData"]) -> Dandelion:
     """
-    Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
+    Convert data from scirpy format to Dandelion format.
 
-    Parameters
-    ----------
-    adata : AnnData
-        `scirpy` initialized `AnnData` object.
+    Parameters:
+        data (Union[AnnData, "MuData"]): The input data in scirpy format.
 
-    Returns
-    -------
-    Dandelion
-        `Dandelion` object.
-
+    Returns:
+        Dandelion: The converted data in Dandelion format.
     """
 
-    if isinstance(data, MuData):
+    if not isinstance(data, AnnData):
         data = data.mod["airr"]
     data = from_ak(data.obsm["airr"])
     return Dandelion(data)
