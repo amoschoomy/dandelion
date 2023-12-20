@@ -47,7 +47,6 @@ def test_chain_qc(
     """test chain qc"""
     vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
     adata = to_scirpy(vdj)
-    ir.pp.index_chains(adata)
     ir.tl.chain_qc(adata)
     vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
     adata2 = to_scirpy(vdj2)
@@ -62,11 +61,9 @@ def test_chain_qc_mudata(
 
     vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
     mudata = to_scirpy(vdj, to_mudata=True)
-    ir.pp.index_chains(mudata)
     ir.tl.chain_qc(mudata)
     vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
     mudata2 = to_scirpy(vdj2)
-    ir.pp.index_chains(mudata2)
     ir.tl.chain_qc(mudata2, inplace=False)
 
 
