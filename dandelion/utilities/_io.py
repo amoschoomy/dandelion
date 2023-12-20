@@ -1049,16 +1049,12 @@ def from_ak(airr: "Array") -> pd.DataFrame:
     import awkward as ak
 
     df = ak.to_dataframe(airr)
-    # df["index"] = df["sequence_id"]
-    # df.set_index("index", inplace=True)
-    # df.rename_axis("sequence_id", inplace=True)
     if "sequence_id" in df.columns:
         df.set_index("sequence_id", drop=False, inplace=True)
     if "cell_id" not in df.columns:
         df["cell_id"] = [c.split("_contig")[0] for c in df["sequence_id"]]
     else:
         raise KeyError("'sequence_id' not found in columns of input")
-    # df["cell_id"] = df["sequence_id"].str.split("_contig").str[0]
     return df
 
 
@@ -1089,7 +1085,7 @@ def to_ak(
             and use_umi_count_col == "auto"
             and "duplicate_count" not in chain_dict
         ):
-            logger.warning("Renaming the non-standard `umi_count` column to `duplicate_count`. ")  # type: ignore
+            # logger.warning("Renaming the non-standard `umi_count` column to `duplicate_count`. ")  # type: ignore
             return True
         elif use_umi_count_col is True:
             return True

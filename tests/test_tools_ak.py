@@ -4,9 +4,9 @@ import json
 import pandas as pd
 import dandelion as ddl
 import scanpy as sc
+from dandelion.utilities._io import to_ak, from_ak, to_scirpy
 
 
-# convert from airr_Reannotate to airr, replicate this, run scirpy chainqc, test mudata as well
 @pytest.mark.usefixtures(
     "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
 )
@@ -14,7 +14,11 @@ def test_setup(
     create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
 ):
     """test setup"""
+    awk, _ = to_ak(airr_reannotated)
+    airr_reannotated = from_ak(awk)
     vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
+    awk, _ = to_ak(airr_reannotated2)
+    airr_reannotated2 = from_ak(awk)
     vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
     assert airr_reannotated.shape[0] == 8
     assert airr_reannotated2.shape[0] == 15
@@ -30,6 +34,39 @@ def test_setup(
     assert len(list(create_testfolder.iterdir())) == 2
     vdj3 = ddl.read_h5ddl(f)
     assert vdj3.metadata is not None
+
+
+@pytest.mark.usefixtures(
+    "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
+)
+def test_chain_qc(
+    create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
+):
+    import scirpy as ir
+
+    """test chain qc"""
+    vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
+    adata = to_scirpy(vdj)
+    ir.pp.index_chains(adata)
+    ir.tl.chain_qc(adata)
+    vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
+    adata2 = to_scirpy(vdj2)
+    ir.tl.chain_qc(adata2, inplace=False)
+
+
+def test_chain_qc_mudata(
+    create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
+):
+    """test chain qc on mudata"""
+    import scirpy as ir
+    vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
+    mudata = to_scirpy(vdj, to_mudata=True)
+    ir.pp.index_chains(mudata)
+    ir.tl.chain_qc(mudata)
+    vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
+    mudata2 = to_scirpy(vdj2)
+    ir.pp.index_chains(mudata2)
+    ir.tl.chain_qc(mudata2, inplace=False)
 
 
 @pytest.mark.usefixtures("create_testfolder")
