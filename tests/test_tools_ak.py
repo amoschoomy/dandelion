@@ -59,6 +59,7 @@ def test_chain_qc_mudata(
 ):
     """test chain qc on mudata"""
     import scirpy as ir
+
     vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
     mudata = to_scirpy(vdj, to_mudata=True)
     ir.pp.index_chains(mudata)
