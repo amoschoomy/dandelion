@@ -1140,10 +1140,18 @@ def to_ak(
 
 
 def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
-    """Like airr.read_rearrangement, but from a data frame instead of a tsv file.
-
-    Provides RearrangementReader with an alternative iterator to its csv.DictReader
     """
+    Reads a DataFrame containing AIRR rearrangement data and returns a PdRearrangementReader object.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the AIRR rearrangement data.
+        validate (bool, optional): Whether to validate the data. Defaults to False.
+        debug (bool, optional): Whether to enable debug mode. Defaults to False.
+
+    Returns:
+        PdRearrangementReader: The PdRearrangementReader object for reading the AIRR rearrangement data.
+    """
+
     import csv
     from airr.io import RearrangementReader
 
