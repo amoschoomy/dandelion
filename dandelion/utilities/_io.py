@@ -1169,6 +1169,15 @@ def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
             return next(self.reader)
 
     class PdRearrangementReader(RearrangementReader):
+        """
+        A class for reading rearrangement data from a Pandas DataFrame.
+
+        Args:
+            df (pandas.DataFrame): The DataFrame containing the rearrangement data.
+            *args: Additional positional arguments to be passed to the base class constructor.
+            **kwargs: Additional keyword arguments to be passed to the base class constructor.
+        """
+
         def __init__(self, df, *args, **kwargs):
             super().__init__(os.devnull, *args, **kwargs)
             self.dict_reader = PdDictReader(df)
