@@ -102,12 +102,14 @@ def test_plot_stackedbar2(create_testfolder, norm):
         clone_key="clone_id",
         title="test",
         xtick_rotation=90,
+        normalize=norm,
     )
     assert ax is not None
     ax = ddl.pl.stackedbarplot(
         adata,
         color="v_call_genotyped_VDJ",
         groupby="isotype",
+        normalize=norm,
     )
     assert ax is not None
 

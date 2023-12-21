@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 import json
-import sys
 import pytest
 
 import dandelion as ddl
 import pandas as pd
 import scanpy as sc
+import scirpy as ir
 
 from dandelion.utilities._io import to_ak, from_ak, to_scirpy, from_scirpy
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures(
-    "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
+    "create_testfolder",
+    "airr_reannotated",
+    "airr_reannotated2",
+    "dummy_adata",
 )
 def test_setup(
     create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
@@ -43,18 +42,14 @@ def test_setup(
     assert vdj3.metadata is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures(
-    "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
+    "airr_reannotated",
+    "airr_reannotated2",
 )
 def test_chain_qc(
-    create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
+    airr_reannotated,
+    airr_reannotated2,
 ):
-    import scirpy as ir
-
     """test chain qc"""
     vdj = ddl.Dandelion(airr_reannotated)
     adata = to_scirpy(vdj)
@@ -67,16 +62,15 @@ def test_chain_qc(
     ir.tl.chain_qc(adata2)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
+@pytest.mark.usefixtures(
+    "airr_reannotated",
+    "airr_reannotated2",
 )
 def test_chain_qc_mudata(
-    create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
+    airr_reannotated,
+    airr_reannotated2,
 ):
     """test chain qc on mudata"""
-    import scirpy as ir
-
     vdj = ddl.Dandelion(airr_reannotated)
     mdata = to_scirpy(vdj, to_mudata=True)
     vdj = from_scirpy(mdata)
@@ -87,10 +81,28 @@ def test_chain_qc_mudata(
     ir.tl.chain_qc(mdata2)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
+@pytest.mark.usefixtures(
+    "airr_reannotated",
+    "dummy_adata",
 )
+@pytest.mark.parametrize(
+    "mudata_mode",
+    [
+        False,
+        True,
+    ],
+)
+def test_chain_qc_with_gex_adata(
+    airr_reannotated,
+    dummy_adata,
+    mudata_mode,
+):
+    vdj = ddl.Dandelion(airr_reannotated)
+    mdata = to_scirpy(vdj, to_mudata=mudata_mode, gex_adata=dummy_adata)
+    vdj = from_scirpy(mdata)
+    ir.tl.chain_qc(mdata)
+
+
 @pytest.mark.usefixtures("create_testfolder")
 def test_find_clones(create_testfolder):
     """test find clones"""
@@ -110,10 +122,6 @@ def test_find_clones(create_testfolder):
     vdj2.write_h5ddl(f2)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_clone_size(create_testfolder):
     """test clone_size"""
@@ -125,10 +133,6 @@ def test_clone_size(create_testfolder):
     assert not vdj.metadata.clone_id_size.empty
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
     "resample,expected", [pytest.param(None, 7), pytest.param(3, 3)]
@@ -158,10 +162,6 @@ def test_generate_network(create_testfolder, resample, expected):
     assert vdj.layout is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_find_clones_key(create_testfolder):
     """test different clone key"""
@@ -175,10 +175,6 @@ def test_find_clones_key(create_testfolder):
     assert vdj.graph is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder", "dummy_adata2")
 def test_transfer(create_testfolder, dummy_adata2):
     """test transfer"""
@@ -194,10 +190,6 @@ def test_transfer(create_testfolder, dummy_adata2):
     dummy_adata2.write_h5ad(f2)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_gini(create_testfolder):
     """test gini"""
@@ -219,10 +211,6 @@ def test_diversity_gini(create_testfolder):
     assert isinstance(tmp, pd.DataFrame)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_gini2(create_testfolder):
     """test gini 2"""
@@ -235,10 +223,6 @@ def test_diversity_gini2(create_testfolder):
     assert isinstance(tmp, pd.DataFrame)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize("resample", [True, False])
 def test_diversity_chao(create_testfolder, resample):
@@ -264,10 +248,6 @@ def test_diversity_chao(create_testfolder, resample):
     assert isinstance(tmp, pd.DataFrame)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
     "method,diversitykey",
@@ -291,10 +271,6 @@ def test_diversity_anndata(create_testfolder, method, diversitykey):
         assert "test_diversity_key" in adata.uns
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
     "resample,normalize",
@@ -336,10 +312,6 @@ def test_diversity_shannon(create_testfolder, resample, normalize):
     assert isinstance(tmp, pd.DataFrame)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder", "json_10x_cr6", "dummy_adata_cr6")
 def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
     """test setup 2"""
@@ -359,10 +331,6 @@ def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
     adata.write_h5ad(f2)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction(create_testfolder):
     """test rarefaction"""
@@ -378,10 +346,6 @@ def test_diversity_rarefaction(create_testfolder):
     assert p is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction2(create_testfolder):
     """test rarefaction2"""
@@ -396,10 +360,6 @@ def test_diversity_rarefaction2(create_testfolder):
     assert p is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction3(create_testfolder):
     """test rarefaction3"""
@@ -418,10 +378,6 @@ def test_diversity_rarefaction3(create_testfolder):
     assert p is not None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
     "metric", ["clone_network", None, "clone_degree", "clone_centrality"]
@@ -458,10 +414,6 @@ def test_diversity_gini3(create_testfolder, metric):
         assert not vdj.metadata.clone_centrality_gini.empty
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2a(create_testfolder):
     """test div"""
@@ -481,10 +433,6 @@ def test_diversity2a(create_testfolder):
     assert not vdj.metadata.clone_network_vertex_size_gini.empty
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2b(create_testfolder):
     """test div2"""
@@ -504,10 +452,6 @@ def test_diversity2b(create_testfolder):
     assert not vdj.metadata.clone_network_vertex_size_gini.empty
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2c(create_testfolder):
     """test div3"""
@@ -526,10 +470,6 @@ def test_diversity2c(create_testfolder):
     assert isinstance(x, pd.DataFrame)
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 def test_extract_edge_weights(create_testfolder):
     """test edge weights"""
@@ -541,10 +481,6 @@ def test_extract_edge_weights(create_testfolder):
     assert x is None
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
-)
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
     "method",
