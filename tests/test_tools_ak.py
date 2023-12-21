@@ -6,9 +6,8 @@ import pytest
 import dandelion as ddl
 import pandas as pd
 import scanpy as sc
-import scirpy as ir
 
-from dandelion.utilities._io import from_ak, to_scirpy, from_scirpy
+from dandelion.utilities._io import to_ak, from_ak, to_scirpy, from_scirpy
 
 
 @pytest.mark.skipif(
@@ -54,6 +53,8 @@ def test_setup(
 def test_chain_qc(
     create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
 ):
+    import scirpy as ir
+
     """test chain qc"""
     vdj = ddl.Dandelion(airr_reannotated)
     adata = to_scirpy(vdj)
@@ -74,6 +75,7 @@ def test_chain_qc_mudata(
     create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
 ):
     """test chain qc on mudata"""
+    import scirpy as ir
 
     vdj = ddl.Dandelion(airr_reannotated)
     mdata = to_scirpy(vdj, to_mudata=True)
