@@ -327,72 +327,72 @@ def read_10x_airr(file: str) -> Dandelion:
     return Dandelion(dat)
 
 
-# def to_scirpy(data: Dandelion, transfer: bool = False, **kwargs) -> AnnData:
-#     """
-#     Convert a `Dandelion` object to scirpy's format.
+def to_scirpy(data: Dandelion, transfer: bool = False, **kwargs) -> AnnData:
+    """
+    Convert a `Dandelion` object to scirpy's format.
 
-#     Parameters
-#     ----------
-#     data : Dandelion
-#         `Dandelion` object
-#     transfer : bool
-#         Whether to execute :func:`dandelion.tl.transfer` to transfer all data
-#         to the :class:`anndata.AnnData` instance.
-#     **kwargs
-#         Additional arguments passed to :func:`scirpy.io.read_airr`.
+    Parameters
+    ----------
+    data : Dandelion
+        `Dandelion` object
+    transfer : bool
+        Whether to execute :func:`dandelion.tl.transfer` to transfer all data
+        to the :class:`anndata.AnnData` instance.
+    **kwargs
+        Additional arguments passed to :func:`scirpy.io.read_airr`.
 
-#     Returns
-#     -------
-#     AnnData
-#         `AnnData` object in the format initialized by `scirpy`.
+    Returns
+    -------
+    AnnData
+        `AnnData` object in the format initialized by `scirpy`.
 
-#     """
-#     try:
-#         import scirpy as ir
-#     except:
-#         raise ImportError("Please install scirpy. pip install scirpy")
+    """
+    try:
+        import scirpy as ir
+    except:
+        raise ImportError("Please install scirpy. pip install scirpy")
 
-#     if "duplicate_count" not in data.data and "umi_count" in data.data:
-#         data.data["duplicate_count"] = data.data["umi_count"]
-#     for h in [
-#         "sequence",
-#         "rev_comp",
-#         "sequence_alignment",
-#         "germline_alignment",
-#         "v_cigar",
-#         "d_cigar",
-#         "j_cigar",
-#     ]:
-#         if h not in data.data:
-#             data.data[h] = None
-#     return ir.io.from_dandelion(data, transfer, **kwargs)
+    if "duplicate_count" not in data.data and "umi_count" in data.data:
+        data.data["duplicate_count"] = data.data["umi_count"]
+    for h in [
+        "sequence",
+        "rev_comp",
+        "sequence_alignment",
+        "germline_alignment",
+        "v_cigar",
+        "d_cigar",
+        "j_cigar",
+    ]:
+        if h not in data.data:
+            data.data[h] = None
+    return ir.io.from_dandelion(data, transfer, **kwargs)
 
 
-# def from_scirpy(adata: AnnData) -> Dandelion:
-#     """
-#     Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
+def from_scirpy(adata: AnnData) -> Dandelion:
+    """
+    Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
 
-#     Parameters
-#     ----------
-#     adata : AnnData
-#         `scirpy` initialized `AnnData` object.
+    Parameters
+    ----------
+    adata : AnnData
+        `scirpy` initialized `AnnData` object.
 
-#     Returns
-#     -------
-#     Dandelion
-#         `Dandelion` object.
+    Returns
+    -------
+    Dandelion
+        `Dandelion` object.
 
-#     Raises
-#     ------
-#     ImportError
-#         if `scirpy` not installed.
-#     """
-#     try:
-#         import scirpy as ir
-#     except:
-#         raise ImportError("Please install scirpy. pip install scirpy")
+    Raises
+    ------
+    ImportError
+        if `scirpy` not installed.
+    """
+    try:
+        import scirpy as ir
+    except:
+        raise ImportError("Please install scirpy. pip install scirpy")
 
-#     return ir.io.to_dandelion(adata)
+    return ir.io.to_dandelion(adata)
 
 
 def concat(
@@ -1058,189 +1058,189 @@ def from_ak(airr: "Array") -> pd.DataFrame:
     return df
 
 
-# def to_ak(
-#     data: pd.DataFrame,
-#     use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
-#     infer_locus: bool = True,
-#     cell_attributes: Collection[str] = "is_cell",
-# ) -> Tuple["Array", pd.DataFrame]:
-#     """
-#     Convert data from a DataFrame to an AnnData object with AIRR format.
+def to_ak(
+    data: pd.DataFrame,
+    use_umi_count_col: Union[bool, Literal["auto"]] = "auto",
+    infer_locus: bool = True,
+    cell_attributes: Collection[str] = "is_cell",
+) -> Tuple["Array", pd.DataFrame]:
+    """
+    Convert data from a DataFrame to an AnnData object with AIRR format.
 
-#     Args:
-#         data (pd.DataFrame): The input DataFrame containing the data.
-#         use_umi_count_col (Union[bool, Literal["auto"]], optional): Whether to use the `umi_count` column for duplicate counts. Defaults to "auto".
-#         infer_locus (bool, optional): Whether to infer the locus from gene names if not provided. Defaults to True.
-#         cell_attributes (Collection[str], optional): Collection of cell attribute fields. Defaults to "is_cell".
+    Args:
+        data (pd.DataFrame): The input DataFrame containing the data.
+        use_umi_count_col (Union[bool, Literal["auto"]], optional): Whether to use the `umi_count` column for duplicate counts. Defaults to "auto".
+        infer_locus (bool, optional): Whether to infer the locus from gene names if not provided. Defaults to True.
+        cell_attributes (Collection[str], optional): Collection of cell attribute fields. Defaults to "is_cell".
 
-#     Returns:
-#         Tuple[Array, pd.DataFrame]: A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
-#     """
-#     airr_cells = {}
+    Returns:
+        Tuple[Array, pd.DataFrame]: A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
+    """
+    airr_cells = {}
 
-#     def _decide_use_umi_count_col(chain_dict):
-#         """Logic to decide whether or not to use counts from the `umi_counts` column."""
-#         if (
-#             "umi_count" in chain_dict
-#             and use_umi_count_col == "auto"
-#             and "duplicate_count" not in chain_dict
-#         ):
-#             # logger.warning("Renaming the non-standard `umi_count` column to `duplicate_count`. ")  # type: ignore
-#             return True
-#         elif use_umi_count_col is True:
-#             return True
-#         else:
-#             return False
+    def _decide_use_umi_count_col(chain_dict):
+        """Logic to decide whether or not to use counts from the `umi_counts` column."""
+        if (
+            "umi_count" in chain_dict
+            and use_umi_count_col == "auto"
+            and "duplicate_count" not in chain_dict
+        ):
+            # logger.warning("Renaming the non-standard `umi_count` column to `duplicate_count`. ")  # type: ignore
+            return True
+        elif use_umi_count_col is True:
+            return True
+        else:
+            return False
 
-#     iterator = _read_airr_rearrangement_df(data)
+    iterator = _read_airr_rearrangement_df(data)
 
-#     for chain_dict in iterator:
-#         cell_id = chain_dict.pop("cell_id")
-#         chain_dict.update(
-#             {
-#                 req: None
-#                 for req in RearrangementSchema.required
-#                 if req not in chain_dict
-#             }
-#         )
-#         try:
-#             tmp_cell = airr_cells[cell_id]
-#         except KeyError:
-#             from scirpy.io import AirrCell
+    for chain_dict in iterator:
+        cell_id = chain_dict.pop("cell_id")
+        chain_dict.update(
+            {
+                req: None
+                for req in RearrangementSchema.required
+                if req not in chain_dict
+            }
+        )
+        try:
+            tmp_cell = airr_cells[cell_id]
+        except KeyError:
+            from scirpy.io import AirrCell
 
-#             tmp_cell = AirrCell(
-#                 cell_id=cell_id,
-#                 cell_attribute_fields=cell_attributes,
-#             )
-#             airr_cells[cell_id] = tmp_cell
+            tmp_cell = AirrCell(
+                cell_id=cell_id,
+                cell_attribute_fields=cell_attributes,
+            )
+            airr_cells[cell_id] = tmp_cell
 
-#         if _decide_use_umi_count_col(chain_dict):
-#             chain_dict["duplicate_count"] = RearrangementSchema.to_int(
-#                 chain_dict.pop("umi_count")
-#             )
+        if _decide_use_umi_count_col(chain_dict):
+            chain_dict["duplicate_count"] = RearrangementSchema.to_int(
+                chain_dict.pop("umi_count")
+            )
 
-#         if infer_locus and "locus" not in chain_dict:
-#             from scirpy.io._io import _infer_locus_from_gene_names
+        if infer_locus and "locus" not in chain_dict:
+            from scirpy.io._io import _infer_locus_from_gene_names
 
-#             chain_dict["locus"] = _infer_locus_from_gene_names(chain_dict)
+            chain_dict["locus"] = _infer_locus_from_gene_names(chain_dict)
 
-#         tmp_cell.add_chain(chain_dict)
+        tmp_cell.add_chain(chain_dict)
 
-#     # data frame from cell-level attributes
-#     obs = pd.DataFrame.from_records(iter(airr_cells.values())).set_index(
-#         "cell_id"
-#     )
-#     # AnnData requires indices to be strings
-#     # A range index would automatically be converted by AnnData, but then the `obsm` object doesn't
-#     # match the index anymore.
-#     obs.index = obs.index.astype(str)
-#     import awkward as ak
+    # data frame from cell-level attributes
+    obs = pd.DataFrame.from_records(iter(airr_cells.values())).set_index(
+        "cell_id"
+    )
+    # AnnData requires indices to be strings
+    # A range index would automatically be converted by AnnData, but then the `obsm` object doesn't
+    # match the index anymore.
+    obs.index = obs.index.astype(str)
+    import awkward as ak
 
-#     return ak.Array(c.chains for c in airr_cells.values()), obs
-
-
-# def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
-#     """
-#     Reads a DataFrame containing AIRR rearrangement data and returns a PdRearrangementReader object.
-
-#     Args:
-#         df (pd.DataFrame): The DataFrame containing the AIRR rearrangement data.
-#         validate (bool, optional): Whether to validate the data. Defaults to False.
-#         debug (bool, optional): Whether to enable debug mode. Defaults to False.
-
-#     Returns:
-#         PdRearrangementReader: The PdRearrangementReader object for reading the AIRR rearrangement data.
-#     """
-
-#     import csv
-#     from airr.io import RearrangementReader
-
-#     class PdDictReader(csv.DictReader):
-#         """
-#         A custom CSV reader that reads data from a pandas DataFrame as a dictionary.
-
-#         Args:
-#             df (pandas.DataFrame): The DataFrame object to be used.
-#             *args: Variable length argument list.
-#             **kwargs: Arbitrary keyword arguments.
-#         """
-
-#         def __init__(self, df, *args, **kwargs):
-#             super().__init__(os.devnull)
-#             self.df = df
-#             self.reader = iter(df.to_dict(orient="records"))
-
-#         @property
-#         def fieldnames(self):
-#             """
-#             Returns a list of field names in the DataFrame.
-
-#             Returns:
-#                 list: A list of field names in the DataFrame.
-#             """
-#             return self.df.columns.tolist()
-
-#         def __next__(self):
-#             """
-#             Retrieves the next item from the iterator.
-
-#             Returns:
-#                 The next item from the iterator.
-
-#             Raises:
-#                 StopIteration: If there are no more items in the iterator.
-#             """
-#             return next(self.reader)
-
-#     class PdRearrangementReader(RearrangementReader):
-#         """
-#         A class for reading rearrangement data from a Pandas DataFrame.
-
-#         Args:
-#             df (pandas.DataFrame): The DataFrame containing the rearrangement data.
-#             *args: Additional positional arguments to be passed to the base class constructor.
-#             **kwargs: Additional keyword arguments to be passed to the base class constructor.
-#         """
-
-#         def __init__(self, df, *args, **kwargs):
-#             """
-#             Initialize the class.
-
-#             Args:
-#                 df (pandas.DataFrame): The DataFrame to be used.
-#                 *args: Variable length argument list.
-#                 **kwargs: Arbitrary keyword arguments.
-#             """
-#             super().__init__(os.devnull, *args, **kwargs)
-#             self.dict_reader = PdDictReader(df)
-
-#     return PdRearrangementReader(df, validate=validate, debug=debug)
+    return ak.Array(c.chains for c in airr_cells.values()), obs
 
 
-# def _create_anndata(
-#     airr: "Array", obs: pd.DataFrame, adata: Optional[AnnData] = None
-# ) -> AnnData:
-#     """
-#     Create an AnnData object with the given AIRR array and observation data.
+def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
+    """
+    Reads a DataFrame containing AIRR rearrangement data and returns a PdRearrangementReader object.
 
-#     Parameters:
-#         airr (Array): The AIRR array.
-#         obs (pd.DataFrame): The observation data.
-#         adata (Optional[AnnData]): An existing AnnData object to update. If None, a new AnnData object will be created.
+    Args:
+        df (pd.DataFrame): The DataFrame containing the AIRR rearrangement data.
+        validate (bool, optional): Whether to validate the data. Defaults to False.
+        debug (bool, optional): Whether to enable debug mode. Defaults to False.
 
-#     Returns:
-#         AnnData: The AnnData object with the AIRR array and observation data.
-#     """
+    Returns:
+        PdRearrangementReader: The PdRearrangementReader object for reading the AIRR rearrangement data.
+    """
 
-#     obsm = {"airr": airr}
+    import csv
+    from airr.io import RearrangementReader
 
-#     if adata is None:
-#         adata = AnnData(X=None, obs=obs, obsm=obsm)
-#     else:
-#         adata.obsm = obsm if adata.obsm is None else adata.obsm
-#         adata.obsm["airr"] = airr
+    class PdDictReader(csv.DictReader):
+        """
+        A custom CSV reader that reads data from a pandas DataFrame as a dictionary.
 
-#     return adata
+        Args:
+            df (pandas.DataFrame): The DataFrame object to be used.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+
+        def __init__(self, df, *args, **kwargs):
+            super().__init__(os.devnull)
+            self.df = df
+            self.reader = iter(df.to_dict(orient="records"))
+
+        @property
+        def fieldnames(self):
+            """
+            Returns a list of field names in the DataFrame.
+
+            Returns:
+                list: A list of field names in the DataFrame.
+            """
+            return self.df.columns.tolist()
+
+        def __next__(self):
+            """
+            Retrieves the next item from the iterator.
+
+            Returns:
+                The next item from the iterator.
+
+            Raises:
+                StopIteration: If there are no more items in the iterator.
+            """
+            return next(self.reader)
+
+    class PdRearrangementReader(RearrangementReader):
+        """
+        A class for reading rearrangement data from a Pandas DataFrame.
+
+        Args:
+            df (pandas.DataFrame): The DataFrame containing the rearrangement data.
+            *args: Additional positional arguments to be passed to the base class constructor.
+            **kwargs: Additional keyword arguments to be passed to the base class constructor.
+        """
+
+        def __init__(self, df, *args, **kwargs):
+            """
+            Initialize the class.
+
+            Args:
+                df (pandas.DataFrame): The DataFrame to be used.
+                *args: Variable length argument list.
+                **kwargs: Arbitrary keyword arguments.
+            """
+            super().__init__(os.devnull, *args, **kwargs)
+            self.dict_reader = PdDictReader(df)
+
+    return PdRearrangementReader(df, validate=validate, debug=debug)
+
+
+def _create_anndata(
+    airr: "Array", obs: pd.DataFrame, adata: Optional[AnnData] = None
+) -> AnnData:
+    """
+    Create an AnnData object with the given AIRR array and observation data.
+
+    Parameters:
+        airr (Array): The AIRR array.
+        obs (pd.DataFrame): The observation data.
+        adata (Optional[AnnData]): An existing AnnData object to update. If None, a new AnnData object will be created.
+
+    Returns:
+        AnnData: The AnnData object with the AIRR array and observation data.
+    """
+
+    obsm = {"airr": airr}
+
+    if adata is None:
+        adata = AnnData(X=None, obs=obs, obsm=obsm)
+    else:
+        adata.obsm = obsm if adata.obsm is None else adata.obsm
+        adata.obsm["airr"] = airr
+
+    return adata
 
 
 def _create_mudata(
@@ -1291,11 +1291,6 @@ def to_scirpy(
         Union[AnnData, "MuData"]: The converted data in either AnnData or MuData format.
     """
 
-    try:
-        import scirpy as ir
-    except:
-        raise ImportError("Please install scirpy. pip install scirpy")
-
     if "duplicate_count" not in data.data and "umi_count" in data.data:
         data.data["duplicate_count"] = data.data["umi_count"]
     for h in [
@@ -1309,7 +1304,8 @@ def to_scirpy(
     ]:
         if h not in data.data:
             data.data[h] = None
-    adata = ir.io.read_airr(data.data)
+    airr, obs = to_ak(data.data)
+    adata = _create_anndata(airr, obs)
 
     if transfer:
         tf(adata, data)  # need to make a version that is not so verbose?
