@@ -1,15 +1,18 @@
 #!/usr/bin/env python
-import pytest
 import json
-import pandas as pd
+import sys
+import pytest
+
 import dandelion as ddl
+import pandas as pd
 import scanpy as sc
+
 from dandelion.utilities._io import to_ak, from_ak, to_scirpy, from_scirpy
 
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures(
     "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
@@ -42,7 +45,7 @@ def test_setup(
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures(
     "create_testfolder", "airr_reannotated", "airr_reannotated2", "dummy_adata"
@@ -66,7 +69,7 @@ def test_chain_qc(
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 def test_chain_qc_mudata(
     create_testfolder, airr_reannotated, airr_reannotated2, dummy_adata
@@ -86,7 +89,7 @@ def test_chain_qc_mudata(
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_find_clones(create_testfolder):
@@ -109,7 +112,7 @@ def test_find_clones(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_clone_size(create_testfolder):
@@ -124,7 +127,7 @@ def test_clone_size(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
@@ -157,7 +160,7 @@ def test_generate_network(create_testfolder, resample, expected):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_find_clones_key(create_testfolder):
@@ -174,7 +177,7 @@ def test_find_clones_key(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder", "dummy_adata2")
 def test_transfer(create_testfolder, dummy_adata2):
@@ -193,7 +196,7 @@ def test_transfer(create_testfolder, dummy_adata2):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_gini(create_testfolder):
@@ -218,7 +221,7 @@ def test_diversity_gini(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_gini2(create_testfolder):
@@ -234,7 +237,7 @@ def test_diversity_gini2(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize("resample", [True, False])
@@ -263,7 +266,7 @@ def test_diversity_chao(create_testfolder, resample):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
@@ -290,7 +293,7 @@ def test_diversity_anndata(create_testfolder, method, diversitykey):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
@@ -335,7 +338,7 @@ def test_diversity_shannon(create_testfolder, resample, normalize):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder", "json_10x_cr6", "dummy_adata_cr6")
 def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
@@ -358,7 +361,7 @@ def test_setup2(create_testfolder, json_10x_cr6, dummy_adata_cr6):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction(create_testfolder):
@@ -377,7 +380,7 @@ def test_diversity_rarefaction(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction2(create_testfolder):
@@ -395,7 +398,7 @@ def test_diversity_rarefaction2(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity_rarefaction3(create_testfolder):
@@ -417,7 +420,7 @@ def test_diversity_rarefaction3(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
@@ -457,7 +460,7 @@ def test_diversity_gini3(create_testfolder, metric):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2a(create_testfolder):
@@ -480,7 +483,7 @@ def test_diversity2a(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2b(create_testfolder):
@@ -503,7 +506,7 @@ def test_diversity2b(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_diversity2c(create_testfolder):
@@ -525,7 +528,7 @@ def test_diversity2c(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 def test_extract_edge_weights(create_testfolder):
@@ -540,7 +543,7 @@ def test_extract_edge_weights(create_testfolder):
 
 @pytest.mark.skipif(
     sys.version_info < (3, 9),
-    reason="to/from_ak only works greater than 3.8",
+    reason="to/from_ak only works greater than 3.8 because of compatibility with scirpy/mudata",
 )
 @pytest.mark.usefixtures("create_testfolder")
 @pytest.mark.parametrize(
