@@ -1139,17 +1139,33 @@ def to_ak(
     return ak.Array(c.chains for c in airr_cells.values()), obs
 
 
-def _read_airr_rearrangement_df(df: pd.DataFrame):
-    """
-    Convert a pandas DataFrame to a list of dictionaries representing the records.
+def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
+    """Like airr.read_rearrangement, but from a data frame instead of a tsv file.
 
-    Args:
-        df (pd.DataFrame): The input DataFrame.
-
-    Returns:
-        List[Dict]: A list of dictionaries representing the records in the DataFrame.
+    Provides RearrangementReader with an alternative iterator to its csv.DictReader
     """
-    return df.to_dict(orient="records")
+    import csv
+    from airr.io import RearrangementReader
+
+    class PdDictReader(csv.DictReader):
+        def __init__(self, df, *args, **kwargs):
+            super().__init__(os.devnull)
+            self.df = df
+            self.reader = iter(df.to_dict(orient="records"))
+
+        @property
+        def fieldnames(self):
+            return self.df.columns.tolist()
+
+        def __next__(self):
+            return next(self.reader)
+
+    class PdRearrangementReader(RearrangementReader):
+        def __init__(self, df, *args, **kwargs):
+            super().__init__(os.devnull, *args, **kwargs)
+            self.dict_reader = PdDictReader(df)
+
+    return PdRearrangementReader(df, validate=validate, debug=debug)
 
 
 def _create_anndata(
