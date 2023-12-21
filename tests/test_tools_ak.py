@@ -4,7 +4,7 @@ import json
 import pandas as pd
 import dandelion as ddl
 import scanpy as sc
-from dandelion.utilities._io import to_ak, from_ak, to_scirpy
+from dandelion.utilities._io import to_ak, from_ak, to_scirpy, from_scirpy
 
 
 @pytest.mark.usefixtures(
@@ -47,10 +47,12 @@ def test_chain_qc(
     """test chain qc"""
     vdj = ddl.Dandelion(airr_reannotated)
     adata = to_scirpy(vdj)
+    vdj = from_scirpy(adata)
     ir.tl.chain_qc(adata)
 
     vdj2 = ddl.Dandelion(airr_reannotated2)
     adata2 = to_scirpy(vdj2)
+    vdj2 = from_scirpy(adata2)
     ir.tl.chain_qc(adata2)
 
 
@@ -62,9 +64,11 @@ def test_chain_qc_mudata(
 
     vdj = ddl.Dandelion(airr_reannotated)
     mdata = to_scirpy(vdj, to_mudata=True)
+    vdj = from_scirpy(mdata)
     ir.tl.chain_qc(mdata)
     vdj2 = ddl.Dandelion(airr_reannotated2)
     mdata2 = to_scirpy(vdj2, to_mudata=True)
+    vdj2 = from_scirpy(mdata2)
     ir.tl.chain_qc(mdata2)
 
 
