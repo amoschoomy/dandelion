@@ -1157,15 +1157,38 @@ def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
 
     class PdDictReader(csv.DictReader):
         def __init__(self, df, *args, **kwargs):
+            """
+            Initialize the _io object.
+
+            Args:
+                df (pandas.DataFrame): The DataFrame object to be used.
+                *args: Variable length argument list.
+                **kwargs: Arbitrary keyword arguments.
+            """
             super().__init__(os.devnull)
             self.df = df
             self.reader = iter(df.to_dict(orient="records"))
 
         @property
         def fieldnames(self):
+            """
+            Returns a list of field names in the DataFrame.
+
+            Returns:
+                list: A list of field names in the DataFrame.
+            """
             return self.df.columns.tolist()
 
         def __next__(self):
+            """
+            Retrieves the next item from the iterator.
+
+            Returns:
+                The next item from the iterator.
+
+            Raises:
+                StopIteration: If there are no more items in the iterator.
+            """
             return next(self.reader)
 
     class PdRearrangementReader(RearrangementReader):
