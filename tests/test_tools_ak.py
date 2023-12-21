@@ -45,12 +45,13 @@ def test_chain_qc(
     import scirpy as ir
 
     """test chain qc"""
-    vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
+    vdj = ddl.Dandelion(airr_reannotated)
     adata = to_scirpy(vdj)
     ir.tl.chain_qc(adata)
-    vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
+
+    vdj2 = ddl.Dandelion(airr_reannotated2)
     adata2 = to_scirpy(vdj2)
-    ir.tl.chain_qc(adata2, inplace=False)
+    ir.tl.chain_qc(adata2)
 
 
 def test_chain_qc_mudata(
@@ -59,12 +60,12 @@ def test_chain_qc_mudata(
     """test chain qc on mudata"""
     import scirpy as ir
 
-    vdj, adata = ddl.pp.filter_contigs(airr_reannotated, dummy_adata)
-    mudata = to_scirpy(vdj, to_mudata=True)
-    ir.tl.chain_qc(mudata)
-    vdj2 = ddl.pp.filter_contigs(airr_reannotated2)
-    mudata2 = to_scirpy(vdj2)
-    ir.tl.chain_qc(mudata2, inplace=False)
+    vdj = ddl.Dandelion(airr_reannotated)
+    mdata = to_scirpy(vdj, to_mudata=True)
+    ir.tl.chain_qc(mdata)
+    vdj2 = ddl.Dandelion(airr_reannotated2)
+    mdata2 = to_scirpy(vdj2, to_mudata=True)
+    ir.tl.chain_qc(mdata2)
 
 
 @pytest.mark.usefixtures("create_testfolder")
