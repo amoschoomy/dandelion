@@ -1156,15 +1156,16 @@ def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
     from airr.io import RearrangementReader
 
     class PdDictReader(csv.DictReader):
-        def __init__(self, df, *args, **kwargs):
-            """
-            Initialize the _io object.
+        """
+        A custom CSV reader that reads data from a pandas DataFrame as a dictionary.
 
-            Args:
-                df (pandas.DataFrame): The DataFrame object to be used.
-                *args: Variable length argument list.
-                **kwargs: Arbitrary keyword arguments.
-            """
+        Args:
+            df (pandas.DataFrame): The DataFrame object to be used.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+
+        def __init__(self, df, *args, **kwargs):
             super().__init__(os.devnull)
             self.df = df
             self.reader = iter(df.to_dict(orient="records"))
