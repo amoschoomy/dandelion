@@ -1202,6 +1202,14 @@ def _read_airr_rearrangement_df(df: pd.DataFrame, validate=False, debug=False):
         """
 
         def __init__(self, df, *args, **kwargs):
+            """
+            Initialize the class.
+
+            Args:
+                df (pandas.DataFrame): The DataFrame to be used.
+                *args: Variable length argument list.
+                **kwargs: Arbitrary keyword arguments.
+            """
             super().__init__(os.devnull, *args, **kwargs)
             self.dict_reader = PdDictReader(df)
 
