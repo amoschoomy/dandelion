@@ -1050,14 +1050,17 @@ def _create_anndata(
     AnnData
         The AnnData object with the AIRR array and observation data.
     """
-
     obsm = {"airr": airr}
+    temp = AnnData(X=None, obs=obs, obsm=obsm)
 
     if adata is None:
-        adata = AnnData(X=None, obs=obs, obsm=obsm)
+        adata = temp
     else:
-        adata.obsm = obsm if adata.obsm is None else adata.obsm
-        adata.obsm.update(obsm)
+        cell_names = adata.obs_names.intersection(temp.obs_names)
+        adata = adata[adata.obs_names.isin(cell_names)].copy()
+        temp = temp[temp.obs_names.isin(cell_names)].copy()
+        adata.obsm = dict() if adata.obsm is None else adata.obsm
+        adata.obsm.update(temp.obsm)
 
     return adata
 
