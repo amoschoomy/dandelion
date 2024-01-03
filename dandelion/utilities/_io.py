@@ -1149,14 +1149,21 @@ def to_scirpy(
             data.data[h] = None
 
     airr, obs = to_ak(data.data, **kwargs)
-    adata = _create_anndata(airr, obs, gex_adata)
-
-    if transfer:
-        tf(adata, data)  # need to make a version that is not so verbose?
-
     if to_mudata:
+        adata = _create_anndata(
+            airr,
+            obs,
+        )
+        if transfer:
+            tf(adata, data)  # need to make a version that is not so verbose?
+
         return _create_mudata(gex_adata, adata, key)
-    return adata
+    else:
+        adata = _create_anndata(airr, obs, gex_adata)
+
+        if transfer:
+            tf(adata, data)
+        return adata
 
 
 def from_scirpy(data: Union[AnnData, "MuData"]) -> Dandelion:
