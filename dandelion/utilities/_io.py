@@ -1105,7 +1105,7 @@ def _create_mudata(
 def to_scirpy(
     data: Dandelion,
     transfer: bool = False,
-    to_mudata: bool = False,
+    to_mudata: bool = True,
     gex_adata: Optional[AnnData] = None,
     key: Tuple[str, str] = ("gex", "airr"),
     **kwargs,
@@ -1120,7 +1120,8 @@ def to_scirpy(
     transfer : bool, optional
         Whether to transfer additional information from Dandelion to the converted data. Defaults to False.
     to_mudata : bool, optional
-        Whether to convert the data to MuData format instead of AnnData. Defaults to False.
+        Whether to convert the data to MuData format instead of AnnData. Defaults to True.
+        If converting to AnnData, it will assert that the same cell_ids and .obs_names are present in the `gex_adata` provided.
     gex_adata : AnnData, optional
         An existing AnnData object to be used as the base for the converted data if provided.
     key : tuple of str, optional

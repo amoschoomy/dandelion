@@ -299,9 +299,9 @@ def test_librarytype(airr_generic):
 
 def test_convert_obsm_airr_to_data(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
-    anndata = ddl.utl.to_scirpy(vdj)
+    mdata = ddl.utl.to_scirpy(vdj)
 
-    result = ddl.utl.from_ak(anndata.obsm["airr"])
+    result = ddl.utl.from_ak(mdata["airr"].obsm["airr"])
 
     assert result.shape == vdj.data.shape
     assert result.shape[0] == 26
@@ -309,7 +309,7 @@ def test_convert_obsm_airr_to_data(create_testfolder):
 
 def test_convert_data_to_obsm_airr(create_testfolder):
     vdj = ddl.read_10x_vdj(create_testfolder, filename_prefix="test_all")
-    anndata = ddl.utl.to_scirpy(vdj)
+    anndata = ddl.utl.to_scirpy(vdj, to_mudata=False)
     obsm_airr, obs = ddl.utl.to_ak(vdj.data)
     assert len(anndata.obsm["airr"]) == len(obsm_airr)
     assert anndata.obsm["airr"].type.show() == obsm_airr.type.show()

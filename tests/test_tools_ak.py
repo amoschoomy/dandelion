@@ -52,12 +52,12 @@ def test_chain_qc(
 ):
     """test chain qc"""
     vdj = ddl.Dandelion(airr_reannotated)
-    adata = to_scirpy(vdj)
+    adata = to_scirpy(vdj, to_mudata=False)
     vdj = from_scirpy(adata)
     ir.tl.chain_qc(adata)
 
     vdj2 = ddl.Dandelion(airr_reannotated2)
-    adata2 = to_scirpy(vdj2)
+    adata2 = to_scirpy(vdj2, to_mudata=False)
     vdj2 = from_scirpy(adata2)
     ir.tl.chain_qc(adata2)
 
