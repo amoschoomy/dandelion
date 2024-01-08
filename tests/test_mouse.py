@@ -71,6 +71,7 @@ def test_assignsisotypes(
     """test_assignsisotypes"""
     ddl.pp.assign_isotypes(
         create_testfolder,
+        org="mouse",
         blastdb=database_paths_mouse["blastdb_fasta"],
         correction_dict=balbc_ighg_primers,
         plot=False,
@@ -86,7 +87,9 @@ def test_create_germlines(
 ):
     """test_create_germlines"""
     f = create_testfolder / "dandelion" / processed_files["filtered"]
-    ddl.pp.create_germlines(f, germline=database_paths_mouse["germline"])
+    ddl.pp.create_germlines(
+        f, org="mouse", germline=database_paths_mouse["germline"]
+    )
     f2 = create_testfolder / "dandelion" / processed_files["germ-pass"]
     dat = pd.read_csv(f2, sep="\t")
     assert not dat["germline_alignment_d_mask"].empty

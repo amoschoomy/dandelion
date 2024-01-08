@@ -26,7 +26,7 @@ gcctggaaggcagatagcagccccgtcaaggcgggagtggagaccaccacaccctccaaa
 caaagcaacaacaagtacgcggccagcagctatctgagcctgacgcctgagcagtggaag
 tcccacagaagctacagctgccaggtcacgcatgaagggagcaccgtggagaagacagtg
 gcccctacagaatgttca
->AJ491317|IGLC2*03|Homo_sapiens|F|C-REGION|1..106|106 nt|2| | || |106+0=106|partial in 5'| |
+>AJ491317|IGLC2*03|Homo_sapiens|F|C-REGION|1..106|106 nt|2| | | | |106+0=106|partial in 5'| |
 cctgagcctgacgcctgagcagtggaagtcccacagaagctacagctgccaggtcacgca
 tgaagggagcaccgtggagaagacagtggcccctacagaatgttca
 >J00254|IGLC3*01|Homo_sapiens|F|C-REGION|1..312|312 nt|1| | | | |312+0=312|partial in 5'| |
@@ -78,20 +78,19 @@ gcctggaaggcagatggcagccccgtcaaggtgggagtggagaccaccaaaccctccaaa
 caaagcaacaacaagtatgcggccagcagctacctgagcctgacgcccgagcagtggaag
 tcccacagaagctacagctgccgggtcacgcatgaagggagcaccgtggagaagacagtg
 gcccctgcagaatgctct
->KM455557|IGLC7*03|Homo_sapiens|F|C-REGION|g,1..317|318 nt|1|+1| || |318+0=318| | |
+>KM455557|IGLC7*03|Homo_sapiens|F|C-REGION|g,1..317|318 nt|1|+1| | | |318+0=318| | |
 ggtcagcccaaggctgccccctcggtcactctgttcccaccctcctctgaggagcttcaa
 gccaacaaggccacactggtgtgtctcgtaagtgacttcaacccgggagccgtgacagtg
 gcctggaaggcagatggcagccccgtcaaggtgggagtggagaccaccaaaccctccaaa
 caaagcaacaacaagtatgcggccagcagctacctgagcctgacgcccgagcagtggaag
 tcccacagaagctacagctgccgggtcacgcatgaagggagcaccgtggagaagacagtg
 gcccctgcagaatgctct
->AP001025|IGLJ-C/OR18*01|Homo_sapiens|ORF|J-REGION|130863..130899|37 nt|2| | || |37+0=37| | |
+>AP001025|IGLJ-C/OR18*01|Homo_sapiens|ORF|J-REGION|130863..130899|37 nt|2| | | | |37+0=37| | |
 gcacatgtttggcagcaagacccagcccactgtctta
->AP001025|IGLJ-C/OR18*01|Homo_sapiens|ORF|C-REGION|130900..131211|312 nt|1| | || |312+0=312| | |
+>AP001025|IGLJ-C/OR18*01|Homo_sapiens|ORF|C-REGION|130900..131211|312 nt|1| | | | |312+0=312| | |
 ggtaagcccaaggctccccgtttggtcactctgttcccgccctcctctgaggagttccaa
 gctaacaaggccaccctagtgtgtctcatgaatgacttctacctgggcaccgtgacagtg
 gcctggaaggcagacggcatcatcatcacccaggacgtggagaccactaagcctcccaaa
 cagagcaagaaacaggccagcagctacctgagcctgatgcctgaacagtggagatcccgc
 agcagctacaactgctgggccatgcataaaaggagcaccctggagaagacaatggcccat
 acagaatgttct
-

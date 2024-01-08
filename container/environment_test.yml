@@ -1,24 +1,29 @@
 name: sc-dandelion-container
 channels:
-- conda-forge
-- bioconda
-- anaconda
-- defaults
+  - conda-forge
+  - bioconda
+  - anaconda
+  - defaults
 dependencies:
-- python=3.9
-- seaborn
-- scikit-learn
-- statsmodels
-- numba
-- pytables
-- python-igraph
-- leidenalg
-- graph-tool
-- pip
-- pytest
-- tbb
-- pip:
-  - matplotlib<=3.5.3
-  - scanpy>=1.7.0
-  - rpy2>=3.4.2
-  - palantir
+  - python=3.11
+  - seaborn
+  - scikit-learn
+  - statsmodels
+  - numba
+  - pytables
+  - python-igraph
+  - leidenalg
+  - graph-tool
+  - pip
+  - pytest
+  - tbb
+  - rpy2
+  - r-optparse
+  - r-alakazam
+  - r-tigger
+  - r-airr
+  - r-shazam
+  - igblast
+  - blast
+  - pip:
+      - scanpy>=1.7.0

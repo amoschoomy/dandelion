@@ -13,6 +13,27 @@ from typing import List, Optional, Union
 from dandelion.utilities._utilities import bh, Literal
 
 
+def _filter_cells(
+    adata: AnnData,
+    col: str,
+    filter_pattern: Optional[str] = ",|None|No_contig",
+    remove_missing: bool = True,
+) -> AnnData:
+    """
+    Helper function that identifies filter_pattern hits in `.obs[col]` of adata, and then either removes the
+    offending cells or masks the matched values with a uniform value of `col+"_missing"`.
+    """
+    # find filter pattern hits in our column of interest
+    mask = adata.obs[col].str.contains(filter_pattern)
+    if remove_missing:
+        # remove the cells
+        adata = adata[~mask].copy()
+    else:
+        # uniformly mask the filter pattern hits
+        adata.obs.loc[mask, col] = col + "_missing"
+    return adata
+
+
 def setup_vdj_pseudobulk(
     adata: AnnData,
     mode: Optional[Literal["B", "abT", "gdT"]] = "abT",
@@ -39,6 +60,7 @@ def setup_vdj_pseudobulk(
     ],
     check_extract_cols_mapping: Optional[List[str]] = None,
     filter_pattern: Optional[str] = ",|None|No_contig",
+    remove_missing: bool = True,
 ) -> AnnData:
     """Function for prepare anndata for computing pseudobulk vdj feature space.
 
@@ -74,6 +96,9 @@ def setup_vdj_pseudobulk(
         Specifying None will skip this step.
     filter_pattern : Optional[str], optional
         pattern to filter from object. If `None`, does not filter.
+    remove_missing : bool, optional
+        If True, will remove cells with contigs matching the filter from the object. If False, will mask them with a uniform
+        value dependent on the column name.
 
     Returns
     -------
@@ -172,52 +197,47 @@ def setup_vdj_pseudobulk(
         if mode is not None:
             if check_vdj_mapping is not None:
                 for col in check_vdj_mapping:
-                    adata = adata[
-                        ~(
-                            adata.obs[
-                                col + "_" + mode + "_VDJ_main"
-                            ].str.contains(filter_pattern)
-                        )
-                    ].copy()
+                    adata = _filter_cells(
+                        adata=adata,
+                        col=col + "_" + mode + "_VDJ_main",
+                        filter_pattern=filter_pattern,
+                        remove_missing=remove_missing,
+                    )
             if check_vj_mapping is not None:
                 for col in check_vj_mapping:
-                    adata = adata[
-                        ~(
-                            adata.obs[
-                                col + "_" + mode + "_VJ_main"
-                            ].str.contains(filter_pattern)
-                        )
-                    ].copy()
+                    adata = _filter_cells(
+                        adata=adata,
+                        col=col + "_" + mode + "_VJ_main",
+                        filter_pattern=filter_pattern,
+                        remove_missing=remove_missing,
+                    )
         else:
             if extract_cols is None:
                 if check_vdj_mapping is not None:
                     for col in check_vdj_mapping:
-                        adata = adata[
-                            ~(
-                                adata.obs[col + "_VDJ_main"].str.contains(
-                                    filter_pattern
-                                )
-                            )
-                        ].copy()
+                        adata = _filter_cells(
+                            adata=adata,
+                            col=col + "_VDJ_main",
+                            filter_pattern=filter_pattern,
+                            remove_missing=remove_missing,
+                        )
                 if check_vj_mapping is not None:
                     for col in check_vj_mapping:
-                        adata = adata[
-                            ~(
-                                adata.obs[col + "_VJ_main"].str.contains(
-                                    filter_pattern
-                                )
-                            )
-                        ].copy()
+                        adata = _filter_cells(
+                            adata=adata,
+                            col=col + "_VJ_main",
+                            filter_pattern=filter_pattern,
+                            remove_missing=remove_missing,
+                        )
             else:
                 if check_extract_cols_mapping is not None:
                     for col in check_extract_cols_mapping:
-                        adata = adata[
-                            ~(
-                                adata.obs[col + "_main"].str.contains(
-                                    filter_pattern
-                                )
-                            )
-                        ].copy()
+                        adata = _filter_cells(
+                            adata=adata,
+                            col=col + "_main",
+                            filter_pattern=filter_pattern,
+                            remove_missing=remove_missing,
+                        )
 
     return adata
 
@@ -294,6 +314,9 @@ def vdj_pseudobulk(
     pbs: Optional[Union[np.ndarray, sp.sparse.csr_matrix]] = None,
     obs_to_bulk: Optional[Union[str, List[str]]] = None,
     obs_to_take: Optional[Union[str, List[str]]] = None,
+    normalise: bool = True,
+    renormalise: bool = False,
+    min_count: int = 1,
     mode: Optional[Literal["B", "abT", "gdT"]] = "abT",
     extract_cols: Optional[List[str]] = [
         "v_call_abT_VDJ_main",
@@ -316,6 +339,14 @@ def vdj_pseudobulk(
         will be combined
     obs_to_take : Optional[Union[str, List[str]]], optional
         Optional obs column(s) to identify the most common value of for each pseudobulk.
+    normalise : bool, optional
+        If True, will scale the counts of each V(D)J gene group to 1 for each pseudobulk.
+    renormalise : bool, optional
+        If True, will re-scale the counts of each V(D)J gene group to 1 for each pseudobulk with any "missing" calls removed.
+        Relevant with `normalise` as True, if `setup_vdj_pseudobulk()` was ran with `remove_missing` set to False.
+    min_count : int, optional
+        Pseudobulks with fewer than these many non-"missing" calls in a V(D)J gene group will have their non-"missing" calls
+        set to 0 for that group. Relevant with `normalise` as True.
     mode : Optional[Literal["B", "abT", "gdT"]], optional
         Optional mode for extracting the V(D)J genes. If set as `None`, it will use e.g. `v_call_VDJ` instead of `v_call_abT_VDJ`.
         If `extract_cols` is provided, then this argument is ignored.
@@ -326,7 +357,7 @@ def vdj_pseudobulk(
     -------
     AnnData
         pb_adata, whereby each observation is a pseudobulk:\n
-        VDJ usage frequency stored in pb_adata.X\n
+        VDJ usage frequency/counts stored in pb_adata.X\n
         VDJ genes stored in pb_adata.var\n
         pseudobulk metadata stored in pb_adata.obs\n
         pseudobulk assignment (binary matrix with input cells as columns) stored in pb_adata.obsm['pbs']\n
@@ -370,14 +401,37 @@ def vdj_pseudobulk(
         vj_pb_count, index=np.arange(pbs.shape[1]), columns=vjs.columns
     )
 
-    # loop over V(D)J gene categories
-    for col in extract_cols:
-        # identify columns holding genes belonging to the category
-        # and then normalise the values to 1 for each pseudobulk
-        mask = np.isin(df.columns, np.unique(adata.obs[col]))
-        df.loc[:, mask] = df.loc[:, mask].div(
-            df.loc[:, mask].sum(axis=1), axis=0
-        )
+    if normalise:
+        # identify any missing calls inserted by the setup, will end with _missing
+        # negate as we want to actually remove them later
+        defined_mask = ~(df.columns.str.endswith("_missing"))
+        # loop over V(D)J gene categories
+        for col in extract_cols:
+            # identify columns holding genes belonging to the category
+            # and then normalise the values to 1 for each pseudobulk
+            group_mask = np.isin(df.columns, np.unique(adata.obs[col]))
+            # identify the defined (non-missing) calls for the group
+            group_defined_mask = group_mask & defined_mask
+            # compute sum of non-missing values for each pseudobulk for this category
+            # and compare to the min_count
+            defined_min_count = (
+                df.loc[:, group_defined_mask].sum(axis=1) >= min_count
+            )
+            # we can now normalise for the pseudobulks, for now all the pseudobulks
+            df.loc[:, group_mask] = df.loc[:, group_mask].div(
+                df.loc[:, group_mask].sum(axis=1), axis=0
+            )
+            if renormalise:
+                # repeat the normalisation for non-missing values only
+                # and only use pseudobulks crossing the min_count threshold
+                df.loc[defined_min_count, group_defined_mask] = df.loc[
+                    defined_min_count, group_defined_mask
+                ].div(
+                    df.loc[defined_min_count, group_defined_mask].sum(axis=1),
+                    axis=0,
+                )
+            # we can now mask the pseudobulks with insufficient defined counts
+            df.loc[~defined_min_count, group_defined_mask] = 0
 
     # create obs for the new pseudobulk object
     pbs_obs = _get_pbs_obs(pbs, obs_to_take, adata)

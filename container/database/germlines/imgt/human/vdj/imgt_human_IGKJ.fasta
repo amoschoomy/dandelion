@@ -2,11 +2,11 @@
 gtggacgttcggccaagggaccaaggtggaaatcaaac
 >J00242|IGKJ2*01|Homo_sapiens|F|J-REGION|612..650|39 nt|3| | | | |39+0=39| | |
 tgtacacttttggccaggggaccaagctggagatcaaac
->Z70260|IGKJ2*02|Homo_sapiens|(F)|J-REGION|288..325,c|38 nt|2| |1|| |38+0=38| | |
+>Z70260|IGKJ2*02|Homo_sapiens|(F)|J-REGION|288..325,c|38 nt|2| |1| | |38+0=38| | |
 gtgcacttttggccaggggaccaagctggagatcaaac
 >U95246|IGKJ2*03|Homo_sapiens|(F)|J-REGION|281..319,c|39 nt|3| |1| | |39+0=39| | |
 tgtacagttttggccaggggaccaagctggagatcaaac
->IMGT000100|IGKJ2*04|Homo_sapiens|F|J-REGION|1383806..1383844|39 nt|3| | || |39+0=39| | |
+>IMGT000100|IGKJ2*04|Homo_sapiens|F|J-REGION|1383806..1383844|39 nt|3| | | | |39+0=39| | |
 tgtgcagttttggccaggggaccaagctggagatcaaac
 >J00242|IGKJ3*01|Homo_sapiens|F|J-REGION|918..955|38 nt|2| | | | |38+0=38| | |
 attcactttcggccctgggaccaaagtggatatcaaac
@@ -16,4 +16,3 @@ gctcactttcggcggagggaccaaggtggagatcaaac
 gctcacgttcggcggagggaccaaggtggagatcaaac
 >J00242|IGKJ5*01|Homo_sapiens|F|J-REGION|1575..1612|38 nt|2| | | | |38+0=38| | |
 gatcaccttcggccaagggacacgactggagattaaac
-

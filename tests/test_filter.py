@@ -81,32 +81,32 @@ def test_filtercontigs_no_adata(create_testfolder):
 def test_generic_filter(airr_generic):
     """test data loading and filtering"""
     tmp = ddl.Dandelion(airr_generic)
-    assert tmp.metadata.shape[0] == 40
+    assert tmp.metadata.shape[0] == 45
     assert tmp.data.shape[0] == airr_generic.shape[0]
 
     tmp2 = ddl.pp.filter_contigs(tmp)
-    assert tmp2.metadata.shape[0] == 14
+    assert tmp2.metadata.shape[0] == 18
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 35
+    assert tmp2.data.shape[0] == 42
 
     tmp2 = ddl.pp.filter_contigs(tmp, filter_extra_vj_chains=True)
-    assert tmp2.metadata.shape[0] == 12
+    assert tmp2.metadata.shape[0] == 16
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 28
+    assert tmp2.data.shape[0] == 35
 
     tmp2 = ddl.pp.filter_contigs(
         tmp, filter_extra_vdj_chains=False, filter_extra_vj_chains=True
     )
-    assert tmp2.metadata.shape[0] == 17
+    assert tmp2.metadata.shape[0] == 22
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 41
+    assert tmp2.data.shape[0] == 50
 
     tmp2 = ddl.pp.filter_contigs(
         tmp, filter_extra_vdj_chains=False, filter_extra_vj_chains=False
     )
-    assert tmp2.metadata.shape[0] == 19
+    assert tmp2.metadata.shape[0] == 24
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 48
+    assert tmp2.data.shape[0] == 57
 
     tmp2 = ddl.pp.filter_contigs(
         tmp,
@@ -114,19 +114,19 @@ def test_generic_filter(airr_generic):
         filter_extra_vj_chains=False,
         productive_only=False,
     )
-    assert tmp2.metadata.shape[0] == 20
+    assert tmp2.metadata.shape[0] == 25
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 58
+    assert tmp2.data.shape[0] == 67
 
     tmp2 = ddl.pp.filter_contigs(tmp, productive_only=False)
-    assert tmp2.metadata.shape[0] == 15
+    assert tmp2.metadata.shape[0] == 19
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 44
+    assert tmp2.data.shape[0] == 51
 
     tmp2 = ddl.pp.filter_contigs(tmp, library_type="ig")
-    assert tmp2.metadata.shape[0] == 12
+    assert tmp2.metadata.shape[0] == 16
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 25
+    assert tmp2.data.shape[0] == 32
 
     tmp2 = ddl.pp.filter_contigs(tmp, library_type="tr-ab")
     assert tmp2.metadata.shape[0] == 8
@@ -143,20 +143,20 @@ def test_generic_filter(airr_generic):
 def test_generic_check(airr_generic):
     """test data loading and filtering"""
     tmp = ddl.Dandelion(airr_generic)
-    assert tmp.metadata.shape[0] == 40
+    assert tmp.metadata.shape[0] == 45
     assert tmp.data.shape[0] == airr_generic.shape[0]
 
     tmp2 = ddl.pp.check_contigs(tmp, productive_only=False)
-    assert tmp2.metadata.shape[0] == 39
+    assert tmp2.metadata.shape[0] == 44
     assert tmp2.data.shape[0] == tmp.data.shape[0]
 
     tmp2 = ddl.pp.check_contigs(tmp, productive_only=False, library_type="ig")
-    assert tmp2.metadata.shape[0] == 20
+    assert tmp2.metadata.shape[0] == 25
     assert tmp2.data.shape[0] != tmp.data.shape[0]
-    assert tmp2.data.shape[0] == 59
+    assert tmp2.data.shape[0] == 68
 
     tmp2 = ddl.pp.check_contigs(tmp)
-    assert tmp2.metadata.shape[0] == 37
+    assert tmp2.metadata.shape[0] == 42
     assert tmp2.data.shape[0] == tmp.data.shape[0]
 
     ddl.tl.find_clones(tmp2, identity={"tr-ab": 1})
@@ -166,3 +166,17 @@ def test_generic_check(airr_generic):
 
     ddl.tl.generate_network(tmp2, key="junction_aa", compute_layout=False)
     assert tmp2.graph is not None
+
+
+@pytest.mark.usefixtures("airr_generic")
+def test_check_remove_extra(airr_generic):
+    """test remove extra option"""
+    tmp = ddl.Dandelion(airr_generic)
+    assert tmp.metadata.shape[0] == 45
+    assert tmp.data.shape[0] == airr_generic.shape[0]
+    tmp2 = ddl.pp.check_contigs(tmp)
+    tmp3 = ddl.pp.check_contigs(tmp, filter_extra=True)
+    assert tmp3.metadata.shape[0] == 42
+    assert tmp2.data.shape[0] == tmp.data.shape[0]
+    assert tmp3.data.shape[0] != tmp2.data.shape[0]
+    assert tmp2.data.extra.value_counts()["T"] == 15

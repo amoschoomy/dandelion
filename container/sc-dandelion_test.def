@@ -1,57 +1,29 @@
 Bootstrap: docker
 
-From: continuumio/miniconda3
+From: ubuntu:latest
 
-%files
-    ncbi-blast-2.13.0+ /share/ncbi-blast-2.13.0+
-    ncbi-igblast-1.19.0 /share/ncbi-igblast-1.19.0
-    database /share/database
-    environment_test.yml /environment_test.yml
-    dandelion_preprocess.py /share/dandelion_preprocess.py
-    changeo_clonotypes.py /share/changeo_clonotypes.py
+%files    
+    environment_test.yml /environment.yml
+    scripts/setup_mamba.sh /share/setup_mamba.sh
+    scripts/dandelion_preprocess.py /share/dandelion_preprocess.py
+    scripts/changeo_clonotypes.py /share/changeo_clonotypes.py
+    scripts/prepare_imgt_database.py /share/prepare_imgt_database.py
+    scripts/prepare_ogrdb_database.py /share/prepare_ogrdb_database.py
+    scripts/utils.py /share/utils.py
+    optional_file /share/optional_file
     tests /tests
 
 %post
-    apt update -y --allow-insecure-repositories && apt install -y --allow-unauthenticated sudo software-properties-common gnupg
-    wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb
-    wget http://security.ubuntu.com/ubuntu/pool/main/libj/libjpeg-turbo/libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb
-    wget http://security.ubuntu.com/ubuntu/pool/main/libj/libjpeg8-empty/libjpeg8_8c-2ubuntu8_amd64.deb
-    sudo apt update && sudo dpkg -i libicu66_66.1-2ubuntu2_amd64.deb
-    sudo apt update && sudo dpkg -i libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb
-    sudo apt update && sudo dpkg -i libjpeg8_8c-2ubuntu8_amd64.deb
-    rm libicu66_66.1-2ubuntu2_amd64.deb libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb libjpeg8_8c-2ubuntu8_amd64.deb
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
-    sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && \
-    sudo apt update -y && sudo apt install -y curl libcurl4-openssl-dev rsync r-base r-base-core r-recommended r-base-dev vim
-    R --slave -e 'install.packages("remotes", repos="https://cloud.r-project.org/")'
-    R --slave -e 'install.packages("BiocManager", repos="https://cloud.r-project.org/")'
-    # R dependencies
-    apt-get update -y && apt-get install -y zlib1g-dev libglpk-dev libgmp3-dev libxml2-dev libicu-dev
-    sudo apt-get autoremove -y
-
-    # Install required R packages
-    R --slave -e 'BiocManager::install(c("Biostrings", "GenomicAlignments", "IRanges"))'
-    R --slave -e 'install.packages(c("optparse", "alakazam", "tigger", "airr", "shazam"), repos="https://cloud.r-project.org/")'
-    . /opt/conda/etc/profile.d/conda.sh
-    conda env update --name sc-dandelion-container -f environment_test.yml
-    # fix pathing
-    echo "export GERMLINE=/share/database/germlines/" | tee -a $SINGULARITY_ENVIRONMENT
-    echo "export IGDATA=/share/database/igblast/" | tee -a $SINGULARITY_ENVIRONMENT
-    echo "export BLASTDB=/share/database/blast/" | tee -a $SINGULARITY_ENVIRONMENT
-    echo "export PATH=/share/ncbi-blast-2.13.0+/bin:/share/ncbi-igblast-1.19.0/bin:$PATH" | tee -a $SINGULARITY_ENVIRONMENT
-    echo ". /opt/conda/etc/profile.d/conda.sh" | tee -a $SINGULARITY_ENVIRONMENT
-    echo "conda activate sc-dandelion-container" | tee -a $SINGULARITY_ENVIRONMENT
-    # update the database just in case
-    /share/ncbi-blast-2.13.0+/bin/makeblastdb -dbtype nucl -parse_seqids -in /share/database/blast/human/human_BCR_C.fasta
-    /share/ncbi-blast-2.13.0+/bin/makeblastdb -dbtype nucl -parse_seqids -in /share/database/blast/mouse/mouse_BCR_C.fasta
-    chmod +x /share/dandelion_preprocess.py
-    chmod +x /share/changeo_clonotypes.py
+    # Setup and install dependencies
+    . /share/setup_mamba.sh
+    # Download and setup reference databases
+    python /share/prepare_imgt_database.py --outdir /share/database
+    python /share/prepare_ogrdb_database.py --outdir /share/database
 
 %environment
     export GERMLINE=/share/database/germlines/
     export IGDATA=/share/database/igblast/
     export BLASTDB=/share/database/blast/
-    export PATH=/share/ncbi-blast-2.13.0+/bin:/share/ncbi-igblast-1.19.0/bin:$PATH
 
 %runscript
     alias dandelion-preprocess='/share/dandelion_preprocess.py'
@@ -61,5 +33,5 @@ From: continuumio/miniconda3
 %test
     ls /share
     which blastn
-    conda list
+    mamba list
     pytest -p no:cacheprovider /tests -W ignore::DeprecationWarning -W ignore::PendingDeprecationWarning -W ignore::FutureWarning

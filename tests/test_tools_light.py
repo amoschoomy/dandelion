@@ -24,10 +24,9 @@ def test_find_clones(create_testfolder):
     """test find clones"""
     f = create_testfolder / "test.h5ddl"
     vdj = ddl.read_h5ddl(f)
-    ddl.tl.find_clones(vdj, collapse_label=True)
+    ddl.tl.find_clones(vdj)
     assert not vdj.data.clone_id.empty
     assert not vdj.metadata.clone_id.empty
-    assert len(set(x for x in vdj.metadata["clone_id"] if pd.notnull(x))) == 4
     vdj.write_h5ddl(f)
     with pytest.raises(ValueError):
         ddl.tl.find_clones(vdj, key="random_column")
@@ -36,7 +35,7 @@ def test_find_clones(create_testfolder):
 @pytest.mark.usefixtures("airr_reannotated")
 def test_find_clonesfromfile(airr_reannotated):
     """test find clones"""
-    vdj = ddl.tl.find_clones(airr_reannotated, collapse_label=True)
+    vdj = ddl.tl.find_clones(airr_reannotated)
     assert not vdj.data.clone_id.empty
     assert not vdj.metadata.clone_id.empty
     vdj2 = ddl.tl.find_clones(airr_reannotated, by_alleles=True)

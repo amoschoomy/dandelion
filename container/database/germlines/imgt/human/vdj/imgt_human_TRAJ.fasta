@@ -11,7 +11,7 @@ ggatggatagcagctataaattgatcttcgggagtgggaccagactgctggtcaggcctg
 >M94081|TRAJ13*01|Homo_sapiens|F|J-REGION|71280..71342|63 nt|3| | | | |63+0=63| | |
 tgaattctgggggttaccagaaagttacctttggaattggaacaaagctccaagtcatcc
 caa
->AB258131|TRAJ13*02|Homo_sapiens|F|J-REGION|101..163|63 nt|3| | || |63+0=63| | |
+>AB258131|TRAJ13*02|Homo_sapiens|F|J-REGION|101..163|63 nt|3| | | | |63+0=63| | |
 tgaattctgggggttaccagaaagttacctttggaactggaacaaagctccaagtcatcc
 caa
 >M94081|TRAJ14*01|Homo_sapiens|F|J-REGION|70532..70583|52 nt|1| | | | |52+0=52| | |
@@ -73,7 +73,7 @@ ggggtacagcagtgcttccaagataatctttggatcagggaccagactcagcatccggcc
 aa
 >M94081|TRAJ30*01|Homo_sapiens|F|J-REGION|53090..53146|57 nt|3| | | | |57+0=57| | |
 tgaacagagatgacaagatcatctttggaaaagggacacgacttcatattctcccca
->M94081|TRAJ31*01|Homo_sapiens|F|J-REGION|51207..51263|57 nt|3| | || |57+0=57| | |
+>M94081|TRAJ31*01|Homo_sapiens|F|J-REGION|51207..51263|57 nt|3| | | | |57+0=57| | |
 ggaataacaatgccagactcatgtttggagatggaactcagctggtggtgaagccca
 >M94081|TRAJ32*01|Homo_sapiens|F|J-REGION|49581..49646|66 nt|3| | | | |66+0=66| | |
 tgaattatggcggtgctacaaacaagctcatctttggaactggcactctgcttgctgtcc
@@ -159,7 +159,7 @@ cat
 >M94081|TRAJ58*01|Homo_sapiens|ORF|J-REGION|17954..18016|63 nt|3| | | | |63+0=63| | |
 tttaagaaaccagtggctctaggttgacctttggggaaggaacacagctcacagtgaatc
 ctg
->M94081|TRAJ59*01|Homo_sapiens|ORF|J-REGION|16801..16860|60 nt|3| | || |60+0=60| | |
+>M94081|TRAJ59*01|Homo_sapiens|ORF|J-REGION|16801..16860|60 nt|3| | | | |60+0=60| | |
 ggaaggaaggaaacaggaaatttacatttggaatggggacgcaagtgagagtgaagctat
 >M16747|TRAJ6*01|Homo_sapiens|F|J-REGION|31..92|62 nt|2| | | | |62+0=62| | |
 tgcatcaggaggaagctacatacctacatttggaagaggaaccagccttattgttcatcc
@@ -177,4 +177,3 @@ tgaacacaggctttcagaaacttgtatttggaactggcacctgacttctggtcagtccaa
 >M94081|TRAJ9*01|Homo_sapiens|F|J-REGION|75756..75816|61 nt|1| | | | |61+0=61| | |
 ggaaatactggaggcttcaaaactatctttggagcaggaacaagactatttgttaaagca
 a
-

@@ -5,7 +5,7 @@ tcctggtaccagcaacgtgaaggccacgcccccgtatttctttcttatgttgttttg...
 .........gatggtttgaaggacagt...............gggcatttctccacattc
 ctgagccgctcgaat...gggtacagttacctgcttctgacagagctccagatcaaagac
 tctgcctcatacctctgtgctgtgaggga
->IMGT000082|TRAV1*02|Mus_musculus_C57BL/6J|F|V-REGION|10635..10909|275 nt|1| | || |275+54=329| | |
+>IMGT000082|TRAV1*02|Mus_musculus_C57BL/6J|F|V-REGION|10635..10909|275 nt|1| | | | |275+54=329| | |
 ggacagggtgtggagcag...cct...gccaaattgatgtctgtggagggaacctttgct
 cgggtcaactgcacatacagcacctcaggg..................ttcaacgggtta
 tcctggtaccagcaacgtgaaggccaagcccctgtatttctttcttatgttgttttg...
@@ -19,7 +19,7 @@ ccttggtacaagcaagaagctggaaagggtctccactttgtgatagacattcgttcaaat
 .........gtggacagaaaacagagc...............caaagacttatagttttg
 ttggataagaaagcc...aaacgattctccctgcacatcacagccacacagcctgaagat
 tcagccatctacttctgtgcagcaagca
->IMGT000082|TRAV10*02|Mus_musculus_C57BL/6J|F|V-REGION|1088040..1088319|280 nt|1| | || |280+48=328| | |
+>IMGT000082|TRAV10*02|Mus_musculus_C57BL/6J|F|V-REGION|1088040..1088319|280 nt|1| | | | |280+48=328| | |
 ggagagaaggtcgagcaacatgag...tctacactgagtgttcgagagggagacagcgct
 gtcatcaactgcacttacacagatactgct..................tcatcatacttc
 ccttggtacaagcaagaagctggaaagagtctccactttgtgatagacattcgttcaaat
@@ -173,14 +173,14 @@ ttctggtatgtgcactatctcaatgaatcccctcggttactcctgaagagctccacagac
 .........aacaagaggaccgagcac...............caagggttccacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagcgcagctgtcagac
 tctgccctgtactactgtgctttgagtga
->X17181|TRAV12-3*02|Mus_musculus_Std:ddY|(F)|V-REGION|663..939|277 nt|1| | || |277+51=328| | |
+>X17181|TRAV12-3*02|Mus_musculus_Std:ddY|(F)|V-REGION|663..939|277 nt|1| | | | |277+51=328| | |
 ggagactccgtgacccagacagaa...ggcctgatcactctcaccgaggggttgcctgtg
 atgctgaactgcacctatcagactacttactca...............aatccttccttt
 ttctggtatgtgcaacatctcaatgaatcccctcggctactcctgaggagctccacagac
 .........aacaagaggaccgag..................caagggttccacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagcgcag...tcagac
 tctgccctgtactactgtgctctgagtg
->X67432|TRAV12-3*03|Mus_musculus_DBA/2|(F)|V-REGION|421..704|284 nt|1| | || |284+45=329| | |
+>X67432|TRAV12-3*03|Mus_musculus_DBA/2|(F)|V-REGION|421..704|284 nt|1| | | | |284+45=329| | |
 ggagactcagtgacccagacagaa...ggcctggtcactctcaccgaggggttgcctgtg
 atgctgaactgcacctatcagactatttactca...............aatcctttcctt
 ttctggtatgtgcactatctcaatgaatcccctcggctactcctgaagagctccacagac
@@ -215,7 +215,7 @@ ttctggtatgtgcaatatctcaacgaagcccctcaggtactcctgcggagctccacagac
 .........aacaagaggaccgagcac...............caagggttccacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagcgcagctgtcagac
 tctgccctgtactactgtgctctgagtga
->X02936|TRAV12D-1*03|Mus_musculus_C57BL/Ka|(F)|V-REGION|1..164|164 nt|1| | || |164+159=323|partial in 5'| |
+>X02936|TRAV12D-1*03|Mus_musculus_C57BL/Ka|(F)|V-REGION|1..164|164 nt|1| | | | |164+159=323|partial in 5'| |
 ............................................................
 ............................................................
 .........gtgcagtatctcaacgaagcccctcaggtactcctgaagagctccacagac
@@ -257,21 +257,21 @@ ttctggtatgtgcaacatctcaacgaagcccctaagctactcctgaagagctccacagac
 .........aacaagaggaccgagcac...............caagggttctacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagtgcagctgtcagac
 tctgccctgtacttctgtgctttgagtga
->X04330|TRAV12D-2*03|Mus_musculus_C57BL/6|(F)|V-REGION|75..355|281 nt|1| | || |281+48=329| | |
+>X04330|TRAV12D-2*03|Mus_musculus_C57BL/6|(F)|V-REGION|75..355|281 nt|1| | | | |281+48=329| | |
 ggagactctgtgacccagacagaa...ggcctggtcactctcaccgaggggttgcctgtg
 atgctgaactgcacctatcagagtacttac..................tcacctttcctt
 ttctggtatgtgcaacatctcaacgaagcccctaagctacttttcaagagcttcacagac
 .........aacaagaggcccgagcac...............caagggttccacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagcgcagctgtcagac
 tctgccctgtactactgtgctttgagtaa
->M15063|TRAV12D-2*04|Mus_musculus_BALB/c|(F)|V-REGION|25..304|280 nt|1| | || |280+48=328| | |
+>M15063|TRAV12D-2*04|Mus_musculus_BALB/c|(F)|V-REGION|25..304|280 nt|1| | | | |280+48=328| | |
 ggagactcagtgacccagacagaa...ggcttggtcactctcaccaaggggttgcctgtg
 atgctgaactgcacctatcagactacttac..................tcacctttcctt
 ttctggtatgtgcaacatctcaacgaagcccctaagctactcctgaagagctccacagac
 .........aacaagaggaccgagcac...............caagggttctacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagtgcagctgtcagac
 tctgccctgtacttctgtgctttgagtg
->M98569|TRAV12D-2*05|Mus_musculus_BALB/c|(F)|V-REGION|1..250|250 nt|1| | || |250+78=328|partial in 5'| |
+>M98569|TRAV12D-2*05|Mus_musculus_BALB/c|(F)|V-REGION|1..250|250 nt|1| | | | |250+78=328|partial in 5'| |
 .................................gtcactctcaccaaggggttgcctgtg
 atgctgaactgcacctatcagactacttac..................tcacctttcctt
 ttctggcatgtgcaacatctcaacgaagcccctaagctactcctgaagagctccacagac
@@ -292,7 +292,7 @@ ttctggtatgtgcactatctcaatgaatccccttggctactcctgcggagctccacagac
 .........aacaagaggaccgagcac...............caagggttccacgccact
 ctccataagagcagc...agctccttccatctgcagaagtcctcagcgcagctgtcagac
 tctgccctgtactactgtgctttgagtga
->M34210|TRAV12D-3*03|Mus_musculus_BALB/c|(F)|V-REGION|1..281|281 nt|1| | || |281+48=329|partial in 5'| |
+>M34210|TRAV12D-3*03|Mus_musculus_BALB/c|(F)|V-REGION|1..281|281 nt|1| | | | |281+48=329|partial in 5'| |
 ...gactccgtgacccagacagaa...ggcctggtcactctcaacgaggggttgcctgtg
 atgctgaactgcacctatcagactatttactca...............aatgctttcctt
 ttctggtatgtgcactatctcaatgaatccccttggctactcctgcggagctccacagac
@@ -369,7 +369,7 @@ cagtggttttaccaacgtcctgggggaagactcgtcagcctgttgtacagtccttct...
 .........tgggcagagcagagaggt...............ggaagactgacatcctcg
 gcagccagtaacgaa...agtcgcagctctttgcacatttcctcctcccagatcacagac
 tcaggcacttatctctgtgctatggaac
->X17176|TRAV13-3*02|Mus_musculus_Std:ddY|ORF|V-REGION|796..1064|269 nt|1| | || |269+54=323| | |
+>X17176|TRAV13-3*02|Mus_musculus_Std:ddY|ORF|V-REGION|796..1064|269 nt|1| | | | |269+54=323| | |
 ggacagcaagtgcagcagagcccc...gcgtccttggttctgcaggagggggagaatgca
 gagctgcagtgcacctattccacaactttg.....................aacagtatg
 cagtggttttaccaacgtcctgggggaagactcgtcagcctgttgtacagtccttct...
@@ -383,7 +383,7 @@ cagtggttttaccaacgtcctgggggaagcctcgtcagcctgttgtacaatccttct...
 ............gggacaaagcacact...............ggaagactgacatccacc
 acagtcactaaagaa...cgtcgcagctctttgcacatttcctcctcccagatcacagac
 tcaggcacttatttctgtgctatggaac
->IMGT000082|TRAV13-4/DV7*02|Mus_musculus_C57BL/6J|F|V-REGION|1339684..1339954|271 nt|1| | || |271+57=328| | |
+>IMGT000082|TRAV13-4/DV7*02|Mus_musculus_C57BL/6J|F|V-REGION|1339684..1339954|271 nt|1| | | | |271+57=328| | |
 ggacagcaagtgcagcagagtcct...gcatccttggttctgcaggagggggagaacgca
 gagctgcagtgtaacttttcctccacagca.....................acccggctg
 cagtggttttaccaacgtcctgggggaagcctcgtcagcctgttgtccaatccttct...
@@ -418,14 +418,14 @@ cagtggttttaccaacgtcctgggggaagtctcgtcagcctgttctacaatccttct...
 ............gggacaaagcatagt...............gggagactgacatccact
 acagtcatcaaagaa...cgtcgcagctctttgcacatttcctcctcccagacaacagac
 tcaggcacttatctctgtgct
->M34216|TRAV13D-1*03|Mus_musculus_BALB/c|(F)|V-REGION|1..175|175 nt|1| | || |175+150=325|partial in 5'| |
+>M34216|TRAV13D-1*03|Mus_musculus_BALB/c|(F)|V-REGION|1..175|175 nt|1| | | | |175+150=325|partial in 5'| |
 ............................................................
 .........................................................atg
 cagtggttttatcaacgtcctgggggaagtctcgtcagcctgttctacaatccttct...
 ............gggacaaagcagagt...............gggagactgacatccact
 acagtcatcaaagaa...cgtcgcagctctttgcacatttcctcctcccagacaacagac
 tcaggcacttatctctgtgctatgg
->IMGT000082|TRAV13D-1*04|Mus_musculus_C57BL/6J|F|V-REGION|433629..433899|271 nt|1| | || |271+57=328| | |
+>IMGT000082|TRAV13D-1*04|Mus_musculus_C57BL/6J|F|V-REGION|433629..433899|271 nt|1| | | | |271+57=328| | |
 ggacagcaagtgcagcagagtccc...acgtccttggttctgcaggagggggaaaacgca
 gagctgcagtgtaacttttccacatctttg.....................aacagtatg
 cagtggttttaccaacgtcctgggggaagtctcgtcagcgtgttctacaatccttct...
@@ -439,7 +439,7 @@ cagtggttttaccaacatcctgggggaagactcgtcagcctgttctacaatccttct...
 ............gggacaaagcacact...............ggaagactgacatccacc
 acagtcactaacgaa...cgtcgcggctctttgcacatttcctcctcccagacaacagac
 tcaggcacttatttctgtgctatagatc
->U21415|TRAV13D-2*02|Mus_musculus_BALB/c|(F)|V-REGION|1..216|216 nt|1| | || |216+108=324|partial in 5'| |
+>U21415|TRAV13D-2*02|Mus_musculus_BALB/c|(F)|V-REGION|1..216|216 nt|1| | | | |216+108=324|partial in 5'| |
 ......................................................aatgca
 gagctgcagtgtaacttttcctccacagta.....................acccggctg
 cagtggttttaccaacatcctgggggaagactcgtcagcctgttctacaatccttct...
@@ -474,7 +474,7 @@ cagtggttttaccaacgtcctgggggaagactcgtcagcctgttgtacaatccttct...
 ............gggacaaagcagagt...............gggagactgacatccaca
 acagtcattaaagaa...cgtcgcagctctttgcacatttcctcctcccagatcacagac
 tcaggcacttatctctgtgctatggaac
->M20876|TRAV13D-4*02|Mus_musculus_B10.S/9R|(F)|V-REGION|40..310|271 nt|1| | || |271+57=328| | |
+>M20876|TRAV13D-4*02|Mus_musculus_B10.S/9R|(F)|V-REGION|40..310|271 nt|1| | | | |271+57=328| | |
 gaacagcaagtgcagcagagtccc...gcgtccttggttctgcaggaggcggagaacgca
 gagctgcagtgtagcttttccatctttaca.....................aaccaggtg
 cagtggttttaccaacgtcctgggggaagactcgtcagcctgttgtacaatccttct...
@@ -495,7 +495,7 @@ cagtggttttaccaacgtcctgggggaagtctcatcagcgtgttctacaatccttct...
 ............gggacaaagcagagt...............gggagactgacatccaca
 acagtcattaaagaa...cgccgcagctctttgcacatttcctcctcccagatcacagac
 tcaggcacttatctctgtgctatggaac
->AC161460|TRAV13N-2*01|Mus_musculus_C57BL/6J|F|V-REGION|117312..117582|271 nt|1| | || |271+57=328| | |
+>AC161460|TRAV13N-2*01|Mus_musculus_C57BL/6J|F|V-REGION|117312..117582|271 nt|1| | | | |271+57=328| | |
 ggacagcaagtgcagcagagcccc...gcgtccttggttctgcaggagggggagaacgca
 gagctgcagtgtaacttttcctccacagca.....................acccagctg
 cagtggttttaccaaagtcctgggggaagcctcgtcagcctgttgtccaatccttct...
@@ -565,7 +565,7 @@ ccatggtaccagcagttccctggggaaggtcccgctctcctgatatccatactttcagtg
 .........tccgataaaaaggaagat...............ggacgattcacaatcttc
 ttcaataaaagggag...aaaaagctctccttgcacattgcagactctcagcctggagac
 tcagccacctacttctgtgcagcaagtg
->U04626|TRAV14-3*02|Mus_musculus_BALB/c|F|V-REGION|463..742|280 nt|1| | || |280+48=328| | |
+>U04626|TRAV14-3*02|Mus_musculus_BALB/c|F|V-REGION|463..742|280 nt|1| | | | |280+48=328| | |
 cagcagcaggtgagacaaagtccc...caatctctgacagtctgggaaggagagaccgca
 attctgaactgcagttatgagaacagtgct..................tttgactacttc
 ccatggtaccagcagttccctggggaaggtcccgctctcctgatagccatactttcagtg
@@ -712,7 +712,7 @@ ttctggtacaagcaccttcttagtggagagatggttttgcttattcgacaaatgccttct
 ......actattgcaatagagaggagc...............ggccgctattctgtagtc
 ttccagaaatcacgc...aaatccatcagccttgtcatttcaaccttacaaccagacgat
 tcgggaaagtatttctgtgctctctgggagctgg
->X63939|TRAV15-1/DV6-1*02|Mus_musculus_BALB/c|(F)|V-REGION|16..307|292 nt|1| | || |292+42=334| | |
+>X63939|TRAV15-1/DV6-1*02|Mus_musculus_BALB/c|(F)|V-REGION|16..307|292 nt|1| | | | |292+42=334| | |
 gcccagaaagtgattcaggtctgg...tcaacaacaagcaggcaggagggagaaaaactc
 acactggactgttcatataagacaagtcaggtc...............ttataccatctt
 ttctggtacaagcaccttcttagtggagagatggttttgcttattcgacaaatgccttct
@@ -726,7 +726,7 @@ ctttggtacaagcagctttttagtggagagatggttttccttatttaccaaacttccttt
 ......gatactcagaaccagaggaac...............agccgctactctgtagtc
 ttccagaaatcactc...aagtccatcagccttgtcatttcagcctcacagccagaggat
 tcagggacgtacttctgcgctctctcggaactga
->IMGT000082|TRAV15-2/DV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|1231739..1232027|289 nt|1| | || |289+45=334| | |
+>IMGT000082|TRAV15-2/DV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|1231739..1232027|289 nt|1| | | | |289+45=334| | |
 gcccagagagtgactcaggtccag...tcaacaggcagcagtcagtgggga...gaagtc
 accctggactgttcatatgagacaagtgaatac...............tcctaccttatt
 ctttggtacaggcagctttttagtggagagatggttttccttatttaccaaccttctttt
@@ -859,7 +859,7 @@ ttctggtacaagcaaacagcaagtgggaaaatagttttccttattcgtcaggactcttac
 ......aaaaaggaaaatgcaacagtg...............ggtcattattctctgaac
 tttcagaagccaaaa...agttccatcggactcatcatcaccaccacacagattgaggac
 tcggcagtatatttctgtgctatg
->AF118105|TRAV16*05|Mus_musculus_C57BL/6xDBA/2|(F)|V-REGION|1..276|276 nt|1| | || |276+48=324|partial in 5'| |
+>AF118105|TRAV16*05|Mus_musculus_C57BL/6xDBA/2|(F)|V-REGION|1..276|276 nt|1| | | | |276+48=324|partial in 5'| |
 ......aaggtaacacagactcag...actttaatttctgtgatggagaagacaacggtg
 acaatggactgtgtgtatgaaacccgggaaagt...............tcttactactta
 ttctggtacaagcaaacagcaagtggggaaatagttttccttattcgtcaggactcttac
@@ -894,7 +894,7 @@ ttctggtacaagcaaacagcaagtggggaaatagttttccttattcgtcaggactcttac
 ......aaaaaggaaaatgcaacagaa...............ggtcattattctctgaac
 tttcagaagccaaaa...agttccatcggactcatcatcactgccacacagattgaggac
 tcagcagtatatttctgtgctatgagagag
->AC161460|TRAV16N*01|Mus_musculus_C57BL/6J|F|V-REGION|20008..20297|290 nt|1| | || |290+42=332| | |
+>AC161460|TRAV16N*01|Mus_musculus_C57BL/6J|F|V-REGION|20008..20297|290 nt|1| | | | |290+42=332| | |
 gcccagaaggtaacacagactcag...acttcaatttctgtggtggagaagacaacggtg
 acaatggactgtgtgtatgaaacccgggacagt...............tcttacttctta
 ttctggtacaagcaaacagcaagtggggaaatagttttccttattcgtcaggactcttac
@@ -908,7 +908,7 @@ ttctggtacgtgcagtatcctggccagagcctccagtttctcctcaaatacatcacagga
 ......gacgccgttgttaaaggcacc...............aagggctttgaggccgag
 tttaggaagagtaac...tcctctttcaacctgaagaaatccccagcccattggagcgac
 tcagccaagtacttctgtgcactggaggg
->IMGT000082|TRAV17*02|Mus_musculus_C57BL/6J|F|V-REGION|1388865..1389148|284 nt|1| | || |284+45=329| | |
+>IMGT000082|TRAV17*02|Mus_musculus_C57BL/6J|F|V-REGION|1388865..1389148|284 nt|1| | | | |284+45=329| | |
 gcccagtccgtggaccagcctgat...gctcatgtcacgctctctgaaggagcctccctg
 gagctcagatgcagttattcatacagtgca..................gcaccttacctc
 ttctggtacgtgcagtatcctggccagagcctccagtttctcctcaaatacatcacagga
@@ -936,7 +936,7 @@ gcctggtacaaaaaataccctgacaacagccccacactcctgatatccgtacgctcaaat
 .........gtggataagagggaagac...............ggaagattcacagttttc
 ttgaacaaaagcggc...aaacacttctcactgcacatcacagcctcccagcctgaagac
 acagcagtgtacctctgcgcagcaggtg
->IMGT000082|TRAV19*03|Mus_musculus_C57BL/6J|F|V-REGION|1427581..1427860|280 nt|1| | || |280+48=328| | |
+>IMGT000082|TRAV19*03|Mus_musculus_C57BL/6J|F|V-REGION|1427581..1427860|280 nt|1| | | | |280+48=328| | |
 ggccagcaagttaaacaaagctct...ccatcgctgactgttcaagagggagggatatcg
 atcctgaattgtgactacgagaatgatatg..................tttgactatttt
 gcctggtacaaaaaataccctgacaacagccccacactcctgatatccgtacgctcaaat
@@ -992,7 +992,7 @@ tcctggtataagcaagaggcgggggcaggtcttcagttgcttatgagtgtcctttcaaat
 .........gtggacagaaaagaagaa...............caaggactcactgtctta
 ctgaacaagaaagac...aaacgactctctctgaacctcacagctgcccatcctggggac
 tcagccgtgtacttctgcgcagtcagtg
->AJ311366|TRAV3-1*02|Mus_musculus_C3H|(F)|V-REGION|113..392|280 nt|1| | || |280+48=328| | |
+>AJ311366|TRAV3-1*02|Mus_musculus_C3H|(F)|V-REGION|113..392|280 nt|1| | | | |280+48=328| | |
 ggcgagcaggtggagcagcgccct...cctcacctgagtgtccgggagggagacagctcc
 attatcatctgcacctacacagacagtgcc..................actgcttacttc
 tcctggtataagcaagaggcgggggcaggtcttcagttgcttatgagtgtcctttcaaat
@@ -1125,7 +1125,7 @@ cagtggttcctacagaatcccaggggcagcctcatcaatcttttttacctggttcca...
 ............ggaacaaaggagaat...............gggaggttaaagtcaaca
 ttcaattctaaggag...agctacagcaccccgcacatcagggatgcccagctggaggac
 tcaggcacttacttctgtgctgctga
->M87844|TRAV4D-3*03|Mus_musculus_C57BL/6|(F)|V-REGION|233..503|271 nt|1| | || |271+57=328| | |
+>M87844|TRAV4D-3*03|Mus_musculus_C57BL/6|(F)|V-REGION|233..503|271 nt|1| | | | |271+57=328| | |
 ggagataaggtgaaacaaagtccc...tcagcgctgagtctccaagaaggaaccaattct
 gctctgagatgcaatttttctatcgccgcg.....................acaactgtg
 cagtggttcctacagaatcccaggggcagcctcatcaatcttttttacctggttcca...
@@ -1153,7 +1153,7 @@ cagtggttccgacagaattccaggggcagcctcatcaatctgttctacttggcttca...
 ............ggaacaaaggagaat...............gggaggctaaagtcagca
 tttgattctaaggag...ctctacagcaccctgcacatcagggatgcccagctggaggac
 tcaggcacttacttctgtgctgctgagg
->X02968|TRAV4D-4*02|Mus_musculus_B10.A|(F)|V-REGION|91..356|266 nt|1| | || |266+57=323| | |
+>X02968|TRAV4D-4*02|Mus_musculus_B10.A|(F)|V-REGION|91..356|266 nt|1| | | | |266+57=323| | |
 ggagatcaggtggagcagagtcct...tcagccctgagcctccacgagggaaccggttct
 gctctgagatgcaattttacgaccaccatg.....................agggctgtg
 cagtggttccaacagaattccaggggcagcctcatcaatctgttctacttggcttca...
@@ -1321,14 +1321,14 @@ ttctggtatgtccaatatcctggagaaggtccacagctccttttgaaagtcacaacagcc
 .........aacaataagggaagcagc...............agaggttttgaagctaca
 tatgataaagggacc...acgtccttccacttgcagaaagcctcagtgcaggaatcagac
 tcggctgtgtactactgtgttctgggtga
->IMGT000082|TRAV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|249617..249897|280 nt|1| | || |280+48=328| | |
+>IMGT000082|TRAV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|249617..249897|281 nt|1| | | | |281+48=329| | |
 ggaaattcagtgacccagatgcaa...ggtcaagtgaccctttcagaagaggagtttcta
 tttataaactgtacctattcaaccacaggg..................tacccgactctt
 ttctggtatgtccaatatcctggagaaggtccacagctccttttgaaagtcacaacagcc
 .........aacaataagggaagcagc...............agaggttttgaagctaca
 tatgataaagggacc...acgtccttccacttgcagaaagcctcagtgcaggagtcagac
-tcggctgtgtactactgtgttctgggtg
->U21455|TRAV6-2*03|Mus_musculus_BALB/c|(F)|V-REGION|1..231|231 nt|1| | || |231+93=324|partial in 5'| |
+tcggctgtgtactactgtgttctgggtga
+>U21455|TRAV6-2*03|Mus_musculus_BALB/c|(F)|V-REGION|1..231|231 nt|1| | | | |231+93=324|partial in 5'| |
 ................................................gaggagtttcta
 tttataaactgtacctattcaaccacaggg..................tacccgactctt
 ttctggtatgtccaatatcctggagaaggtccacagctccttttgaaagtcacaacagcc
@@ -1384,7 +1384,7 @@ ttctggtatgtgcagtatcccggagaaggtccacagctcctctttaaagtcccaaaggcc
 .........aacgagaagggaagcagc...............agagggtttgaagccaca
 tacaataaagaagcc...acctccttccacttgcagaaagcctcagtgcaagagtcagac
 tcggctgtgtactactgtgctctgagtga
->U05046|TRAV6-5*03|Mus_musculus_BALB/cJ|(F)|V-REGION|1..251|251 nt|1| | || |251+72=323|partial in 5'| |
+>U05046|TRAV6-5*03|Mus_musculus_BALB/cJ|(F)|V-REGION|1..251|251 nt|1| | | | |251+72=323|partial in 5'| |
 ...........................ggtccagtgacattgtctgaaggaacttctctg
 actgtgaactgttcctatgaaaccaaacag..................tacccaaccctg
 ttctggtatgtgcagtatcccggagaaggtccacagctcctctttaaagtcccaaaggcc
@@ -1482,7 +1482,7 @@ ttctggtatgtccaatattctggagaaggtccacagctccttctgcaagtcacaactgcc
 .........aacaacaagggaagcagc...............agaggttttgaagctaca
 tatgataaaggaacc...acttccttccacttgcagaaaacctcagtgcaagagatagat
 tcggctgtgtactactgtgctatgagaga
->M16675|TRAV6D-3*02|Mus_musculus_C57BL/6|(F)|V-REGION|58..332|275 nt|1| | || |275+48=323| | |
+>M16675|TRAV6D-3*02|Mus_musculus_C57BL/6|(F)|V-REGION|58..332|275 nt|1| | | | |275+48=323| | |
 ggagactcagtgatccagatgcaa...ggtcaagtgaccttttcagaaaacgactcctta
 tttataaactgcacttattcaaccacaggg..................tacccgactctt
 ttctggtatgtccaatattctggagaaggtccacagctccttctgcaagtcacaactgcc
@@ -1524,7 +1524,7 @@ ttctggtatgttcgatatcctggagaaggtctacaactcctcctgaaagtcattacggct
 .........ggccagaagggaagcagc...............agagggtttgaagccaca
 tacaataaagaaacc...acctccttccacttgcagaaagcctcagtgcaagagtcagac
 tcggctgtgtactactgtgctctgagtga
->IMGT000082|TRAV6D-6*02|Mus_musculus_C57BL/6J|F|V-REGION|404106..404392|287 nt|1| | || |287+42=329| | |
+>IMGT000082|TRAV6D-6*02|Mus_musculus_C57BL/6J|F|V-REGION|404106..404392|287 nt|1| | | | |287+42=329| | |
 ggagattccgtgactcaaacagaa...ggcccagtgaccgtctcagaaagcgagtccctg
 ataataaattgcacgtattcagccacaagcata............gcttaccctaatctt
 ttctggtatgttcgatatcctggagaaggtctacaactcctcctgaaagtcattacggct
@@ -1538,7 +1538,7 @@ ttctggtatgttcgataccttggagaaggtccgcaactcctcctgaaagtcattacggct
 .........ggccagaagggaagcagc...............agagggtttgaagccaca
 tacaataaagaagcc...acctccttccacttgcagaaagcctcagtgcaagagtcggac
 tcggctgtgtactactgcgctctgag
->U21397|TRAV6D-6*04|Mus_musculus_BALB/c|(F)|V-REGION|1..253|253 nt|1| | || |253+72=325|partial in 5'| |
+>U21397|TRAV6D-6*04|Mus_musculus_BALB/c|(F)|V-REGION|1..253|253 nt|1| | | | |253+72=325|partial in 5'| |
 .................................gttactgttacagaaagcaagtccctg
 ataataaattgcacgtattcagccacaagcata............ggttaccctaatctt
 ttctggtatgttcgatatcctggagaaggtctacaactcctcctgaaagtcattacggct
@@ -1636,14 +1636,14 @@ tggtggtacagacagcattctgggaaagcccccaaggcactgatgtccatcttctcc...
 .........aatggtgaaaaagaagaa...............gggagattcacaattcac
 ctcaataaagccagt...ctgcatttctccctgcacatcagagactcccagcccagtgac
 tctgctctctatctctgtgcagtgagca
->L16803|TRAV7-3*02|Mus_musculus_BALB/c|(F)|V-REGION|1..156|156 nt|1| | || |156+166=322|partial in 5'| |
+>L16803|TRAV7-3*02|Mus_musculus_BALB/c|(F)|V-REGION|1..156|156 nt|1| | | | |156+166=322|partial in 5'| |
 ............................................................
 ............................................................
 ................attctgggaaagcccccaaggcactgatgtccatcttctcc...
 .........aatggtgaaaaagaagaa...............ggcagattcacaattcac
 ctcaataaagccagt...ctgcatttctccctgcacatcagagactcccagcccagtgac
 tctgctctctacctctgtgcag
->AF037038|TRAV7-3*03|Mus_musculus_SJL|(F)|V-REGION|61..331|271 nt|1| | || |271+51=322| | |
+>AF037038|TRAV7-3*03|Mus_musculus_SJL|(F)|V-REGION|61..331|271 nt|1| | | | |271+51=322| | |
 cagcagaatgtgcagcagagccca...gactccctcattgtcccagagggagccaggacc
 tctctcaactgcactttcagtgacagtgct..................tctcagtatttc
 tggtggtacagacagcattctgggaaagcccccaaggcactgatgtccatcttctcc...
@@ -1685,7 +1685,7 @@ tctgctgtctacctctgtgcaatgagca
 .........gatggtgaaaaggaagaa...............ggcagatttacagctcag
 gtcaatagagccagc...ctgcatgtttccctacacatcagagagccgcaacccagtgac
 tctgctgtctacctctgtgcaatgag
->IMGT000082|TRAV7-5*03|Mus_musculus_C57BL/6J|F|V-REGION|1113070..1113346|277 nt|1| | || |277+51=328| | |
+>IMGT000082|TRAV7-5*03|Mus_musculus_C57BL/6J|F|V-REGION|1113070..1113346|277 nt|1| | | | |277+51=328| | |
 cagcagaaggtgcagcagagccca...gaatccctcactgtctcagagggagccatggcc
 tctctcaactgcacgttcagtgatggtact..................tctaacaacttc
 aggtggtacagacagcattctgcgaaaggccttgaggtgctagtgtccatcttctct...
@@ -1699,14 +1699,14 @@ tggtggtaccaacagcatcctgggaaaggccccgaagcactaatatccatattctct...
 .........aatggcaacaagaaagaa...............ggcagattgacagtttac
 ctcaatagagccagc...ctgcatgtttccctgcacatcagagactcccagcccactgac
 tccgccatctacctctgtgcagtgagca
->IMGT000082|TRAV7-6*02|Mus_musculus_C57BL/6J|F|V-REGION|1299048..1299324|277 nt|1| | || |277+51=328| | |
+>IMGT000082|TRAV7-6*02|Mus_musculus_C57BL/6J|F|V-REGION|1299048..1299324|277 nt|1| | | | |277+51=328| | |
 caggagaaggtacagcagagccca...gaatccctcattgtcccagagggagccatggtc
 tccctcaactgcagtttcagcgacagtgct..................tctcagtccatc
 tggtggtaccaacagcatcctgggaaaggccccaaagcactaatatccatcttctct...
 .........aatggcaacaagaaagaa...............ggcagattgacagtttac
 ctcaatagagccagc...ctgcatgtttccctgcacatcaaagactcccagcccagtgac
 tccgctgtctacctctgtgcagtgagca
->AF259071|TRAV7D-2*01|Mus_musculus_129/SvJ|F|V-REGION|105942..106218|277 nt|1| | || |277+51=328| | |
+>AF259071|TRAV7D-2*01|Mus_musculus_129/SvJ|F|V-REGION|105942..106218|277 nt|1| | | | |277+51=328| | |
 caacagaaggtgcagcagagccca...gaatccctcattgttccagagggaggcatggcc
 tctctcaactgcacttccagtgatcgtaat..................gttgactacttc
 tggtggtacagacagcactctgggaaaagccccaagatgctgatgtctatcttctcc...
@@ -1734,7 +1734,7 @@ gcatggtacagacagcattctgggaaagcccccaaggcactgatgtccatcttctcc...
 .........aatggtgaaaaagaagaa...............ggcagattcacaattcac
 ctcaataaagccagt...ctgcatttctcgctacacatcagagactcccagcccagtgac
 tctgctctctacctctgtgcagtgagc
->M26423|TRAV7D-3*02|Mus_musculus_B10.AxAKR|(F)|V-REGION|1..217|217 nt|1| | || |217+108=325|partial in 5'| |
+>M26423|TRAV7D-3*02|Mus_musculus_B10.AxAKR|(F)|V-REGION|1..217|217 nt|1| | | | |217+108=325|partial in 5'| |
 ............................................................
 tctctcaactgcactttcagcgacagtgct..................tctcagtatttt
 gcatggtacagacagcattctgggaaagcccccaaggcactgacgtccatcttctcc...
@@ -2070,4 +2070,3 @@ ttctggtatgtccagtacccgcggcaggggctgcagctgctcctcaagtactattcagga
 ......gacccagtggttcaaggagtg...............aacagcttcgaggctgag
 ttcagcaagagtaac...tcttccttccacctgcagaaagcctctgtgcactggagcgac
 tcggctgtgtacttctgtgctctgagca
-

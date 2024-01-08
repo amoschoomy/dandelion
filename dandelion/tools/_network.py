@@ -87,7 +87,9 @@ def generate_network(
     """
     regenerate = True
     if vdj_data.graph is not None:
-        if use_existing_graph:
+        if (min_size != 2) or (downsample is not None):
+            pass
+        elif use_existing_graph:
             start = logg.info(
                 "Generating network layout from pre-computed network"
             )
@@ -485,8 +487,8 @@ def generate_network(
         time=start,
         deep=(
             "Updated Dandelion object: \n"
-            "   'data', contig-indexed clone table\n"
-            "   'metadata', cell-indexed clone table\n"
+            "   'data', contig-indexed AIRR table\n"
+            "   'metadata', cell-indexed observations table\n"
             "   'layout', graph layout\n"
             "   'graph', network constructed from distance matrices of VDJ- and VJ- chains"
         ),

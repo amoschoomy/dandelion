@@ -12,6 +12,9 @@ def test_find_clones_other_options(airr_generic):
     with pytest.raises(ValueError):
         vdj = ddl.tl.find_clones(vdj, recalculate_length=False)
     vdj.data["junction_aa_length"] = 10
+    with pytest.raises(ValueError):
+        ddl.tl.find_clones(vdj, recalculate_length=False)
+    vdj = vdj[vdj.data.junction != ""]  # remove empty junctions
     ddl.tl.find_clones(vdj, recalculate_length=False)
     assert not vdj.data.clone_id.empty
     assert not vdj.metadata.clone_id.empty

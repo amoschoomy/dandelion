@@ -33,10 +33,11 @@ setup(
             "sphinx<7",  # see issue at https://github.com/readthedocs/readthedocs.org/issues/10279
             "nbsphinx<=0.9.2",
             "sphinx-autodoc-typehints<=1.25.2",
-            "sphinx_rtd_theme<=1.2.2",
-            "readthedocs-sphinx-ext<=2.2.3",
+            "sphinx_rtd_theme<=2.0.0",
+            "readthedocs-sphinx-ext<=2.2.5",
             "recommonmark<=0.7.1",
-        ]
+        ],
+        "scirpy": ["scirpy<=0.14", "awkward", "mudata"],
     },
     package_data={"dandelion": ["bin/tigger-genotype.R"]},
     data_files=[("bin", ["bin/tigger-genotype.R"])],

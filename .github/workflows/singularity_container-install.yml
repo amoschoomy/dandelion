@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             **/*.{yml,yaml,py}
@@ -41,54 +41,18 @@ jobs:
     if: needs.changes.outputs.keepgoing == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.13
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.13
-        id: go
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y \
-            build-essential \
-            libssl-dev \
-            uuid-dev \
-            libgpgme11-dev \
-            squashfs-tools \
-            libseccomp-dev \
-            pkg-config
-      - name: Install Singularity
-        env:
-          SINGULARITY_VERSION: 3.8.1
-          GOPATH: /tmp/go
-        run: |
-          mkdir -p $GOPATH
-          sudo mkdir -p /usr/local/var/singularity/mnt && \
-          mkdir -p $GOPATH/src/github.com/sylabs && \
-          cd $GOPATH/src/github.com/sylabs && \
-          wget -qO- https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz | \
-          tar xzv && \
-          cd singularity-ce-${SINGULARITY_VERSION} && \
-          ./mconfig -p /usr/local && \
-          make -C builddir && \
-          sudo make -C builddir install
       - name: Check out code for the container build
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
+      - name: Setup Singularity
+        uses: singularityhub/install-singularity@main
       - name: Extract repository location
         shell: bash
         run: |
-          echo "location=$(echo "  - git+https://www.github.com/${GITHUB_REPOSITORY}@${GITHUB_REF#refs/heads/}")" >> $GITHUB_OUTPUT
+          echo "location=$(echo "      - git+https://www.github.com/${GITHUB_REPOSITORY}@${GITHUB_REF#refs/heads/}")" >> $GITHUB_OUTPUT
         id: extract_location
-
       - name: Build Container
         run: |
-          ls container
           cd container
-          wget https://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.19.0/ncbi-igblast-1.19.0-x64-linux.tar.gz
-          wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.13.0/ncbi-blast-2.13.0+-x64-linux.tar.gz
-          tar -xzvf ncbi-igblast-1.19.0-x64-linux.tar.gz
-          tar -xzvf ncbi-blast-2.13.0+-x64-linux.tar.gz
           echo '${{ steps.extract_location.outputs.location }}' >> environment_test.yml
           sudo -E singularity build --notest sc-dandelion.sif sc-dandelion_test.def
       - name: Test Container

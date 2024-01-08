@@ -25,6 +25,7 @@ def database_paths_mouse() -> Dict[str, Path]:
         "germline": DATABASE_PATH / "germlines" / "imgt" / "mouse" / "vdj",
         "blastdb": MBLASTDB_PATH,
         "blastdb_fasta": MBLASTDB_PATH / "mouse_BCR_C.fasta",
+        "ogrdb": DATABASE_PATH / "germlines" / "ogrdb" / "mouse" / "vdj",
     }
     return db
 

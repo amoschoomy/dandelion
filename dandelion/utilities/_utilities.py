@@ -21,6 +21,26 @@ TRUES = ["T", "True", "true", "TRUE", True]
 FALSES = ["F", "False", "false", "FALSE", False]
 HEAVYLONG = ["IGH", "TRB", "TRD"]
 LIGHTSHORT = ["IGK", "IGL", "TRA", "TRG"]
+VCALL = "v_call"
+JCALL = "j_call"
+VCALLG = "v_call_genotyped"
+JCALLG = "j_call_genotyped"
+STRIPALLELENUM = "[*][0-9][0-9]"
+NO_DS = [
+    "129S1_SvImJ",
+    "AKR_J",
+    "A_J",
+    "C3H_HeJ",
+    "C57BL_6J",
+    "BALB_c_ByJ",
+    "CBA_J",
+    "DBA_1J",
+    "DBA_2J",
+    "MRL_MpJ",
+    "NOR_LtJ",
+    "NZB_BlNJ",
+    "SJL_J",
+]
 
 # for compatibility with python>=3.10
 try:
@@ -964,6 +984,7 @@ def set_germline_env(
     germline: Optional[str] = None,
     org: Literal["human", "mouse"] = "human",
     input_file: Optional[Union[str, Path]] = None,
+    db: Literal["imgt", "ogrdb"] = "imgt",
 ) -> Tuple[Dict, Path, Path]:
     """
     Set the paths to germline database and environment variables and relevant input files.
@@ -976,6 +997,8 @@ def set_germline_env(
         organism for germline sequences.
     input_file : Optional[Union[str, Path]], optional
         path to input file.
+    db : Literal["imgt", "ogrdb"], optional
+        database to use. Defaults to imgt.
     Returns
     -------
     Tuple[Dict, Path]
@@ -997,7 +1020,7 @@ def set_germline_env(
                     "Please 'export GERMLINE=/path/to/database/germlines/'"
                 )
             )
-        gml = gml / "imgt" / org / "vdj"
+        gml = gml / db / org / "vdj"
     else:
         gml = env["GERMLINE"] = Path(germline)
     if input_file is not None:
@@ -1094,3 +1117,8 @@ def sum_col(vals):
         return np.nan
     else:
         return sum(vals)
+
+
+def check_same_celltype(clone_def1, clone_def2):
+    """Check if the first key is the same."""
+    return clone_def1.split("_", 1)[0] == clone_def2.split("_", 1)[0]

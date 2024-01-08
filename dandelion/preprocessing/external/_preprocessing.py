@@ -8,14 +8,11 @@ import pandas as pd
 import scanpy as sc
 
 from anndata import AnnData
-from datetime import timedelta
 from pathlib import Path
 from scanpy import logging as logg
 from sklearn import mixture
 from subprocess import run
-from time import time
-from typing import Optional
-
+from typing import Optional, Union, List
 
 from ...utilities._utilities import *
 
@@ -67,7 +64,7 @@ def assigngenes_igblast(
             "-o",
             str(outfolder / outfile),
         ]
-        cmd = cmd + additional_args
+        cmd += additional_args
         logg.info("Running command: %s\n" % (" ".join(cmd)))
         run(cmd, env=env)  # logs are printed to terminal
 
@@ -77,6 +74,7 @@ def makedb_igblast(
     igblast_output: Optional[Union[str, Path]] = None,
     germline: Optional[str] = None,
     org: Literal["human", "mouse"] = "human",
+    db: Literal["imgt", "ogrdb"] = "imgt",
     extended: bool = True,
     additional_args: List[str] = [],
 ):
@@ -93,13 +91,18 @@ def makedb_igblast(
         path to germline database.
     org : Literal["human", "mouse"], optional
         organism of germline sequences.
+    db : Literal["imgt", "ogrdb"], optional
+        `imgt` or `ogrdb` reference database for running igblastn.
     extended : bool, optional
         whether or not to parse extended 10x annotations.
     additional_args: List[str], optional
         Additional arguments to pass to `MakeDb.py`.
     """
     env, gml, fasta = set_germline_env(
-        germline=germline, org=org, input_file=fasta
+        germline=germline,
+        org=org,
+        input_file=fasta,
+        db=db,
     )
     if igblast_output is None:
         indir = fasta.parent / "tmp"
@@ -196,6 +199,33 @@ def creategermlines(
     org: Literal["human", "mouse"] = "human",
     genotyped_fasta: Optional[str] = None,
     mode: Optional[Literal["heavy", "light"]] = None,
+    db: Literal["imgt", "ogrdb"] = "imgt",
+    strain: Optional[
+        Literal[
+            "c57bl6",
+            "balbc",
+            "129S1_SvImJ",
+            "AKR_J",
+            "A_J",
+            "BALB_c_ByJ",
+            "BALB_c",
+            "C3H_HeJ",
+            "C57BL_6J",
+            "C57BL_6",
+            "CAST_EiJ",
+            "CBA_J",
+            "DBA_1J",
+            "DBA_2J",
+            "LEWES_EiJ",
+            "MRL_MpJ",
+            "MSM_MsJ",
+            "NOD_ShiLtJ",
+            "NOR_LtJ",
+            "NZB_BlNJ",
+            "PWD_PhJ",
+            "SJL_J",
+        ]
+    ] = None,
     additional_args: List[str] = [],
 ):
     """
@@ -214,55 +244,67 @@ def creategermlines(
     mode : Optional[Literal["heavy", "light"]], optional
         whether to run on heavy or light mode. If left as None, heavy and
         light will be run together.
+    db : Literal["imgt", "ogrdb"], optional
+        `imgt` or `ogrdb` reference database.
+    strain : Optional[Literal["c57bl6", "balbc", "129S1_SvImJ", "AKR_J", "A_J", "BALB_c_ByJ", "BALB_c", "C3H_HeJ", "C57BL_6J", "C57BL_6", "CAST_EiJ", "CBA_J", "DBA_1J", "DBA_2J", "LEWES_EiJ", "MRL_MpJ", "MSM_MsJ", "NOD_ShiLtJ", "NOR_LtJ", "NZB_BlNJ", "PWD_PhJ", "SJL_J"]], optional
+        strain of mouse to use for germline sequences. Only for `db="ogrdb"`. Note that only "c57bl6", "balbc", "CAST_EiJ", "LEWES_EiJ", "MSM_MsJ", "NOD_ShiLt_J" and "PWD_PhJ" contains both heavy chain and light chain germline sequences as a set.
+        The rest will not allow igblastn and MakeDB.py to generate a successful airr table (check the failed file). "c57bl6" and "balbc" are merged databases of "C57BL_6" with "C57BL_6J" and "BALB_c" with "BALB_c_ByJ" respectively. None defaults to all combined.
     additional_args : List[str], optional
         Additional arguments to pass to `CreateGermlines.py`.
     """
     env, gml, airr_file = set_germline_env(
-        germline=germline, org=org, input_file=airr_file
+        germline=germline,
+        org=org,
+        input_file=airr_file,
+        db=db,
     )
-
+    _strain = "_" + strain if strain is not None else ""
     if germline is None:
         if mode == "heavy":
             if genotyped_fasta is None:
                 gml_ref = [
-                    str(gml / ("imgt_" + org + "_IGHV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
+                    str(gml / ("imgt_" + org + _strain + "_IGHV.fasta")),
                 ]
             else:
                 gml_ref = [
                     str(genotyped_fasta),
-                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
                 ]
+            gml_ref += [
+                str(gml / ("imgt_" + org + _strain + "_IGHJ.fasta")),
+            ]
+            _strainD = "" if strain not in NO_DS else _strain
+            gml_ref += [
+                str(gml / ("imgt_" + org + _strainD + "_IGHD.fasta")),
+            ]
         elif mode == "light":
             gml_ref = [
-                str(gml / ("imgt_" + org + "_IGKV.fasta")),
-                str(gml / ("imgt_" + org + "_IGKJ.fasta")),
-                str(gml / ("imgt_" + org + "_IGLV.fasta")),
-                str(gml / ("imgt_" + org + "_IGLJ.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGKV.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGKJ.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGLV.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGLJ.fasta")),
             ]
         elif mode is None:
             if genotyped_fasta is None:
                 gml_ref = [
-                    str(gml / ("imgt_" + org + "_IGHV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
-                    str(gml / ("imgt_" + org + "_IGKV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGKJ.fasta")),
-                    str(gml / ("imgt_" + org + "_IGLV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGLJ.fasta")),
+                    str(gml / ("imgt_" + org + _strain + "_IGHV.fasta")),
                 ]
             else:
                 gml_ref = [
                     str(genotyped_fasta),
-                    str(gml / ("imgt_" + org + "_IGHD.fasta")),
-                    str(gml / ("imgt_" + org + "_IGHJ.fasta")),
-                    str(gml / ("imgt_" + org + "_IGKV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGKJ.fasta")),
-                    str(gml / ("imgt_" + org + "_IGLV.fasta")),
-                    str(gml / ("imgt_" + org + "_IGLJ.fasta")),
                 ]
+            gml_ref += [
+                str(gml / ("imgt_" + org + _strain + "_IGHJ.fasta")),
+            ]
+            _strainD = "" if strain not in NO_DS else _strain
+            gml_ref += [
+                str(gml / ("imgt_" + org + _strainD + "_IGHD.fasta")),
+            ]
+            gml_ref += [
+                str(gml / ("imgt_" + org + _strain + "_IGKV.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGKJ.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGLV.fasta")),
+                str(gml / ("imgt_" + org + _strain + "_IGLJ.fasta")),
+            ]
     else:
         if not isinstance(germline, list):
             germline = [str(germline)]
@@ -286,6 +328,33 @@ def tigger_genotype(
     org: Literal["human", "mouse"] = "human",
     fileformat: Literal["airr", "changeo"] = "airr",
     novel_: Literal["YES", "NO"] = "YES",
+    db: Literal["imgt", "ogrdb"] = "imgt",
+    strain: Optional[
+        Literal[
+            "c57bl6",
+            "balbc",
+            "129S1_SvImJ",
+            "AKR_J",
+            "A_J",
+            "BALB_c_ByJ",
+            "BALB_c",
+            "C3H_HeJ",
+            "C57BL_6J",
+            "C57BL_6",
+            "CAST_EiJ",
+            "CBA_J",
+            "DBA_1J",
+            "DBA_2J",
+            "LEWES_EiJ",
+            "MRL_MpJ",
+            "MSM_MsJ",
+            "NOD_ShiLtJ",
+            "NOR_LtJ",
+            "NZB_BlNJ",
+            "PWD_PhJ",
+            "SJL_J",
+        ]
+    ] = None,
     additional_args: List[str] = [],
 ):
     """
@@ -306,14 +375,23 @@ def tigger_genotype(
         format for running tigger. Default is 'airr'. Also accepts 'changeo'.
     novel_ : Literal["YES", "NO"], optional
         whether or not to run novel allele discovery.
+    db : Literal["imgt", "ogrdb"], optional
+        `imgt` or `ogrdb` reference database.
+    strain : Optional[Literal["c57bl6", "balbc", "129S1_SvImJ", "AKR_J", "A_J", "BALB_c_ByJ", "BALB_c", "C3H_HeJ", "C57BL_6J", "C57BL_6", "CAST_EiJ", "CBA_J", "DBA_1J", "DBA_2J", "LEWES_EiJ", "MRL_MpJ", "MSM_MsJ", "NOD_ShiLtJ", "NOR_LtJ", "NZB_BlNJ", "PWD_PhJ", "SJL_J"]], optional
+        strain of mouse to use for germline sequences. Only for `db="ogrdb"`. Note that only "c57bl6", "balbc", "CAST_EiJ", "LEWES_EiJ", "MSM_MsJ", "NOD_ShiLt_J" and "PWD_PhJ" contains both heavy chain and light chain germline sequences as a set.
+        The rest will not allow igblastn and MakeDB.py to generate a successful airr table (check the failed file). "c57bl6" and "balbc" are merged databases of "C57BL_6" with "C57BL_6J" and "BALB_c" with "BALB_c_ByJ" respectively. None defaults to all combined.
     additional_args : List[str], optional
         Additional arguments to pass to `tigger-genotype.R`.
     """
     env, gml, airr_file = set_germline_env(
-        germline=v_germline, org=org, input_file=airr_file
+        germline=v_germline,
+        org=org,
+        input_file=airr_file,
+        db=db,
     )
+    _strain = "_" + strain if strain is not None else ""
     if v_germline is None:
-        v_gml = gml / ("imgt_" + org + "_IGHV.fasta")
+        v_gml = gml / (db + "_" + org + _strain + "_IGHV.fasta")
     else:
         v_gml = Path(v_germline)
     if outdir is not None:

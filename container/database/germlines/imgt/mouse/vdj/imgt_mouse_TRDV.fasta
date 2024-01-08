@@ -5,7 +5,7 @@ cagtggttttaccaacgtcctgggggaagcctcgtcagcctgttgtacaatccttct...
 ............gggacaaagcacact...............ggaagactgacatccacc
 acagtcactaaagaa...cgtcgcagctctttgcacatttcctcctcccagatcacagac
 tcaggcacttatttctgtgctatggaac
->IMGT000082|TRAV13-4/DV7*02|Mus_musculus_C57BL/6J|F|V-REGION|1339684..1339954|271 nt|1| | || |271+57=328| | |
+>IMGT000082|TRAV13-4/DV7*02|Mus_musculus_C57BL/6J|F|V-REGION|1339684..1339954|271 nt|1| | | | |271+57=328| | |
 ggacagcaagtgcagcagagtcct...gcatccttggttctgcaggagggggagaacgca
 gagctgcagtgtaacttttcctccacagca.....................acccggctg
 cagtggttttaccaacgtcctgggggaagcctcgtcagcctgttgtccaatccttct...
@@ -82,7 +82,7 @@ ttctggtacaagcaccttcttagtggagagatggttttgcttattcgacaaatgccttct
 ......actattgcaatagagaggagc...............ggccgctattctgtagtc
 ttccagaaatcacgc...aaatccatcagccttgtcatttcaaccttacaaccagacgat
 tcgggaaagtatttctgtgctctctgggagctgg
->X63939|TRAV15-1/DV6-1*02|Mus_musculus_BALB/c|(F)|V-REGION|16..307|292 nt|1| | || |292+42=334| | |
+>X63939|TRAV15-1/DV6-1*02|Mus_musculus_BALB/c|(F)|V-REGION|16..307|292 nt|1| | | | |292+42=334| | |
 gcccagaaagtgattcaggtctgg...tcaacaacaagcaggcaggagggagaaaaactc
 acactggactgttcatataagacaagtcaggtc...............ttataccatctt
 ttctggtacaagcaccttcttagtggagagatggttttgcttattcgacaaatgccttct
@@ -96,7 +96,7 @@ ctttggtacaagcagctttttagtggagagatggttttccttatttaccaaacttccttt
 ......gatactcagaaccagaggaac...............agccgctactctgtagtc
 ttccagaaatcactc...aagtccatcagccttgtcatttcagcctcacagccagaggat
 tcagggacgtacttctgcgctctctcggaactga
->IMGT000082|TRAV15-2/DV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|1231739..1232027|289 nt|1| | || |289+45=334| | |
+>IMGT000082|TRAV15-2/DV6-2*02|Mus_musculus_C57BL/6J|F|V-REGION|1231739..1232027|289 nt|1| | | | |289+45=334| | |
 gcccagagagtgactcaggtccag...tcaacaggcagcagtcagtgggga...gaagtc
 accctggactgttcatatgagacaagtgaatac...............tcctaccttatt
 ctttggtacaggcagctttttagtggagagatggttttccttatttaccaaccttctttt
@@ -341,32 +341,31 @@ tggtataagaagaatggaactaatgctctgtttttagtatacaagctaaat.........
 ............agcaattctactgatggtggaaag...agcaacctcaaagggaaaatt
 aacatttcaaaaaatcagtttatactcgacattcagaaggcaacaatgaaagacgctggt
 acgtactactgtgggtcagatatc
->M23382|TRDV5*01|Mus_musculus_BALB/c|F|V-REGION|263..556|294 nt|1| | || |294+30=324| | |
+>M23382|TRDV5*01|Mus_musculus_BALB/c|F|V-REGION|263..556|294 nt|1| | | | |294+30=324| | |
 tgcatcacgctgacccagagctccactgaccagacagtggcaagcggcactgaagtaaca
 ctgctctgcacgtacaatgcggattctcca...............aacccagatttattt
 tggtatcgcaaaaggccagacagatccttccagttcatcctttatagggacgac......
 ......actagttcccatgatgcagattttgttcaa...ggtcgattttctgtgaagcac
 agcaaggccaacagaaccttccatctggtgatctctccagtgagccttgaagacagcgct
 acttattactgtgcctccgggtat
->M23095|TRDV5*02|Mus_musculus_B10.D2-H2dm1|F|V-REGION|469..762|294 nt|1| | || |294+30=324| | |
+>M23095|TRDV5*02|Mus_musculus_B10.D2-H2dm1|F|V-REGION|469..762|294 nt|1| | | | |294+30=324| | |
 tgcatcacgctgacccagagctccactgaccagacagtggcaagcggcactgaagtaaca
 ctgctctgcacgtacaatgcggattctcca...............aacccagatttattt
 tggtatcgcaaaaggccagacagatccttccagttcatcctttatagggacgac......
 ......actagttcccatgatgcagattttgttcaa...ggtcgattttctgtgaagcac
 agcaaggccaacagaaccttccatctggtgatctctccagtgagccttgaagacagcgct
 acttattactgtgcctcggggtat
->M64239|TRDV5*03|Mus_musculus_B10.D2-H2dm1|F|V-REGION|14323..14616|294 nt|1| | || |294+30=324| | |
+>M64239|TRDV5*03|Mus_musculus_B10.D2-H2dm1|F|V-REGION|14323..14616|294 nt|1| | | | |294+30=324| | |
 tgcatcacgctgacccagagctccactgaccagacagtggcaagcggcactgaagtaaca
 ctgctttgcacgtacaatgcggattctcca...............aacccagatttattt
 tggtatcgcaaaaggccagacagatccttccagttcatcctttatagggacgac......
 ......actagttcccatgatgcagattttgttcaa...ggtcgattttctgtgaagcac
 agcaaggccaacagaaccttccatctggtgatctctccagtgagccttgaagacagcgct
 acttattactgtgcctcggggtat
->M37281|TRDV5*04|Mus_musculus_BALB/cx129(F1)|(F)|V-REGION|99..392|294 nt|1| | || |294+30=324| | |
+>M37281|TRDV5*04|Mus_musculus_BALB/cx129(F1)|(F)|V-REGION|99..392|294 nt|1| | | | |294+30=324| | |
 tgcatcacgctgacccagagctccactgaccagacagtggcaagcggcactgaagcaaca
 ctgctttgcacgtacaatgcggattctcca...............aacccagatttattt
 tggtatcgcaaaaggccagacagatccttccagttcatcctttatagggacgac......
 ......actagttcccatgatgcagattttgttcaa...ggtcgattttctgtgaagcac
 agcaaggccaacagaaccttccatctggtgatctctccagtgagccttgaagacagcgct
 acttattactgtgcctcggggtat
-

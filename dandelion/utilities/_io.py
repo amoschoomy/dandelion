@@ -1,27 +1,26 @@
 #!/usr/bin/env python
+from dandelion.utilities._utilities import *
+from dandelion.utilities._core import *
+from dandelion.tools._tools import transfer as tf
+
+from typing import Any, Collection, Union, Optional, List
+from scanpy import logging as logg
+from pathlib import Path
+from collections import defaultdict, OrderedDict
+from anndata import AnnData
+import pandas as pd
+import numpy as np
+import networkx as nx
 import bz2
 import gzip
 import json
 import os
 import re
 import shutil
-
 import _pickle as cPickle
 import pickle
 
 pickle.HIGHEST_PROTOCOL = 4
-import networkx as nx
-import numpy as np
-import pandas as pd
-
-from anndata import AnnData
-from collections import defaultdict, OrderedDict
-from pathlib import Path
-from scanpy import logging as logg
-from typing import Union, Optional, List
-
-from dandelion.utilities._core import *
-from dandelion.utilities._utilities import *
 
 
 AIRR = [
@@ -326,74 +325,6 @@ def read_10x_airr(file: str) -> Dandelion:
         dat.drop(null_columns, inplace=True, axis=1)
 
     return Dandelion(dat)
-
-
-def to_scirpy(data: Dandelion, transfer: bool = False, **kwargs) -> AnnData:
-    """
-    Convert a `Dandelion` object to scirpy's format.
-
-    Parameters
-    ----------
-    data : Dandelion
-        `Dandelion` object
-    transfer : bool
-        Whether to execute :func:`dandelion.tl.transfer` to transfer all data
-        to the :class:`anndata.AnnData` instance.
-    **kwargs
-        Additional arguments passed to :func:`scirpy.io.read_airr`.
-
-    Returns
-    -------
-    AnnData
-        `AnnData` object in the format initialized by `scirpy`.
-
-    """
-    try:
-        import scirpy as ir
-    except:
-        raise ImportError("Please install scirpy. pip install scirpy")
-
-    if "duplicate_count" not in data.data and "umi_count" in data.data:
-        data.data["duplicate_count"] = data.data["umi_count"]
-    for h in [
-        "sequence",
-        "rev_comp",
-        "sequence_alignment",
-        "germline_alignment",
-        "v_cigar",
-        "d_cigar",
-        "j_cigar",
-    ]:
-        if h not in data.data:
-            data.data[h] = None
-    return ir.io.from_dandelion(data, transfer, **kwargs)
-
-
-def from_scirpy(adata: AnnData) -> Dandelion:
-    """
-    Read a `scirpy` initialized `AnnData` object and returns a `Dandelion` object.
-
-    Parameters
-    ----------
-    adata : AnnData
-        `scirpy` initialized `AnnData` object.
-
-    Returns
-    -------
-    Dandelion
-        `Dandelion` object.
-
-    Raises
-    ------
-    ImportError
-        if `scirpy` not installed.
-    """
-    try:
-        import scirpy as ir
-    except:
-        raise ImportError("Please install scirpy. pip install scirpy")
-
-    return ir.io.to_dandelion(adata)
 
 
 def concat(
@@ -1033,3 +964,225 @@ def check_complete(df: pd.DataFrame) -> pd.DataFrame:
             df.at[i, "productive"] = "F"
             df.at[i, "complete_vdj"] = "F"
     return df
+
+
+def from_ak(airr: "Array") -> pd.DataFrame:
+    """
+    Convert an AIRR-formatted array to a pandas DataFrame.
+
+    Parameters
+    ----------
+    airr : Array
+        The AIRR-formatted array to be converted.
+
+    Returns
+    -------
+    pd.DataFrame
+        The converted pandas DataFrame.
+
+    Raises
+    ------
+    KeyError
+        If `sequence_id` not found in the data.
+    """
+
+    import awkward as ak
+
+    df = ak.to_dataframe(airr)
+    if "sequence_id" in df.columns:
+        df.set_index("sequence_id", drop=False, inplace=True)
+    if "cell_id" not in df.columns:
+        df["cell_id"] = [c.split("_contig")[0] for c in df["sequence_id"]]
+    else:
+        raise KeyError("'sequence_id' not found in columns of input")
+    return df
+
+
+def to_ak(
+    data: pd.DataFrame,
+    **kwargs,
+) -> Tuple["Array", pd.DataFrame]:
+    """
+    Convert data from a DataFrame to an AnnData object with AIRR format.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The input DataFrame containing the data.
+    **kwargs
+        Additional keyword arguments passed to `scirpy.io.read_airr`.
+
+    Returns
+    -------
+    Tuple[Array, pd.DataFrame]
+        A tuple containing the AIRR-formatted data as an ak.Array and the cell-level attributes as a pd.DataFrame.
+    """
+
+    try:
+        import scirpy as ir
+    except:
+        raise ImportError("Please install scirpy to use this function.")
+
+    adata = ir.io.read_airr(data, **kwargs)
+
+    return adata.obsm["airr"], adata.obs
+
+
+def _create_anndata(
+    airr: "Array",
+    obs: pd.DataFrame,
+    adata: Optional[AnnData] = None,
+) -> AnnData:
+    """
+    Create an AnnData object with the given AIRR array and observation data.
+
+    Parameters
+    ----------
+    airr : Array
+        The AIRR array.
+    obs : pd.DataFrame
+        The observation data.
+    adata : Optional[AnnData], optional
+        An existing AnnData object to update. If None, a new AnnData object will be created.
+
+    Returns
+    -------
+    AnnData
+        The AnnData object with the AIRR array and observation data.
+    """
+    obsm = {"airr": airr}
+    temp = AnnData(X=None, obs=obs, obsm=obsm)
+
+    if adata is None:
+        adata = temp
+    else:
+        cell_names = adata.obs_names.intersection(temp.obs_names)
+        adata = adata[adata.obs_names.isin(cell_names)].copy()
+        temp = temp[temp.obs_names.isin(cell_names)].copy()
+        adata.obsm = dict() if adata.obsm is None else adata.obsm
+        adata.obsm.update(temp.obsm)
+
+    return adata
+
+
+def _create_mudata(
+    gex: AnnData,
+    adata: AnnData,
+    key: Tuple[str, str] = ("gex", "airr"),
+) -> "MuData":
+    """
+    Create a MuData object from the given AnnData objects.
+
+    Parameters
+    ----------
+    gex : AnnData
+        The AnnData object containing gene expression data.
+    adata : AnnData
+        The AnnData object containing additional data.
+    key : Tuple[str, str], optional
+        The keys to use for the gene expression and additional data in the MuData object. Defaults to ("gex", "airr").
+
+    Returns
+    -------
+    MuData
+        The created MuData object.
+
+    Raises
+    ------
+    ImportError
+        If the mudata package is not installed.
+    """
+
+    try:
+        from mudata import MuData
+    except ImportError:
+        raise ImportError("Please install mudata. pip install mudata")
+    if gex is not None:
+        return MuData({key[0]: gex, key[1]: adata})
+    return MuData({key[1]: adata})
+
+
+def to_scirpy(
+    data: Dandelion,
+    transfer: bool = False,
+    to_mudata: bool = True,
+    gex_adata: Optional[AnnData] = None,
+    key: Tuple[str, str] = ("gex", "airr"),
+    **kwargs,
+) -> Union[AnnData, "MuData"]:
+    """
+    Convert Dandelion data to scirpy-compatible format.
+
+    Parameters
+    ----------
+    data : Dandelion
+        The Dandelion object containing the data to be converted.
+    transfer : bool, optional
+        Whether to transfer additional information from Dandelion to the converted data. Defaults to False.
+    to_mudata : bool, optional
+        Whether to convert the data to MuData format instead of AnnData. Defaults to True.
+        If converting to AnnData, it will assert that the same cell_ids and .obs_names are present in the `gex_adata` provided.
+    gex_adata : AnnData, optional
+        An existing AnnData object to be used as the base for the converted data if provided.
+    key : tuple of str, optional
+        A tuple specifying the keys for the 'gex' and 'airr' fields in the converted data. Defaults to ("gex", "airr").
+    **kwargs
+        Additional keyword arguments passed to `scirpy.io.read_airr`.
+
+    Returns
+    -------
+    Union[AnnData, "MuData"]
+        The converted data in either AnnData or MuData format.
+    """
+
+    if "duplicate_count" not in data.data and "umi_count" in data.data:
+        data.data["duplicate_count"] = data.data["umi_count"]
+    for h in [
+        "sequence",
+        "rev_comp",
+        "sequence_alignment",
+        "germline_alignment",
+        "v_cigar",
+        "d_cigar",
+        "j_cigar",
+    ]:
+        if h not in data.data:
+            data.data[h] = None
+
+    airr, obs = to_ak(data.data, **kwargs)
+    if to_mudata:
+        adata = _create_anndata(
+            airr,
+            obs,
+        )
+        if transfer:
+            tf(adata, data)  # need to make a version that is not so verbose?
+
+        return _create_mudata(gex_adata, adata, key)
+    else:
+        adata = _create_anndata(airr, obs, gex_adata)
+
+        if transfer:
+            tf(adata, data)
+        return adata
+
+
+def from_scirpy(data: Union[AnnData, "MuData"]) -> Dandelion:
+    """
+    Convert data from scirpy format to Dandelion format.
+
+    Parameters
+    ----------
+    data : Union[AnnData, "MuData"]
+        The input data in scirpy format.
+
+    Returns
+    -------
+    Dandelion
+        The converted data in Dandelion format.
+    """
+
+    if not isinstance(data, AnnData):
+        data = data.mod["airr"]
+    data = from_ak(data.obsm["airr"])
+    return Dandelion(data)
